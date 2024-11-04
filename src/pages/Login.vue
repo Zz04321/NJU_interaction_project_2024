@@ -11,7 +11,7 @@
                 <el-input type="password" v-model="upass" placeholder="请输入密码" show-password></el-input>
             </div>
             <div>
-                <el-button @click="login" class="submit">登录</el-button>
+              <el-button @click="handleLogin" class="submit">登录</el-button>
                 <p>还没有注册？点击<router-link to="/Register">注册</router-link></p>
                 <p><router-link to="/UpdPwd">忘记密码</router-link></p>
             </div>
@@ -62,8 +62,8 @@
     }
 </style>
 <script type="text/javascript">
-import global from '../components/global.vue'
 import NewTop from '../components/NewTop.vue'
+import {login} from "../api/user.js";
 
 export default {
   data() {
@@ -72,64 +72,33 @@ export default {
         upass:''
     }
   },
-  methods:{
-    login() {
-            if (this.email === '') {
-                this.$notify({
-                        message: '邮箱不能为空!',
-                        type: 'error',
-                        offset: 100
-                    });
-                return;
-            }
-            if (this.upass === '') {
-                this.$notify({
-                        message: '密码不能为空!',
-                        type: 'error',
-                        offset: 100
-                    });
-                return;
-            }
-            var url=global.url+'/user/login'
-            this.$http.post(
-                url,
-                {
-                    email: this.email,
-                    upass: this.upass
-                }
-            ).then(res => {
-                console.log(res)
-                if (res.data.code === 1) {
-                    console.log(res)
-                    // this.$router.replace('/')
-                    this.$notify({
-                        message: "登录成功!...正在跳转主页",
-                        type: "success",
-                        offset: 100
-                    })
-                    clearTimeout(this.timer);
-                    this.timer = setTimeout(()=>{   //设置延迟执行
-                        this.$router.replace('/')
-                    },1000);
+  methods: {
+    handleLogin() {
+      if (this.email === '') {
+        this.$notify({ message: '邮箱不能为空!', type: 'error', offset: 100 });
+        return;
+      }
+      if (this.upass === '') {
+        this.$notify({ message: '密码不能为空!', type: 'error', offset: 100 });
+        return;
+      }
 
-                    localStorage.setItem("email", this.email)
-                    localStorage.setItem("uid", res.data.data[0].uid)
-                } else {
-                    console.log(this.upass)
-                    console.log(this.email)
-                    this.$notify({
-                        message: res.data.msg,
-                        type: 'error',
-                        offset: 100
-                    });
-                }
-            }).catch(error => {
-                console.log(error)
-            })
-        }
-    },
-    components: {
-        NewTop
+      login(this.email, this.upass)
+        .then(res => {
+          if (res.data.code === 1) {
+            this.$notify({ message: "登录成功!...正在跳转主页", type: "success", offset: 100 });
+            localStorage.setItem("email", this.email);
+            localStorage.setItem("uid", res.data.data[0].uid);
+            setTimeout(() => this.$router.replace('/'), 1000);
+          } else {
+            this.$notify({ message: res.data.msg, type: 'error', offset: 100 });
+          }
+        })
+        .catch(error => console.error('登录失败:', error));
     }
+  },
+  components: {
+    NewTop
+  }
 }
 </script>

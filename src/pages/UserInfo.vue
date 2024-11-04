@@ -15,7 +15,7 @@
                 <el-button @click="saveImg" style="margin-top:50px; width: 100px; height: 38px;">保存头像</el-button>
             </div>
             <div class="block2">
-                <ul style="list-style:none; margin-top: 20px;">                
+                <ul style="list-style:none; margin-top: 20px;">
                     <li>
                         <p>
                             <font>用户名：</font>
@@ -61,7 +61,6 @@
                 </ul>
             </div>
         </div>
-    </div>
     </body>
 </template>
 
@@ -206,7 +205,7 @@ export default {
           this.$notify({
             message: res.data.msg,
             type: "error",
-            offset: 100            
+            offset: 100
           })
         }
       });
@@ -228,9 +227,9 @@ export default {
           this.$message({
             type: 'info',
             message: '取消操作!'
-          });          
+          });
         });
-        
+
     }
   },
   mounted() {

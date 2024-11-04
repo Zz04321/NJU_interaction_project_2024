@@ -15,10 +15,10 @@
             </div>
             <div class="text">
                 <el-input type="text" v-model="tempcode" placeholder="输入验证码" style="width: 140px"></el-input>
-                <el-button @click="postcode" style="margin-left: 44px">发送验证码</el-button>
+              <el-button @click="handleSendVerificationCode" style="margin-left: 44px">发送验证码</el-button>
             </div>
             <div>
-                <el-button @click="register" class="submit">注册</el-button>
+              <el-button @click="handleRegister" class="submit">注册</el-button>
                 <p>已有账号?返回<router-link to="/Login">登录</router-link></p>
             </div>
         </div>
@@ -67,8 +67,8 @@
     }
 </style>
 <script type="text/javascript">
-import global from '../components/global.vue'
 import NewTop from '../components/NewTop.vue'
+import { register } from '../api/user.js'
 export default {
     components: {
         NewTop
@@ -83,78 +83,62 @@ export default {
             timer: null
     	}
   	},
-	methods: {
-        postcode() {
-            var url=global.url+'/user/registerSentEmail/'
-            this.$http.post (
-                url,
-                {
-                    email: this.email
-                }
-            ).then(res=>{
-                if (res.data.code === 1) {
-                    this.$notify({
-                        message: '发送成功!',
-                        type: 'success',
-                        offset: 100
-                    });
-                } else {
-                    this.$notify({
-                        message: res.data.msg,
-                        type: 'error',
-                        offset: 100
-                    });
-                }
-                console.log(res.data)
-            })
-        },
-		register() {
-            if (this.upass !== this.reupass) {
-                this.$notify({
-                    message: '两次密码不一致!',
-                    type: 'error',
-                    offset: 100
-                });
-                return;
-            }
-            var url=global.url+'/user/add'
-            this.$http.post(
-                url,
-                {
-                    email: this.email,
-                    upass: this.upass,
-                    tempcode: this.tempcode,
-                }
-            ).then(res => {
-                console.log(res)
-                if (res.data.code === 1) {
-                    console.log(res)
-                    var url = global.url+'/user/sendUid/'+res.data.data[0].uid
-                    this.$http.get (
-                        url,
-                    ).then(res2=>{
-                        console.log(res2.data.msg)
-                    })
-                    this.$notify({
-                        message: "注册成功!...返回登录界面",
-                        type: "success",
-                        offset: 100
-                    })
-                    clearTimeout(this.timer);
-                    this.timer = setTimeout(()=>{   //设置延迟执行
-                        this.$router.replace('/Login')
-                    },1000);
-                } else {
-                    this.$notify({
-                    message: res.data.msg,
-                    type: 'error',
-                    offset: 100
-                });
-                }
-            }).catch(error => {
-                console.log(error)
-            })
-        }
-	}
+  methods: {
+    handleSendVerificationCode() {
+      sendVerificationCode(this.email)
+        .then(res => {
+          if (res.data.code === 1) {
+            this.$notify({
+              message: '发送成功!',
+              type: 'success',
+              offset: 100
+            });
+          } else {
+            this.$notify({
+              message: res.data.msg,
+              type: 'error',
+              offset: 100
+            });
+          }
+        })
+        .catch(error => {
+          console.error('验证码发送失败:', error);
+        });
+    },
+    handleRegister() {
+      if (this.upass !== this.reupass) {
+        this.$notify({
+          message: '两次密码不一致!',
+          type: 'error',
+          offset: 100
+        });
+        return;
+      }
+
+      register(this.email, this.upass, this.tempcode)
+        .then(res => {
+          if (res.data.code === 1) {
+            this.$notify({
+              message: "注册成功!...返回登录界面",
+              type: "success",
+              offset: 100
+            });
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => {
+              this.$router.replace('/Login')
+            }, 1000);
+          } else {
+            this.$notify({
+              message: res.data.msg,
+              type: 'error',
+              offset: 100
+            });
+          }
+        })
+        .catch(error => {
+          console.error('注册失败:', error);
+        });
+    }
+  }
 }
 </script>
