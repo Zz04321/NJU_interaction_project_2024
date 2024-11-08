@@ -13,10 +13,12 @@
             <div class="text">
                 <el-input type="password" v-model="reupass" placeholder="再次输入密码" show-password></el-input>
             </div>
-            <div class="text">
-                <el-input type="text" v-model="tempcode" placeholder="输入验证码" style="width: 140px"></el-input>
-              <el-button @click="handleSendVerificationCode" style="margin-left: 44px">发送验证码</el-button>
-            </div>
+          <div class="text">
+            <el-select v-model="isPhotographer" placeholder="请选择身份">
+              <el-option label="摄影师" :value="true"></el-option>
+              <el-option label="普通用户" :value="false"></el-option>
+            </el-select>
+          </div>
             <div>
               <el-button @click="handleRegister" class="submit">注册</el-button>
                 <p>已有账号?返回<router-link to="/Login">登录</router-link></p>
@@ -79,32 +81,11 @@ export default {
             email: '',
             upass:'',
             reupass:'',
-            tempcode:'',
+            isPhotographer: null,  // 添加身份选择
             timer: null
     	}
   	},
   methods: {
-    handleSendVerificationCode() {
-      sendVerificationCode(this.email)
-        .then(res => {
-          if (res.data.code === 1) {
-            this.$notify({
-              message: '发送成功!',
-              type: 'success',
-              offset: 100
-            });
-          } else {
-            this.$notify({
-              message: res.data.msg,
-              type: 'error',
-              offset: 100
-            });
-          }
-        })
-        .catch(error => {
-          console.error('验证码发送失败:', error);
-        });
-    },
     handleRegister() {
       if (this.upass !== this.reupass) {
         this.$notify({
@@ -114,8 +95,8 @@ export default {
         });
         return;
       }
-
-      register(this.email, this.upass, this.tempcode)
+      //添加 isPhotographer 信息
+      register(this.email, this.upass, this.isPhotographer)
         .then(res => {
           if (res.data.code === 1) {
             this.$notify({
@@ -125,7 +106,7 @@ export default {
             });
             clearTimeout(this.timer);
             this.timer = setTimeout(() => {
-              this.$router.replace('/Login')
+              this.$router.replace('/Login');
             }, 1000);
           } else {
             this.$notify({

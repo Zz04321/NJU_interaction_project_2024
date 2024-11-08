@@ -10,6 +10,6 @@ export function login(email, upass) {
 }
 
 // 注册 API
-export function register(email, upass, tempcode) {
-  return axios.post(`${API_BASE_URL}/user/add`, { email, upass, tempcode });
+export function register(email, upass, isPhotographer) {
+  return axios.post(`${API_BASE_URL}/user/add`, { email, upass, isPhotographer});
 }
