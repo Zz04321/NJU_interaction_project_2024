@@ -162,9 +162,9 @@ export default {
         eventId: 1
       },
       images: [
-        require('../assets/event/event1_1.jpg'),
-        require('../assets/event/event1_2.jpg'),
-        require('../assets/event/event1_3.jpg'),
+        require('../assets/event/event3_1.jpg'),
+        require('../assets/event/event3_2.jpg'),
+        require('../assets/event/event3_3.jpg'),
       ]
     };
   },

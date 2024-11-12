@@ -18,43 +18,43 @@
                 <ul style="list-style:none; margin-top: 20px;">
                     <li>
                         <p>
-                            <font>用户名：</font>
+                            <span>用户名：</span>
                             <a title="修改信息" @click="f"><span>{{uname}}</span></a>
                         </p>
                     </li>
                     <li>
                         <p>
-                            <font>邮&nbsp箱：</font>
+                            <span>邮&nbsp箱：</span>
                             <a title="修改信息" @click="f"><span>{{email}}</span></a>
                         </p>
                     </li>
                     <li>
                         <p>
-                            <font>性&nbsp别：</font>
+                            <span>性&nbsp别：</span>
                             <a title="修改信息" @click="f"><span>{{sex}}</span></a>
                         </p>
                     </li>
                     <li style="width:200px;">
                         <p>
-                            <font>生&nbsp日：</font>
+                            <span>生&nbsp日：</span>
                             <a title="修改信息" @click="f"><span>{{birthday}}</span></a>
                         </p>
                     </li>
                     <li>
                         <p>
-                            <font>手机号：</font>
+                            <span>手机号：</span>
                             <a title="修改信息" @click="f"><span>{{phone}}</span></a>
                         </p>
                     </li>
                     <li>
                         <p>
-                            <font>&nbsp&nbspQQ：</font>
+                            <span>&nbsp&nbspQQ：</span>
                             <a title="修改信息" @click="f"><span>{{qq}}</span></a>
                         </p>
                     </li>
                     <li>
                         <p>
-                            <font>微&nbsp信：</font>
+                            <span>微&nbsp信：</span>
                             <a title="修改信息" @click="f"><span>{{wechat}}</span></a>
                         </p>
                     </li>
@@ -148,11 +148,12 @@ span {
 </style>
 <script>
 import NewTop from "../components/NewTop.vue";
-import global from "../components/global.vue";
+import {uploadImage, getUserInfo, logout, notify} from '../api/user.js';
+
 export default {
   data() {
     return {
-      src: "",
+      headImg: "",
       uname: "",
       email: "",
       sex: "",
@@ -160,25 +161,23 @@ export default {
       phone: "",
       qq: "",
       wechat: "",
-      // pic
+      pic: null,
     };
   },
   components: {
     NewTop,
   },
   methods: {
-    f: function () {
+    f() {
       this.$router.push("/UpdInfo");
     },
     uploadImg() {
       let tmp = this.$refs.input.files;
-      // console.log(tmp[0])
       if (tmp.length === 0) {
         this.inputValue = null;
       } else {
         this.showImage(tmp[0]);
         this.pic = tmp[0];
-        // this.src=require(img.src);
       }
     },
     showImage(img) {
@@ -188,63 +187,56 @@ export default {
         this.src = reader.result.toString();
       };
     },
-    saveImg: function () {
-      var url = global.url + "/upload";
-      let bodyFormData = new FormData();
-      bodyFormData.append("file", this.pic);
-      bodyFormData.append("uid", localStorage.getItem("uid"));
-      // console.log(this.pic)
-      this.$http.post(url, bodyFormData).then((res) => {
-        if (res.data.code === 1) {
-          this.$notify({
-            message: "修改成功!",
-            type: "success",
-            offset: 100
+    saveImg() {
+      if (this.pic) {
+        uploadImage(this.pic, localStorage.getItem("uid"))
+          .then((res) => {
+            if (res.data.code === 1) {
+              notify(this, "修改成功!", "success");
+            } else {
+              notify(this, res.data.msg, "error");
+            }
           })
-        } else {
-          this.$notify({
-            message: res.data.msg,
-            type: "error",
-            offset: 100
-          })
-        }
-      });
+          .catch(() => {
+            notify(this, "上传失败，请重试", "error");
+          });
+      }
     },
     logout() {
-        this.$confirm('确定要退出登录吗?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '成功退出!'
-          });
-          localStorage.removeItem('email')
-          localStorage.removeItem('uid')
-          this.$router.replace('/Login')
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消操作!'
-          });
+      this.$confirm('确定要退出登录吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '成功退出!'
         });
-
+        logout(this.$router);
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消操作!'
+        });
+      });
     }
   },
   mounted() {
-    this.src = global.url + "/images2/" + localStorage.getItem("uid") + ".jpg";
-    var url = global.url + "/user/findByEmail/" + localStorage.getItem("email");
-    this.$http.get(url).then((res) => {
-      console.log(res.data);
-      this.uname = res.data.data[0].uname;
-      this.email = res.data.data[0].email;
-      this.phone = res.data.data[0].phone;
-      this.sex = res.data.data[0].sex;
-      this.birthday = res.data.data[0].birthday;
-      this.qq = res.data.data[0].qq;
-      this.wechat = res.data.data[0].wechat;
-    });
+    console.log(localStorage.getItem("uid"))
+    getUserInfo(localStorage.getItem("uid"))
+      .then((res) => {
+        this.headImg = res.data.data.headImg;
+        this.uname = res.data.data.uname;
+        this.email = res.data.data.email;
+        this.phone = res.data.data.phone;
+        this.sex = res.data.data.sex;
+        this.birthday = res.data.data.birthday;
+        this.qq = res.data.data.qq;
+        this.wechat = res.data.data.wechat;
+      })
+      .catch(() => {
+        notify(this, "获取用户信息失败", "error");
+      });
   },
 };
 </script>

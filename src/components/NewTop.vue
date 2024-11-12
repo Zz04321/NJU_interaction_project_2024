@@ -10,9 +10,9 @@
                 </div>
                 <div class="col-sm-8 hidden-xs">
                     <ul class="nav nav-justified">
-                        <li><a href="#templatemo_banner_slide" @click="toHome">首页</a></li>
-                        <li><a href="#templatemo_about" @click="toAboutNews">新闻</a></li>
-                        <li><a href="#templatemo_events" @click="toEvents">展馆</a></li>
+                        <li><a href="#templatemo_banner_slide" @click="toHome">服务对接</a></li>
+                        <li><a href="#templatemo_about" @click="toAboutNews">图片展</a></li>
+                        <li><a href="#templatemo_events" @click="toEvents">活动</a></li>
                         <!-- <li><a href="#templatemo_timeline" @click="toTimeLine">Timeline</a></li>
                         <li><a href="#templatemo_contact" @click="toContact">Contact</a></li> -->
                         <li>
@@ -63,7 +63,7 @@
 </style>
 
 <script>
-import global from './global.vue'
+import global from '../api/global.vue'
 export default {
     data() {
         var src, info;
@@ -71,7 +71,8 @@ export default {
             src = require('../assets/init_user.jpg');
             info = "还未登录?";
         } else {
-            src = global.url+'/images2/'+localStorage.getItem('uid')+'.jpg';
+            src = require('../assets/init_user.jpg');
+            // src = global.url+'/images2/'+localStorage.getItem('uid')+'.jpg';
             info = "用户信息";
         }
         return {

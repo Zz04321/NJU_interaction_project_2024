@@ -98,7 +98,7 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        background-image: url("../assets/bg_left.png"),url("../assets/bg_right.png");   
+        background-image: url("../assets/bg_left.png"),url("../assets/bg_right.png");
         background-size: cover;
         background-position: 100% 100%;
         background-repeat: no-repeat;
@@ -117,14 +117,14 @@
         height: 500px;
         width: 480px;
     }
-    
+
 </style>
 <script>
 import NewTop from '../components/NewTop.vue'
 import Date from '../components/Date.vue'
-import global from '../components/global.vue'
+import global from '../api/global.vue'
 export default {
-    data () {    
+    data () {
         return {
             pickerOptions: {
                 disabledDate(time) {
@@ -162,7 +162,7 @@ export default {
                 this.$message({
                     type: 'info',
                     message: '取消操作!'
-                });          
+                });
             });
         },
         change: function() {

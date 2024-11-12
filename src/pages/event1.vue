@@ -179,7 +179,7 @@ export default {
       this.$router.push('/');
     },
     submitForm() {
-      submitFormData(this.form)
+      submitFormData(this.form, eventId)
         .then(response => {
           console.log('Form submitted:', response.data);
           this.$message({

@@ -87,8 +87,7 @@ export default {
         .then(res => {
           if (res.data.code === 1) {
             this.$notify({ message: "登录成功!...正在跳转主页", type: "success", offset: 100 });
-            localStorage.setItem("email", this.email);
-            localStorage.setItem("uid", res.data.data[0].uid);
+            localStorage.setItem("uid", res.data.data);
             setTimeout(() => this.$router.replace('/'), 1000);
           } else {
             this.$notify({ message: res.data.msg, type: 'error', offset: 100 });
