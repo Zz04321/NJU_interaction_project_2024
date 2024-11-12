@@ -1,5 +1,5 @@
 import axios from 'axios';
-import global from '../components/global.vue';
+import global from './global.vue';
 
 // 定义 API 基础 URL
 const API_BASE_URL = global.url;

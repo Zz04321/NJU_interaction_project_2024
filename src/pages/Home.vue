@@ -40,8 +40,8 @@
 
 <script>
 import Top from '../components/Top.vue'
-import AboutNews from '../components/AboutNews.vue'
-import Photos from '../components/Photos.vue'
+import AboutNews from '../components/AboutAndPhoto.vue'
+import Photos from '../components/Activity.vue'
 import TimeLine from '../components/TimeLine.vue'
 import Contact from '../components/Contact.vue'
 export default {

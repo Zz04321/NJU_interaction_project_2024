@@ -148,7 +148,7 @@ span {
 </style>
 <script>
 import NewTop from "../components/NewTop.vue";
-import global from "../components/global.vue";
+import global from "../api/global.vue";
 export default {
   data() {
     return {

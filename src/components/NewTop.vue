@@ -63,7 +63,7 @@
 </style>
 
 <script>
-import global from './global.vue'
+import global from '../api/global.vue'
 export default {
     data() {
         var src, info;
