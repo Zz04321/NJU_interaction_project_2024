@@ -1,95 +1,104 @@
 <template>
   <body>
-    <div>
-      <div style="height: 30px;">
-        <el-button
-          style="position: absolute; top: 30px; left: 100px;"
-          @click="toExhibition3"
-          type="primary"
-          icon="el-icon-arrow-left"
-        >
-          2024发现中国之美
-        </el-button>
-        <el-button
-          style="position: absolute; top: 30px; right: 100px;"
-          @click="toExhibition1"
-          type="primary"
-          icon="el-icon-arrow-right"
-        >
-          第一届南京大学摄影展
-        </el-button>
-      </div>
-      <!-- 活动主题 -->
-      <div style="text-align: center; margin-top: 100px;">
-        <h1>最人气摄影师评选</h1>
-      </div>
-      <!-- 判断用户身份 -->
-      <section v-if="isPhotographer" style="padding: 20px;">
-        <h2>摄影师参与评选</h2>
-        <el-button
-          v-if="!hasJoined"
-          type="primary"
-          @click="joinCompetition"
-        >
-          参与评选
-        </el-button>
-        <p v-else>您已参与评选，无法投票。</p>
-      </section>
+  <div class="container">
+    <header class="header">
+      <el-button @click="toExhibition3" type="primary" icon="el-icon-arrow-left">
+        2024发现中国之美
+      </el-button>
+      <el-button @click="toExhibition1" type="primary" icon="el-icon-arrow-right">
+        第一届南京大学摄影展
+      </el-button>
+    </header>
 
-      <section v-else style="padding: 20px;">
-        <h2>投票区</h2>
-        <p>请选择您支持的摄影师，每人最多可投一票。</p>
-        <div v-for="(photographer, index) in photographers" :key="index">
+    <!-- 活动主题 -->
+    <div class="main-title">
+      <h1>最人气摄影师评选</h1>
+    </div>
+
+    <!-- 判断用户身份 -->
+    <section v-if="isPhotographer" class="section">
+      <h2>摄影师参与评选</h2>
+      <el-button v-if="!hasJoined" type="primary" @click="joinCompetition">
+        参与评选
+      </el-button>
+      <p v-else>您已参与评选，无法投票。</p>
+    </section>
+
+    <section v-else class="section">
+      <h2>投票区</h2>
+      <p>请选择您支持的摄影师，每人最多可投一票。</p>
+      <div class="photographer-list">
+        <div class="photographer-card" v-for="(photographer, index) in photographers" :key="index">
           <span>{{ photographer.name }} - 票数：{{ photographer.votes }}</span>
-          <el-button
-            type="success"
-            @click="vote(photographer.id)"
-            :disabled="hasVoted"
-          >
+          <el-button type="success" @click="vote(photographer.id)" :disabled="hasVoted">
             投票
           </el-button>
         </div>
-      </section>
-
-      <div class="bottom" style="display: flex; justify-content: center; margin-top: 40px;">
-        <el-button @click="toHome" type="primary" icon="el-icon-arrow-left">返回主页</el-button>
       </div>
-    </div>
+    </section>
+
+    <footer class="footer">
+      <el-button @click="toHome" type="primary" icon="el-icon-arrow-left">返回主页</el-button>
+    </footer>
+  </div>
   </body>
 </template>
 
 <style scoped>
-    body {
-        background-image: url("../assets/bg_left.png"), url("../assets/bg_right.png");
-    }
-    .user_commit p {
-        word-break: break-all;
-        word-wrap: break-word;
-    }
-    .commit_body img {
-        margin-top: 0px;
-        margin-left: 45px;
-        display: block;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background-color: white;
-    }
-    .left img {
-        margin-top: 20px;
-        margin-left: 45px;
-        display: block;
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        background-color: white;
-    }
-    iframe {
-        width: 100%;
-        height: 1000px;
-    }
-</style>
+body {
+  background-image: url("../assets/bg_left.png"), url("../assets/bg_right.png");
+  background-size: cover;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+}
 
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.main-title {
+  text-align: center;
+  margin: 50px 0;
+}
+
+.section {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.photographer-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.photographer-card {
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+</style>
 
 <script>
 import { submitFormData, joinCompetitionAPI, voteAPI } from "../api/event";

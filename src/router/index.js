@@ -12,9 +12,11 @@ import Exhibition3 from '../pages/event3.vue'
 import Exhibition4 from '../pages/event4.vue'
 
 import UpdInfo from '../pages/UpdInfo.vue'
+import PhotoShowDetail from "../components/PhotoShowDetail.vue";
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -69,6 +71,10 @@ export default new Router({
     {
       path: '/Exhibition4',
       component: Exhibition4,
+    },
+    {
+      path: '/PhotoShowDetail',
+      component: PhotoShowDetail,
     },
   ]
 })

@@ -66,7 +66,7 @@
 </style>
 <script type="text/javascript">
 import NewTop from '../components/NewTop.vue'
-import global from '../components/global.vue'
+import global from '../api/global.vue'
 export default {
     data() {
         return {
@@ -115,7 +115,7 @@ export default {
             }
             var url=global.url+'/user/resetPass'
             this.$http.post(
-                url, 
+                url,
                 {
                     email: this.email,
                     upass: this.upass,
