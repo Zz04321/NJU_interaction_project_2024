@@ -34,17 +34,14 @@ export function getUserInfo() {
     });
 }
 
-
-
 /// 更新用户信息 API
-export function resetUserInfo(token, userInfo) {
+export function resetUserInfo(userInfo) {
   const url = `${API_BASE_URL}/user/resetInfo`;
-  return axios.post(url, userInfo, {
-    headers: {
-      'Authorization': `${global.getToken()}`
-    }
 
-  });
+  const headers = {
+    'Authorization': `${global.getToken()}`
+  };
+  return axios.post(url, userInfo, { headers });
 }
 
 // 上传头像 API
