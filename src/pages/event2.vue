@@ -52,6 +52,7 @@ body {
   font-family: 'Arial', sans-serif;
 }
 
+
 .container {
   max-width: 1200px;
   margin: auto;
@@ -101,7 +102,7 @@ body {
 </style>
 
 <script>
-import { submitFormData, joinCompetitionAPI, voteAPI } from "../api/event";
+import { joinCompetition, getAllPhotographers, voteForPhotographer, hasVoted } from "../api/event";
 
 export default {
   data() {
@@ -109,11 +110,29 @@ export default {
       isPhotographer: false, // 假设从用户数据中获取
       hasJoined: false, // 是否参与评选
       hasVoted: false, // 是否已投票
-      photographers: [
-        { id: 1, name: '摄影师A', votes: 10 },
-        { id: 2, name: '摄影师B', votes: 15 }
-      ],
+      photographers: [],
     };
+  },
+
+  mounted() {
+    // 获取所有摄影师数据并初始化
+    getAllPhotographers()
+      .then(response => {
+        this.photographers = response.data;
+      })
+      .catch(error => {
+        console.error('Error fetching photographers:', error);
+        this.$message.error('获取摄影师信息失败，请稍后重试');
+      });
+
+    // 检查是否已投票
+    hasVoted(this.$store.state.user.email)
+      .then(response => {
+        this.hasVoted = response.data.hasVoted;
+      })
+      .catch(error => {
+        console.error('Error checking vote status:', error);
+      });
   },
   methods: {
     toExhibition3() {
@@ -128,7 +147,7 @@ export default {
       this.$router.push('/');
     },
     joinCompetition() {
-      joinCompetitionAPI({ userId: this.$store.state.user.id }) // 假设用户 ID 存在于 store 中
+      joinCompetition(this.$store.state.user.contact, this.$store.state.user.description, this.$store.state.user.photo)
         .then(response => {
           this.hasJoined = true;
           this.$message({
@@ -142,10 +161,11 @@ export default {
         });
     },
     vote(photographerId) {
-      voteAPI({ photographerId })
+      voteForPhotographer(photographerId)
         .then(response => {
           this.hasVoted = true;
-          this.photographers.find(p => p.id === photographerId).votes += 1;
+          const photographer = this.photographers.find(p => p.id === photographerId);
+          if (photographer) photographer.votes += 1;
           this.$message({
             message: '投票成功！',
             type: 'success'

@@ -66,7 +66,8 @@ export default {
             src = require('../assets/init_user.jpg');
             info = "还未登录?";
         } else {
-            src = global.url+'/images2/'+localStorage.getItem('uid')+'.jpg';
+            src = require('../assets/init_user.jpg');
+            // src = global.url+'/images2/'+localStorage.getItem('uid')+'.jpg';
             info = "用户信息";
         }
         return {

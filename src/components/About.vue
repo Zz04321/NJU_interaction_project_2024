@@ -19,7 +19,7 @@
         <div class="col-sm-6 col-md-3 about_icon">
             <div class="imgwap statistic"><i class="fa fa-comments"></i></div>
             <h2>Social Work</h2>
-            <p>发表评论与看法</p>
+            <p>客服</p>
         </div>
     </div>
 </template>

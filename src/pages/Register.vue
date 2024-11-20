@@ -14,9 +14,10 @@
                 <el-input type="password" v-model="reupass" placeholder="再次输入密码" show-password></el-input>
             </div>
           <div class="text">
-            <el-select v-model="isPhotographer" placeholder="请选择身份">
-              <el-option label="摄影师" :value="true"></el-option>
-              <el-option label="普通用户" :value="false"></el-option>
+            <el-select v-model="role" placeholder="请选择身份">
+              <el-option label="管理员" :value="'ADMIN'"></el-option>
+              <el-option label="摄影师" :value="'PHOTOGRAPHER'"></el-option>
+              <el-option label="普通用户" :value="'NORMAL'"></el-option>
             </el-select>
           </div>
             <div>
@@ -81,8 +82,7 @@ export default {
             email: '',
             upass:'',
             reupass:'',
-            isPhotographer: null,  // 添加身份选择
-            timer: null
+            role: '',
     	}
   	},
   methods: {
@@ -96,7 +96,7 @@ export default {
         return;
       }
       //添加 isPhotographer 信息
-      register(this.email, this.upass, this.isPhotographer)
+      register(this.email, this.upass, this.role)
         .then(res => {
           if (res.data.code === 1) {
             this.$notify({
