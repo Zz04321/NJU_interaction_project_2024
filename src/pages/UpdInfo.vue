@@ -1,128 +1,161 @@
 <template>
-    <body>
-    <NewTop></NewTop>
-    <div id="box" style="margin-top: 150px">
-        <h1 style="color:white">个人信息</h1>
-        <div class="Block">
-            <ul style="list-style:none">
-                <li>
-                    <p>
-                        <font>用户名: </font>
-                        <input style="width:280px;" v-model="user.uname"></input>
-                    </p>
-                </li>
-                <li>
-                    <p>
-                        <font>邮&nbsp箱: </font>
-                        <input style="width:280px;" v-model="user.email" disabled=true></input>
-                    </p>
-                </li>
-                <li>
-                    <p>
-                        <font>性&nbsp别: </font>
-                        <label><input id="male" type="radio" value="male" v-model="user.sex">男</label>
-                        <label style="margin-right:250px;"><input id="female" type="radio" value="female" v-model="user.sex">女</label>
-                    </p>
-                </li>
-                <li>
-                    <p style="margin-right:30px;">
-                        <!-- <br/> -->
-                        <font>生&nbsp日: </font>
-                        <span>
-                            <div class="block" style="display: inline;">
-                                <span class="demonstration"></span>
-                                <el-date-picker
-                                v-model="user.birthday"
-                                value-format="yyyy-MM-dd"
-                                type="date"
-                                placeholder="选择日期">
-                                </el-date-picker>
-                            </div>
-                        </span>
-                    </p>
-                </li>
-                <li>
-                    <p>
-                        <font>手机号: </font>
-                        <input style="width:280px;" v-model="user.phone"></input>
-                    </p>
-                </li>
-                <li>
-                    <p>
-                        <font>&nbsp&nbspQQ: </font>
-                        <input style="width:280px;" v-model="user.qq"></input>
-                    </p>
-                </li>
-                <li>
-                    <p>
-                        <font>微&nbsp信: </font>
-                        <input style="width:280px;" v-model="user.wechat"></input>
-                    </p>
-                </li>
-            </ul>
-            <el-button @click="unchange" class="submit">返回</el-button>
-            <el-button @click="change" class="submit">确认修改</el-button>
-        </div>
+  <body>
+  <NewTop></NewTop>
+  <div id="box" class="container">
+    <h1 class="title">个人信息</h1>
+    <div class="block">
+      <ul class="form-list">
+        <li>
+          <p>
+            <span>用户名:</span>
+            <input class="input-field" v-model="user.uname" placeholder="请输入用户名"></input>
+          </p>
+        </li>
+        <li>
+          <p>
+            <span>邮箱: </span>
+            <input class="input-field" v-model="user.email" disabled placeholder="邮箱不可修改"></input>
+          </p>
+        </li>
+        <li>
+          <p>
+            <span>性别: </span>
+            <label><input type="radio" value="male" v-model="user.sex">男</label>
+            <label><input type="radio" value="female" v-model="user.sex">女</label>
+          </p>
+        </li>
+        <li>
+          <p>
+            <span>生日: </span>
+            <el-date-picker
+              class="date-picker"
+              v-model="user.birthday"
+              value-format="yyyy-MM-dd"
+              type="date"
+              placeholder="选择日期">
+            </el-date-picker>
+          </p>
+        </li>
+        <li>
+          <p>
+            <span>手机号: </span>
+            <input class="input-field" v-model="user.phone" placeholder="请输入手机号"></input>
+          </p>
+        </li>
+        <li>
+          <p>
+            <span>QQ: </span>
+            <input class="input-field" v-model="user.qq" placeholder="请输入QQ号"></input>
+          </p>
+        </li>
+        <li>
+          <p>
+            <span>微信: </span>
+            <input class="input-field" v-model="user.wechat" placeholder="请输入微信号"></input>
+          </p>
+        </li>
+      </ul>
+      <div class="button-container">
+        <el-button @click="unchange" class="submit-button">返回</el-button>
+        <el-button @click="change" class="submit-button primary">确认修改</el-button>
+      </div>
     </div>
-    </body>
+  </div>
+  </body>
 </template>
 
 <style scoped>
-    .submit {
-        margin-left: 40px;
-        /* margin-right: 10px; */
-        margin-top: 25px;
-        width: 200px;
-        background-color: rgba(33, 47, 94, 0.09);
-        color: white;
-    }
-    input {
-        font-size: 18px;
-    }
-    p {
-        font-size: 18px;
-        float: left;
-        text-align: center;
-        margin-bottom: 25px;
-    }
-    font {
-        font-size: 22px;
-        color: white;
-        font-family: monospace;
-        /* float: left; */
-    }
-    span {
-        color: white;
-    }
-    body {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background-image: url("../assets/bg_left.png"),url("../assets/bg_right.png");
-        background-size: cover;
-        background-position: 100% 100%;
-        background-repeat: no-repeat;
-    }
-    #box {
-        /* margin-top: 150px; */
-        height: 600px;
-        width: 500px;
-        /* background-color: #0f0f0f0f; */
-        opacity: 0.7;
-        background-color: black;
-        margin: 0 auto;
-        border-radius: 5%;
-    }
-    .Block {
-        height: 500px;
-        width: 480px;
-    }
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-image: url("../assets/bg_left.png"), url("../assets/bg_right.png");
+  background-size: 40% auto, 40% auto;
+  background-repeat: no-repeat;
+  background-position: left, right; /* 将图片分别放在左侧和右侧 */
+  width: 990px;
+  margin: 0;
+}
 
+.container {
+  background-color: #ffffff; /* 白色背景，使内容部分更显眼 */
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto; /* 居中对齐 */
+}
+
+.title {
+  color: #333;
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-list {
+  list-style: none;
+  padding: 0;
+}
+
+.form-list li {
+  margin-bottom: 20px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s;
+  background-color: #f9f9f9; /* 浅灰色输入框背景 */
+}
+
+.input-field:focus {
+  border-color: #40a9ff; /* 浅蓝色边框 */
+}
+
+.date-picker {
+  width: 100%;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.submit-button {
+  background-color: #87cefa; /* 浅蓝色按钮 */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #1e90ff; /* 深蓝色悬停效果 */
+}
+
+.submit-button.primary {
+  background-color: #40a9ff; /* 更深的蓝色用于强调 */
+}
+
+.submit-button.primary:hover {
+  background-color: #1e90ff; /* 深蓝色悬停效果 */
+}
 </style>
+
 <script>
 import NewTop from '../components/NewTop.vue'
 import Date from '../components/Date.vue'
 import global from '../api/global.vue'
+import {resetUserInfo, notify, getUserInfo} from '../api/user';
 export default {
     data () {
         return {
@@ -165,47 +198,40 @@ export default {
                 });
             });
         },
-        change: function() {
-            console.log(this.user.birthday)
-            var url=global.url+"/user/resetInfo"
-            this.$http.post(
-                url,
-                {
-                    email: this.user.email,
-                    uname: this.user.uname,
-                    phone: this.user.phone,
-                    sex: this.user.sex,
-                    qq: this.user.qq,
-                    wechat: this.user.wechat,
-                    birthday: this.user.birthday,
-                }
-            ).then(res=>{
-                console.log(res);
-                if (res.data.code===1) {
-                    this.$notify({
-                        message: "保存成功!",
-                        type: "success",
-                        offset: 100
-                    })
-                    this.$router.replace('/UserInfo')
-                } else {
-                    alert(res.data.msg)
-                }
-            }).catch(error=>{
-                console.log(error)
-            })
-        }
-    },
-    mounted: function() {
-        var url = global.url+"/user/findByEmail/" + localStorage.getItem("email")
-        this.$http.get(
-            url,
-        ).then(res=>{
-            console.log(res.data)
-            if (res.data.code===1) {
-                this.user=res.data.data[0]
+      change: function() {
+        console.log(this.user.birthday);
+        resetUserInfo(this.user)
+          .then(res => {
+            console.log(res);
+            if (res.data.code === 1) {
+              notify(this, '保存成功!', 'success');
+              this.$router.replace('/UserInfo');
+            } else {
+              this.$message.error(res.data.msg);
             }
-        })
-    }
+          })
+          .catch(error => {
+            console.error(error);
+            this.$message.error('更新信息失败，请稍后再试。');
+          });
+      },
+    },
+  mounted() {
+    getUserInfo()
+      .then((res) => {
+        console.log(res.data)
+        this.headImg = res.data.headImg;
+        this.uname = res.data.uname;
+        this.email = res.data.email;
+        this.phone = res.data.phone;
+        this.sex = res.data.sex;
+        this.birthday = res.data.birthday;
+        this.qq = res.data.qq;
+        this.wechat = res.data.wechat;
+      })
+      .catch(() => {
+        notify(this, "获取用户信息失败", "error");
+      });
+  },
 }
 </script>

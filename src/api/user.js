@@ -1,6 +1,10 @@
 import axios from 'axios'
 import global from './global.vue';
 
+export function getToken() {
+  return localStorage.getItem('uid');
+}
+
 const API_BASE_URL = global.url;
 const token = localStorage.getItem('uid');
 
@@ -20,17 +24,19 @@ export function getUserInfo() {
   const url = `${API_BASE_URL}/user/info`;
   return axios.post(url, {},{
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('uid')}`
+      'Authorization': `${getToken()}`
     }
   });
 }
 
 
 /// 更新用户信息 API
-export function resetUserInfo(token, userInfo) {
+export function resetUserInfo(userInfo) {
   const url = `${API_BASE_URL}/user/resetInfo`;
   return axios.post(url, userInfo, {
-    'Authorization': `Bearer ${getToken()}`
+    headers: {
+      'Authorization': `${getToken()}`
+    }
   });
 }
 
