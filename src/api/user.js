@@ -1,7 +1,8 @@
 import axios from 'axios'
-import global, {getToken} from './global.vue';
+import global from './global.vue';
 
 const API_BASE_URL = global.url;
+const token = localStorage.getItem('uid');
 
 // 登录 API
 export function login(email, upass) {
@@ -15,14 +16,15 @@ export function register(email, upass, role) {
 }
 
 // 获取用户信息 API
-export function getUserInfo(token) {
+export function getUserInfo() {
   const url = `${API_BASE_URL}/user/info`;
-  return axios.post(url,  null,{
+  return axios.post(url, {},{
     headers: {
-      'Authorization': token
+      'Authorization': `Bearer ${localStorage.getItem('uid')}`
     }
   });
 }
+
 
 /// 更新用户信息 API
 export function resetUserInfo(token, userInfo) {
