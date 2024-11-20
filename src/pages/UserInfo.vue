@@ -226,22 +226,22 @@ export default {
       });
     }
   },
-  mounted() {
-    getUserInfo()
-      .then((res) => {
-        console.log(res.data)
-        this.headImg = res.data.headImg;
-        this.uname = res.data.uname;
-        this.email = res.data.email;
-        this.phone = res.data.phone;
-        this.sex = res.data.sex;
-        this.birthday = res.data.birthday;
-        this.qq = res.data.qq;
-        this.wechat = res.data.wechat;
-      })
-      .catch(() => {
-        notify(this, "获取用户信息失败", "error");
-      });
-  },
-};
+  mounted: function () {
+    console.log("mounted");
+    getUserInfo().then((res) => {
+      console.log("here")
+      console.log(res.data)
+      this.headImg = res.data.data[0].headImg;
+      this.uname = res.data.data[0].uname;
+      this.email = res.data.data[0].email;
+      this.phone = res.data.data[0].phone;
+      this.sex = res.data.data[0].sex;
+      this.birthday = res.data.data[0].birthday;
+      this.qq = res.data.data[0].qq;
+      this.wechat = res.data.data[0].wechat;
+    }).catch(() => {
+      notify(this, "获取用户信息失败", "error");
+    })
+  }
+}
 </script>

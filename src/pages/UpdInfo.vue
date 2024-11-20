@@ -197,8 +197,8 @@ export default {
         }
     },
     mounted: function() {
-        var url = global.url+"/user/findByEmail/" + localStorage.getItem("email")
-        this.$http.get(
+        var url = global.url+"/user/info";
+        this.$http.post(
             url,
         ).then(res=>{
             console.log(res.data)
