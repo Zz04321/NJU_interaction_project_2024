@@ -1,12 +1,7 @@
 import axios from 'axios'
 import global from './global.vue';
 
-export function getToken() {
-  return localStorage.getItem('uid');
-}
-
 const API_BASE_URL = global.url;
-const token = localStorage.getItem('uid');
 
 // 登录 API
 export function login(email, upass) {
@@ -22,22 +17,30 @@ export function register(email, upass, role) {
 // 获取用户信息 API
 export function getUserInfo() {
   const url = `${API_BASE_URL}/user/info`;
-  return axios.post(url, {},{
-    headers: {
-      'Authorization': `${getToken()}`
-    }
-  });
-}
+  console.log("Preparing request to:", url);
+  const headers = {
+    'Authorization': `${global.getToken()}`
+  };
+  console.log("Request headers:", headers);
 
+  return axios.post(url, {}, { headers })
+    .then((response) => {
+      console.log("Request successful:", response);
+      return response;
+    })
+    .catch((error) => {
+      console.error("Request failed:", error);
+      throw error;
+    });
+}
 
 /// 更新用户信息 API
 export function resetUserInfo(userInfo) {
   const url = `${API_BASE_URL}/user/resetInfo`;
-  return axios.post(url, userInfo, {
-    headers: {
-      'Authorization': `${getToken()}`
-    }
-  });
+  const headers = {
+    'Authorization': `${global.getToken()}`
+  };
+  return axios.post(url, userInfo, { headers });
 }
 
 // 上传头像 API
@@ -48,7 +51,7 @@ export function uploadImage(file, token) {
 
   return axios.post(url, bodyFormData, {
     headers: {
-      'Authorization': `Bearer ${getToken()}`,
+      'Authorization': `${global.getToken()}`,
       'Content-Type': 'multipart/form-data'
     }
   });

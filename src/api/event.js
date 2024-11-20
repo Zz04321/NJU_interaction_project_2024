@@ -1,5 +1,5 @@
 import axios from 'axios';
-import global, {getToken} from './global.vue';
+import global from './global.vue';
 
 // 定义 API 基础 URL
 const API_BASE_URL = global.url;
@@ -9,7 +9,7 @@ export function submitFormData(formData, eventId) {
   const url = `${API_BASE_URL}/event/${eventId}/register`;
   return axios.post(url, formData,{
     headers: {
-      'Authorization': `Bearer ${getToken()}`
+      'Authorization': `${global.getToken()}`
     }
   });
 }
@@ -19,7 +19,7 @@ export function joinCompetition(contact, description, photo) {
   const url = `${API_BASE_URL}/event/3/register`;
   return axios.post(url, { contact, description, photo }, {
     headers: {
-      'Authorization': `Bearer ${getToken()}`
+      'Authorization': `${global.getToken()}`
     }
   });
 }
@@ -35,7 +35,7 @@ export function voteForPhotographer(email) {
   const url = `${API_BASE_URL}/event/3/vote/${email}`;
   return axios.post(url, {}, {
     headers: {
-      'Authorization': `Bearer ${getToken()}`
+      'Authorization': `${global.getToken()}`
     }
   });
 }
@@ -45,7 +45,7 @@ export function hasVoted(email) {
   const url = `${API_BASE_URL}/event/3/hasVoted/${email}`;
   return axios.get(url, {
     headers: {
-      'Authorization': `Bearer ${getToken()}`
+      'Authorization': `${global.getToken()}`
     }
   });
 }
@@ -58,7 +58,7 @@ export function uploadImage(file) {
 
   return axios.post(url, formData, {
     headers: {
-      'Authorization': `Bearer ${getToken()}`,
+      'Authorization': `${global.getToken()}`,
       'Content-Type': 'multipart/form-data'
     }
   });
