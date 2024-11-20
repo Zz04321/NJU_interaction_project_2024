@@ -12,19 +12,19 @@
                 <p><strong>Email:</strong> info@company.com<br /><strong>Phone:</strong> 080-010-0180<br /><strong>Website:</strong> www.company.com<br /><strong>Address:</strong> 990 Proin Gravida Street, <br>Lincoln Way, San Francisco, California</p>
                 <ul class="list-inline social-link">
                     <li>
-                        <a href="#"><i class="fa fa-linkedin"></i></a> 
+                        <a href="#"><i class="fa fa-linkedin"></i></a>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-twitter"></i></a> 
+                        <a href="#"><i class="fa fa-twitter"></i></a>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-facebook"></i></a> 
+                        <a href="#"><i class="fa fa-facebook"></i></a>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-youtube"></i></a> 
+                        <a href="#"><i class="fa fa-youtube"></i></a>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-github"></i></a> 
+                        <a href="#"><i class="fa fa-github"></i></a>
                     </li>
             </ul>
             </div>

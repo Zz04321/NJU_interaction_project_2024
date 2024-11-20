@@ -13,6 +13,7 @@ import Exhibition4 from '../pages/event4.vue'
 
 import UpdInfo from '../pages/UpdInfo.vue'
 import PhotoShowDetail from "../components/PhotoShowDetail.vue";
+import ServicePage from "../components/ServicePage.vue";
 Vue.use(Router)
 
 export default new Router({
@@ -76,5 +77,10 @@ export default new Router({
       path: '/PhotoShowDetail',
       component: PhotoShowDetail,
     },
+    {
+      path: '/ServicePage',
+      component: ServicePage,
+    },
+
   ]
 })
