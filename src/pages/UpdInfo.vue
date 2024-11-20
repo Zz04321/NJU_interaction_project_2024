@@ -154,7 +154,6 @@ body {
 <script>
 import NewTop from '../components/NewTop.vue'
 import Date from '../components/Date.vue'
-import global from '../api/global.vue'
 import {resetUserInfo, notify, getUserInfo} from '../api/user';
 export default {
     data () {
@@ -165,11 +164,12 @@ export default {
                 }
             },
             user: {
+                headImg: '',
                 uname: '',
                 email: '',
+                phone: '',
                 sex: '',
                 birthday: '',
-                phone: '',
                 qq: '',
                 wechat: '',
             }
@@ -199,7 +199,7 @@ export default {
             });
         },
       change: function() {
-        console.log(this.user.birthday);
+        console.log(this.user);
         resetUserInfo(this.user)
           .then(res => {
             console.log(res);
@@ -216,22 +216,31 @@ export default {
           });
       },
     },
-  mounted() {
-    getUserInfo()
-      .then((res) => {
-        console.log(res.data)
-        this.headImg = res.data.headImg;
-        this.uname = res.data.uname;
-        this.email = res.data.email;
-        this.phone = res.data.phone;
-        this.sex = res.data.sex;
-        this.birthday = res.data.birthday;
-        this.qq = res.data.qq;
-        this.wechat = res.data.wechat;
-      })
+  mounted: function () {
+    console.log("mounted");
+    getUserInfo().then((res) => {
+      console.log("here")
+      console.log(res.data)
+      // 检查接口返回的数据是否正确
+      if (res.data && res.data.data && res.data.data.length > 0) {
+        const userInfo = res.data.data[0];
+        this.user = {
+          headImg: userInfo.headImg || '',
+          uname: userInfo.uname || '',
+          email: userInfo.email || '',
+          phone: userInfo.phone || '',
+          sex: userInfo.sex || '',
+          birthday: userInfo.birthday || '',
+          qq: userInfo.qq || '',
+          wechat: userInfo.wechat || '',
+        };
+      } else {
+        this.$message.error("用户信息加载失败！");
+      }
+    })
       .catch(() => {
         notify(this, "获取用户信息失败", "error");
       });
-  },
+  }
 }
 </script>
