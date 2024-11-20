@@ -16,8 +16,21 @@
     </div>
 
     <!-- 判断用户身份 -->
-    <section v-if="isPhotographer" class="section">
-      <h2>摄影师参与评选</h2>
+    <section v-if="isPhotographer === 'PHOTOGRAPHER'" class="section">
+      <div class="activity-form">
+        <h2>摄影师参与评选</h2>
+        <el-form ref="contact" :model="contact" label-width="100px" class="form-container">
+          <el-form-item label="联系方式">
+            <el-input v-model="contact"></el-input>
+          </el-form-item>
+          <el-form-item label="个人陈述">
+            <el-input v-model="description"></el-input>
+          </el-form-item>
+          <el-form-item label="照片上传">
+            <el-input v-model="photo"></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
       <el-button v-if="!hasJoined" type="primary" @click="joinCompetition">
         参与评选
       </el-button>
@@ -29,7 +42,7 @@
       <p>请选择您支持的摄影师，每人最多可投一票。</p>
       <div class="photographer-list">
         <div class="photographer-card" v-for="(photographer, index) in photographers" :key="index">
-          <span>{{ photographer.name }} - 票数：{{ photographer.votes }}</span>
+          <span>{{ photographer.uname }} - 票数：{{ photographer.votes }}</span>
           <el-button type="success" @click="vote(photographer.id)" :disabled="hasVoted">
             投票
           </el-button>
@@ -102,22 +115,41 @@ body {
 
 <script>
 import { joinCompetition, getAllPhotographers, voteForPhotographer, hasVoted } from "../api/event";
+import {getUserInfo, notify} from "../api/user";
 
 export default {
   data() {
     return {
-      isPhotographer: false, // 假设从用户数据中获取
-      hasJoined: false, // 是否参与评选
-      hasVoted: false, // 是否已投票
+      contact: '',
+      description: '',
+      photo: '',
+      isPhotographer: ' ',
+      hasJoined: false,
+      hasVoted: false,
       photographers: [],
     };
   },
 
   mounted() {
+    getUserInfo().then((res) => {
+      console.log(res.data)
+      console.log(this.isPhotographer)
+      this.isPhotographer = res.data.data[0].role;
+      this.uname = res.data.data[0].uname;
+      this.email = res.data.data[0].email;
+      this.phone = res.data.data[0].phone;
+      this.sex = res.data.data[0].sex;
+      this.birthday = res.data.data[0].birthday;
+      this.qq = res.data.data[0].qq;
+      this.wechat = res.data.data[0].wechat;
+    }).catch(() => {
+      notify(this, "获取用户信息失败", "error");
+    })
     // 获取所有摄影师数据并初始化
     getAllPhotographers()
       .then(response => {
-        this.photographers = response.data;
+        console.log(response.data.data)
+        this.photographers = response.data.data;
       })
       .catch(error => {
         console.error('Error fetching photographers:', error);
