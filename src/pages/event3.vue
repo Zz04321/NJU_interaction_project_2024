@@ -1,79 +1,101 @@
 <template>
   <body>
   <div class="container">
-    <el-header class="header-buttons">
-      <el-button @click="toExhibition4" type="primary" icon="el-icon-arrow-left">
-        摄影心得交流会
+    <header class="header">
+      <el-button @click="toExhibition3" type="primary" icon="el-icon-arrow-left">
+        2024发现中国之美
       </el-button>
-      <el-button @click="toExhibition3" type="primary" icon="el-icon-arrow-right">
-        2024最人气摄影师评选
+      <el-button @click="toExhibition1" type="primary" icon="el-icon-arrow-right">
+        第一届南京大学摄影展
       </el-button>
-    </el-header>
+    </header>
 
     <!-- 活动主题 -->
     <div class="main-title">
-      <h1>2024发现中国之美摄影大赛</h1>
+      <h1>最人气摄影师评选</h1>
     </div>
 
-    <!-- 通知 -->
-    <section class="section notice">
-      <h2>2024发现中国之美</h2>
-      <p>为深入贯彻落实“美丽中国”战略，展现祖国壮丽山河和独特文化，推动摄影艺术在青年群体中的发展，主办方特此举办“2024发现中国之美”摄影大赛。我们诚邀全国各地的摄影爱好者用镜头记录中国的美丽与魅力。</p>
-
-      <h3>作品类别</h3>
-      <ul>
-        <li><strong>风光类</strong>：展示中国各地的自然风光、历史遗迹与人文景观，表达自然与文化的和谐美。</li>
-        <li><strong>人文类</strong>：聚焦社会生活、民族文化、城市风貌等，通过人物故事展现中国的多元文化与日常生活。</li>
-        <li><strong>创意类</strong>：通过独特的视角与创意拍摄，表达对中国之美的创新与独特理解。</li>
-      </ul>
-
-      <h3>参赛资格</h3>
-      <p>社会各界人士均可参与本次大赛。无论是专业摄影师还是业余爱好者，都欢迎提交作品。</p>
-
-      <h3>投稿细则</h3>
-      <ul>
-        <li>作品格式：JPG或PNG格式，单张文件大小为2MB至8MB，组照最多提交5张。</li>
-        <li>作品要求：参赛作品应为原创，不得侵犯他人著作权，参赛者需确保拥有作品的合法版权。</li>
-        <li>允许适度调整和后期处理，但不得进行合成或改变原始图像的内容。</li>
-        <li>投稿途径：请通过官方网站报名并上传作品。</li>
-        <li>投稿截止日期：2025年2月20日。</li>
-      </ul>
-
-      <h3>评选与展览</h3>
-      <p>大赛结束后，将组织评审团对所有作品进行评选，评选出一、二、三等奖及优秀奖。获奖作品将在全国范围内进行巡展，并通过线上平台展示。主办方有权使用获奖作品进行宣传推广，获奖者将获得相应的奖品与荣誉证书。</p>
+    <!-- 活动细则 -->
+    <section class="activity-rules">
+      <h2>活动细则</h2>
+      <p>
+        1. 本活动为2024年度评选，旨在发现最人气摄影师；<br />
+        2. 摄影师可通过提供联系方式、简介及代表作报名参与；<br />
+        3. 用户可为自己喜爱的摄影师投票，每个账号仅能投票一次；<br />
+        4. 投票与报名截止日期：2024年12月31日。
+      </p>
     </section>
 
-    <!-- 图片与报名整合 -->
-    <section class="section activity-row">
-      <div class="activity-images">
-        <el-carousel height="400px" indicator-position="outside">
-          <el-carousel-item v-for="(image, index) in images" :key="index">
-            <img :src="image" class="carousel-image" />
-          </el-carousel-item>
-        </el-carousel>
-      </div>
-      <div class="activity-form">
-        <h2>活动报名</h2>
-        <el-form ref="form" :model="form" label-width="100px" class="form-container">
-          <el-form-item label="账号">
-            <el-input v-model="form.account"></el-input>
-          </el-form-item>
-          <el-form-item label="学号">
-            <el-input v-model="form.studentId"></el-input>
-          </el-form-item>
+    <!-- 判断用户身份 -->
+    <section v-if="isLoggedIn">
+      <div v-if="isPhotographer === 'PHOTOGRAPHER'" class="section">
+        <h2>报名参与评选</h2>
+        <el-form ref="contact" :model="user" label-width="100px" class="form-container">
           <el-form-item label="联系方式">
-            <el-input v-model="form.contact"></el-input>
+            <el-input v-model="user.contact"></el-input>
           </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="submitForm">提交报名</el-button>
+          <el-form-item label="个人简介">
+            <el-input v-model="user.description" type="textarea"></el-input>
+          </el-form-item>
+          <el-form-item label="代表照片">
+            <el-upload
+              :http-request="uploadPhoto"
+              list-type="picture-card"
+              :on-success="handlePhotoUpload"
+              :on-error="handleUploadError"
+            >
+              <i class="el-icon-plus"></i>
+            </el-upload>
+            <img v-if="user.photo" :src="user.photo" alt="代表照片" class="uploaded-photo" />
           </el-form-item>
         </el-form>
+        <el-button v-if="!hasJoined" type="primary" @click="joinCompetition">
+          提交报名
+        </el-button>
+        <p v-else>您已成功报名，感谢您的参与！</p>
+      </div>
+
+      <div v-else class="section">
+        <h2>投票区</h2>
+        <p>请选择您支持的摄影师，每人最多可投一票。</p>
+        <div class="photographer-list">
+          <div
+            class="photographer-card"
+            v-for="(photographer, index) in photographers"
+            :key="index"
+          >
+            <div class="photographer-info">
+              <img :src="photographer.photo" alt="头像" class="avatar" />
+              <div>
+                <h3>{{ photographer.nickname }}</h3>
+                <p>{{ photographer.description }}</p>
+              </div>
+            </div>
+            <span>票数：{{ photographer.votes }}</span>
+            <el-button
+              type="success"
+              @click="vote(photographer.email)"
+              :disabled="hasVoted || isSelf(photographer.email)"
+            >
+              投票
+            </el-button>
+          </div>
+        </div>
       </div>
     </section>
 
-    <div class="bottom-buttons">
-      <el-button @click="toHome" type="primary" icon="el-icon-arrow-left">返回主页</el-button>
-    </div>
+    <!-- 未登录显示提示 -->
+    <section v-else class="section">
+      <h2>请先登录</h2>
+      <p>登录后可以报名参选或为摄影师投票。</p>
+      <el-button type="primary" @click="toLogin">登录</el-button>
+    </section>
+
+    <footer class="footer">
+      <el-button @click="toHome" type="primary" icon="el-icon-arrow-left">
+        返回主页
+      </el-button>
+    </footer>
   </div>
   </body>
 </template>
@@ -81,119 +103,177 @@
 <style scoped>
 body {
   background-image: url("../assets/bg_left.png"), url("../assets/bg_right.png");
+  background-size: cover;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
 }
 
 .container {
   max-width: 1200px;
   margin: auto;
-  padding: 30px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 15px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(5px);
+  padding: 20px;
 }
 
-.header-buttons {
+.header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
 }
 
-.main-title h1 {
-  font-size: 42px;
+.main-title {
   text-align: center;
-  color: #2b2b2b;
-  margin-top: 20px;
-  font-weight: bold;
+  margin: 50px 0;
 }
 
 .section {
-  margin: 40px 0;
-  padding: 25px;
-  background: #ffffff;
-  border-radius: 15px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
-.activity-row {
+.photographer-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.photographer-card {
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
 }
 
-.activity-images, .activity-form {
-  width: 48%;
-}
-
-.activity-images .carousel-image {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 10px;
-}
-
-.form-container {
-  background: #f6f6f6;
-  padding: 20px;
-  border-radius: 10px;
-  border: 1px solid #e0e0e0;
-}
-
-.bottom-buttons {
+.footer {
   display: flex;
   justify-content: center;
   margin-top: 40px;
 }
 </style>
 
+
 <script>
-import { submitFormData } from "../api/event";
+import {
+  joinCompetition,
+  getAllPhotographers,
+  voteForPhotographer,
+  hasVoted,
+} from "../api/event";
+import {getUserInfo, notify, uploadImage} from "../api/user";
+
 export default {
   data() {
     return {
-      form: {
-        account: '',
-        studentId: '',
-        contact: '',
-        eventId: 1
+      isLoggedIn: false,
+      isPhotographer: "",
+      hasJoined: false,
+      hasVoted: false,
+      photographers: [],
+      user: {
+        contact: "",
+        description: "",
+        photo: "",
+        email: ""
       },
-      images: [
-        require('../assets/event/event3_1.jpg'),
-        require('../assets/event/event3_2.jpg'),
-        require('../assets/event/event3_3.jpg'),
-      ]
     };
   },
+  mounted() {
+    // 获取用户信息
+    getUserInfo()
+      .then((res) => {
+        console.log(res.data)
+        this.isLoggedIn = true;
+        this.isPhotographer = res.data.data[0].role;
+        this.user.email = res.data.data[0].email;
+
+        // 检查是否已投票
+        if (this.isPhotographer === "NORMAL") {
+          hasVoted(this.user.email)
+            .then((res) => {
+              console.log("here")
+              console.log(this.user.email)
+              console.log(res.data)
+              this.hasVoted = res.data.hasVoted;
+            })
+            .catch(() => {
+              this.hasVoted = false;
+            });
+        }
+      })
+      .catch(() => {
+        this.isLoggedIn = false;
+      });
+
+    // 获取所有摄影师
+    getAllPhotographers()
+      .then((res) => {
+        this.photographers = res.data.data;
+      })
+      .catch(() => {
+        this.photographers = [];
+        notify(this, "获取摄影师信息失败", "error");
+      });
+  },
   methods: {
-    toExhibition4() {
-      localStorage.setItem("now", 4);
-      this.$router.push('/Exhibition4');
-    },
     toExhibition3() {
-      localStorage.setItem("now", 3);
-      this.$router.push('/Exhibition3');
+      this.$router.push("/Exhibition3");
+    },
+    toExhibition1() {
+      this.$router.push("/Exhibition1");
     },
     toHome() {
-      this.$router.push('/');
+      this.$router.push("/");
     },
-    submitForm() {
-      submitFormData(this.form)
-        .then(response => {
-          console.log('Form submitted:', response.data);
-          this.$message({
-            message: '报名已提交！',
-            type: 'success'
-          });
+    toLogin() {
+      this.$router.push("/login");
+    },
+    joinCompetition() {
+      joinCompetition(this.user.contact, this.user.description, this.user.photo)
+        .then((res) => {
+          console.log(res)
+          this.hasJoined = true;
+          this.$message.success("成功报名参选！");
         })
-        .catch(error => {
-          console.error('Error submitting form:', error);
-          this.$message.error('提交失败，请稍后重试');
+        .catch(() => {
+          this.$message.error("报名失败，请稍后重试！");
         });
-    }
-  }
+    },
+    vote(email) {
+      voteForPhotographer(email)
+        .then(() => {
+          this.hasVoted = true;
+          const photographer = this.photographers.find((p) => p.email === email);
+          if (photographer) photographer.votes += 1;
+          this.$message.success("投票成功！");
+        })
+        .catch(() => {
+          this.$message.error("投票失败，请稍后重试！");
+        });
+    },
+    isSelf(email) {
+      return this.user.email === email;
+    },
+    uploadPhoto({ file }) {
+      uploadImage(file)
+        .then((res) => {
+          this.user.photo = res.data.data;
+          this.$message.success("图片上传成功！");
+        })
+        .catch(() => {
+          this.$message.error("图片上传失败，请稍后重试！");
+        });
+    },
+    handlePhotoUpload(response) {
+      this.user.photo = response.url; // 假设后台返回的图片 URL
+    },
+    handleUploadError() {
+      this.$message.error("图片上传失败，请稍后重试！");
+    },
+  },
 };
 </script>

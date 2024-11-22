@@ -45,7 +45,7 @@ export function resetUserInfo(userInfo) {
 }
 
 // 上传头像 API
-export function uploadImage(file, token) {
+export function uploadImage(file) {
   const url = `${API_BASE_URL}/image/upload`;
   let bodyFormData = new FormData();
   bodyFormData.append('file', file);

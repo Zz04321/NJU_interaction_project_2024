@@ -52,13 +52,7 @@
       </div>
       <div class="activity-form">
         <h2>活动报名</h2>
-        <el-form ref="form" :model="form" label-width="100px" class="form-container">
-          <el-form-item label="账号">
-            <el-input v-model="form.account"></el-input>
-          </el-form-item>
-          <el-form-item label="学号">
-            <el-input v-model="form.studentId"></el-input>
-          </el-form-item>
+        <el-form ref="contact" :model="form" label-width="100px" class="form-container">
           <el-form-item label="联系方式">
             <el-input v-model="form.contact"></el-input>
           </el-form-item>
@@ -154,10 +148,8 @@ export default {
   data() {
     return {
       form: {
-        account: '',
-        studentId: '',
         contact: '',
-        eventId: 1
+        eventId: '1',
       },
       images: [
         require('../assets/event/event1_1.jpg'),
@@ -179,13 +171,14 @@ export default {
       this.$router.push('/');
     },
     submitForm() {
-      submitFormData(this.form, eventId)
+      submitFormData(this.form.contact, this.form.eventId)
         .then(response => {
           console.log('Form submitted:', response.data);
           this.$message({
             message: '报名已提交！',
             type: 'success'
           });
+          setTimeout(() => this.$router.replace('/'), 1000);
         })
         .catch(error => {
           console.error('Error submitting form:', error);
