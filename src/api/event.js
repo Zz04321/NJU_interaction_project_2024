@@ -50,3 +50,12 @@ export function hasVoted(email) {
     }
   });
 }
+
+export function hasRegister(eventId) {
+  const url = `${API_BASE_URL}/event/${eventId}/hasRegistered`;
+  return axios.post(url, {
+    headers: {
+      'Authorization': `${global.getToken()}`
+    }
+  });
+}
