@@ -12,88 +12,53 @@
                     <el-button class="fileInput">选择头像</el-button>
                     <input @change="uploadImg" type="file" class="fileInput" style="opacity: 0;" ref="input">
                 </div>
-<<<<<<< HEAD
-                <el-button @click="saveImg" class="fileInput" style="margin-top:50px; width: 100px; height: 38px;">保存头像</el-button>
-=======
                 <el-button @click="saveImg" class="button" style="margin-top:50px; width: 100px; height: 38px;">保存头像</el-button>
->>>>>>> 0be11e4afb22d9e62a812af0ba06d784a4db9fe9
             </div>
             <div class="block2">
                 <ul style="list-style:none; margin-top: 20px;">
                     <li>
                         <p>
                           <span>用户名：</span>
-<<<<<<< HEAD
-                          <span>{{uname}}</span>
-=======
                           <span>{{user.uname}}</span>
->>>>>>> 0be11e4afb22d9e62a812af0ba06d784a4db9fe9
                         </p>
                     </li>
                     <li>
                         <p>
                           <span>邮&nbsp箱：</span>
-<<<<<<< HEAD
-                          <span>{{email}}</span>
-=======
                           <span>{{user.email}}</span>
->>>>>>> 0be11e4afb22d9e62a812af0ba06d784a4db9fe9
                         </p>
                     </li>
                     <li>
                         <p>
                           <span>性&nbsp别：</span>
-<<<<<<< HEAD
-                          <span>{{sex}}</span>
-=======
                           <span>{{user.sex}}</span>
->>>>>>> 0be11e4afb22d9e62a812af0ba06d784a4db9fe9
                         </p>
                     </li>
                     <li style="width:200px;">
                         <p>
                           <span>生&nbsp日：</span>
-<<<<<<< HEAD
-                          <span>{{birthday}}</span>
-=======
                           <span>{{user.birthday}}</span>
->>>>>>> 0be11e4afb22d9e62a812af0ba06d784a4db9fe9
                         </p>
                     </li>
                     <li>
                         <p>
                           <span>手机号：</span>
-<<<<<<< HEAD
-                          <span>{{phone}}</span>
-=======
                           <span>{{user.phone}}</span>
->>>>>>> 0be11e4afb22d9e62a812af0ba06d784a4db9fe9
                         </p>
                     </li>
                     <li>
                         <p>
                           <span>&nbsp&nbspQQ：</span>
-<<<<<<< HEAD
-                          <span>{{qq}}</span>
-=======
                           <span>{{user.qq}}</span>
->>>>>>> 0be11e4afb22d9e62a812af0ba06d784a4db9fe9
                         </p>
                     </li>
                     <li>
                         <p>
                           <span>微&nbsp信：</span>
-<<<<<<< HEAD
-                          <span>{{wechat}}</span>
-                        </p>
-                    </li>
-                  <el-button class="fileInput" @click="f">编辑个人信息</el-button>
-=======
                           <span>{{user.wechat}}</span>
                         </p>
                     </li>
                   <el-button  class="button"  @click="f">编辑个人信息</el-button>
->>>>>>> 0be11e4afb22d9e62a812af0ba06d784a4db9fe9
                 </ul>
             </div>
         </div>
@@ -109,15 +74,12 @@
   padding: 10px 20px;
   cursor: pointer;
   transition: background-color 0.3s;
-<<<<<<< HEAD
-=======
   position: absolute;
   overflow: hidden;
   width: 100%;
   height: 100%;
   top: 0;
   left: 0;
->>>>>>> 0be11e4afb22d9e62a812af0ba06d784a4db9fe9
 }
 .block2 ul li a {
   cursor: pointer;
@@ -204,8 +166,6 @@ li {
   color: #333; /* 调整文字颜色 */
 }
 
-<<<<<<< HEAD
-=======
 button{
   background-color: #bedcf6; /* 浅蓝色按钮 */
   color: black;
@@ -216,7 +176,6 @@ button{
   transition: background-color 0.3s;
 }
 
->>>>>>> 0be11e4afb22d9e62a812af0ba06d784a4db9fe9
 .logout-btn:hover {
   transform: scale(1.1);
 }
@@ -224,12 +183,8 @@ button{
 
 <script>
 import NewTop from "../components/NewTop.vue";
-<<<<<<< HEAD
-import {uploadImage, logout, notify, getUserInfo} from '../api/user.js';
-=======
 import {uploadImage, logout, notify, getUserInfo, resetUserInfo} from '../api/user.js';
 
->>>>>>> 0be11e4afb22d9e62a812af0ba06d784a4db9fe9
 export default {
   data() {
     return {

@@ -198,7 +198,6 @@ export default {
                 });
             });
         },
-
       change: function() {
         console.log(this.user);
         resetUserInfo(this.user)

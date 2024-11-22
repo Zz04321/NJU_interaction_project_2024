@@ -37,7 +37,6 @@ export function getUserInfo() {
 /// 更新用户信息 API
 export function resetUserInfo(userInfo) {
   const url = `${API_BASE_URL}/user/resetInfo`;
-
   const headers = {
     'Authorization': `${global.getToken()}`
   };

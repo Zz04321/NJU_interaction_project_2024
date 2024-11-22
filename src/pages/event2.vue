@@ -77,7 +77,6 @@ body {
   background-image: url("../assets/bg_left.png"), url("../assets/bg_right.png");
 }
 
-
 .container {
   max-width: 1200px;
   margin: auto;
