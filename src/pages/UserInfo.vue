@@ -7,7 +7,7 @@
             <svg t="1639467147468" class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="3115" width="60" height="60"><path d="M542.7 373.6h-59.5c-24.8 0-44.8-20.1-44.8-44.8V167.9c0-24.8 20.1-44.8 44.8-44.8h59.5c24.8 0 44.8 20.1 44.8 44.8v160.9c0.1 24.7-20 44.8-44.8 44.8z m0 0" fill="#CEE8FA" p-id="3116"></path><path d="M542.7 398.5h-59.5c-38.5 0-69.7-31.3-69.7-69.7V167.9c0-38.5 31.3-69.7 69.7-69.7h59.5c38.5 0 69.7 31.3 69.7 69.7v160.9c0.1 38.4-31.2 69.7-69.7 69.7zM483.3 148c-11 0-19.9 8.9-19.9 19.9v160.9c0 11 8.9 19.9 19.9 19.9h59.5c11 0 19.9-8.9 19.9-19.9V167.9c0-11-8.9-19.9-19.9-19.9h-59.5zM513 811.4" fill="#2197EF" p-id="3117"></path><path d="M513 928.3c-218.7 0-396.6-177.9-396.6-396.6 0-132.3 65.4-255.3 175-329 11.4-7.7 26.9-4.6 34.6 6.8 7.7 11.4 4.6 26.9-6.8 34.6-95.7 64.4-152.9 171.9-152.9 287.6 0 191.2 155.5 346.7 346.7 346.7s346.7-155.5 346.7-346.7c0-115.7-57.2-223.2-152.9-287.6-11.4-7.7-14.5-23.2-6.8-34.6 7.7-11.4 23.2-14.5 34.6-6.8 109.6 73.6 175 196.6 175 329 0 218.7-177.9 396.6-396.6 396.6z m0 0" fill="#2197EF" p-id="3118"></path></svg>
         </div>
             <div class="block1">
-                <img v-bind:src="headImg" alt="">
+                <img v-bind:src="user.headImg" alt="">
                 <div style="position: relative; width: 100px; height: 38px; left: 50%; transform: translateX(-50%); top: 30px;">
                     <el-button class="fileInput">选择头像</el-button>
                     <input @change="uploadImg" type="file" class="fileInput" style="opacity: 0;" ref="input">
@@ -19,43 +19,43 @@
                     <li>
                         <p>
                           <span>用户名：</span>
-                          <span>{{uname}}</span>
+                          <span>{{user.uname}}</span>
                         </p>
                     </li>
                     <li>
                         <p>
                           <span>邮&nbsp箱：</span>
-                          <span>{{email}}</span>
+                          <span>{{user.email}}</span>
                         </p>
                     </li>
                     <li>
                         <p>
                           <span>性&nbsp别：</span>
-                          <span>{{sex}}</span>
+                          <span>{{user.sex}}</span>
                         </p>
                     </li>
                     <li style="width:200px;">
                         <p>
                           <span>生&nbsp日：</span>
-                          <span>{{birthday}}</span>
+                          <span>{{user.birthday}}</span>
                         </p>
                     </li>
                     <li>
                         <p>
                           <span>手机号：</span>
-                          <span>{{phone}}</span>
+                          <span>{{user.phone}}</span>
                         </p>
                     </li>
                     <li>
                         <p>
                           <span>&nbsp&nbspQQ：</span>
-                          <span>{{qq}}</span>
+                          <span>{{user.qq}}</span>
                         </p>
                     </li>
                     <li>
                         <p>
                           <span>微&nbsp信：</span>
-                          <span>{{wechat}}</span>
+                          <span>{{user.wechat}}</span>
                         </p>
                     </li>
                   <el-button  class="button"  @click="f">编辑个人信息</el-button>
@@ -183,19 +183,21 @@ button{
 
 <script>
 import NewTop from "../components/NewTop.vue";
-import {uploadImage, logout, notify, getUserInfo} from '../api/user.js';
+import {uploadImage, logout, notify, getUserInfo, resetUserInfo} from '../api/user.js';
 
 export default {
   data() {
     return {
-      headImg: "",
-      uname: "",
-      phone: "",
-      email: "",
-      sex: "",
-      birthday: "",
-      qq: "",
-      wechat: "",
+      user: {
+        headImg: '',
+        uname: '',
+        email: '',
+        phone: '',
+        sex: '',
+        birthday: '',
+        qq: '',
+        wechat: '',
+      }
     };
   },
   components: {
@@ -218,7 +220,7 @@ export default {
       let reader = new FileReader();
       reader.readAsDataURL(img);
       reader.onload = () => {
-        this.headImg = reader.result.toString();
+        this.user.headImg = reader.result.toString();
       };
     },
 
@@ -231,8 +233,12 @@ export default {
       console.log(this.pic)
       uploadImage(this.pic)
         .then((res) => {
+          console.log(res.data)
           if (res.data && res.data.code === 1) {
+            this.user.headImg = res.data.data;
             notify(this, "头像保存成功!", "success");
+            resetUserInfo(this.user)
+            setTimeout(() => this.$router.replace('/'), 1000);
           } else {
             notify(this, res.data.msg || "保存失败，请稍后重试", "error");
           }
@@ -269,14 +275,14 @@ export default {
     getUserInfo().then((res) => {
       console.log("here")
       console.log(res.data)
-      this.headImg = res.data.data[0].headImg;
-      this.uname = res.data.data[0].uname;
-      this.email = res.data.data[0].email;
-      this.phone = res.data.data[0].phone;
-      this.sex = res.data.data[0].sex;
-      this.birthday = res.data.data[0].birthday;
-      this.qq = res.data.data[0].qq;
-      this.wechat = res.data.data[0].wechat;
+      this.user.headImg = res.data.data[0].headImg;
+      this.user.uname = res.data.data[0].uname;
+      this.user.email = res.data.data[0].email;
+      this.user.phone = res.data.data[0].phone;
+      this.user.sex = res.data.data[0].sex;
+      this.user.birthday = res.data.data[0].birthday;
+      this.user.qq = res.data.data[0].qq;
+      this.user.wechat = res.data.data[0].wechat;
     }).catch(() => {
       notify(this, "获取用户信息失败", "error");
     })
