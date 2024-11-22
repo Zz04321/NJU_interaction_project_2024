@@ -193,7 +193,7 @@ export default {
       hasRegister(this.form.eventId)
         .then(res => {
           console.log(res)
-          this.hasRegistered = res.data.data;
+          this.hasRegistered = res.data.code;
         })
         .catch(error => {
           console.error('Error checking registration:', error);

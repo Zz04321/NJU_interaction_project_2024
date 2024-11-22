@@ -44,7 +44,7 @@ export function voteForPhotographer(email) {
 // 检查用户是否已投票 API
 export function hasVoted(email) {
   const url = `${API_BASE_URL}/event/3/hasVoted/${email}`;
-  return axios.post(url, {
+  return axios.post(url, {},{
     headers: {
       'Authorization': `${global.getToken()}`
     }
@@ -53,7 +53,7 @@ export function hasVoted(email) {
 
 export function hasRegister(eventId) {
   const url = `${API_BASE_URL}/event/${eventId}/hasRegistered`;
-  return axios.post(url, {
+  return axios.post(url, {},{
     headers: {
       'Authorization': `${global.getToken()}`
     }

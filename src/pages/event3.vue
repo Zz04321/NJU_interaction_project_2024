@@ -1,14 +1,14 @@
 <template>
   <body>
   <div class="container">
-    <header class="header">
+    <el-header class="header-buttons">
       <el-button @click="toExhibition3" type="primary" icon="el-icon-arrow-left">
         2024发现中国之美
       </el-button>
       <el-button @click="toExhibition1" type="primary" icon="el-icon-arrow-right">
         第一届南京大学摄影展
       </el-button>
-    </header>
+    </el-header>
 
     <!-- 活动主题 -->
     <div class="main-title">
@@ -16,7 +16,7 @@
     </div>
 
     <!-- 活动细则 -->
-    <section class="activity-rules">
+    <section class="section notice">
       <h2>活动细则</h2>
       <p>
         1. 本活动为2024年度评选，旨在发现最人气摄影师；<br />
@@ -28,7 +28,7 @@
 
     <!-- 判断用户身份 -->
     <section v-if="isLoggedIn">
-      <div v-if="isPhotographer === 'PHOTOGRAPHER'" class="section">
+      <div v-if="isPhotographer === 'PHOTOGRAPHER' && !hasJoined" class="section">
         <h2>报名参与评选</h2>
         <el-form ref="contact" :model="user" label-width="100px" class="form-container">
           <el-form-item label="联系方式">
@@ -52,7 +52,7 @@
         <el-button v-if="!hasJoined" type="primary" @click="joinCompetition">
           提交报名
         </el-button>
-        <p v-else>您已成功报名，感谢您的参与！</p>
+        <p v-else style="color: green;">您已成功报名，感谢您的参与！</p>
       </div>
 
       <div v-else class="section">
@@ -65,10 +65,12 @@
             :key="index"
           >
             <div class="photographer-info">
-              <img :src="photographer.photo" alt="头像" class="avatar" />
+              <img :src="photographer.headImg" alt="头像" class="avatar" />
               <div>
-                <h3>{{ photographer.nickname }}</h3>
-                <p>{{ photographer.description }}</p>
+                <h3>{{ photographer.uname }}</h3>
+                <p>简介：{{ photographer.description }}</p>
+                <p>联系方式：{{ photographer.contact }}</p>
+                <p>邮箱：{{ photographer.email }}</p>
               </div>
             </div>
             <span>票数：{{ photographer.votes }}</span>
@@ -91,11 +93,11 @@
       <el-button type="primary" @click="toLogin">登录</el-button>
     </section>
 
-    <footer class="footer">
+    <div class="bottom-buttons">
       <el-button @click="toHome" type="primary" icon="el-icon-arrow-left">
         返回主页
       </el-button>
-    </footer>
+    </div>
   </div>
   </body>
 </template>
@@ -103,34 +105,42 @@
 <style scoped>
 body {
   background-image: url("../assets/bg_left.png"), url("../assets/bg_right.png");
-  background-size: cover;
-  margin: 0;
-  font-family: 'Arial', sans-serif;
 }
 
 .container {
   max-width: 1200px;
   margin: auto;
-  padding: 20px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
 }
 
-.header {
+.header-buttons {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.main-title {
+.main-title h1 {
+  font-size: 42px;
   text-align: center;
-  margin: 50px 0;
+  color: #2b2b2b;
+  margin-top: 20px;
+  font-weight: bold;
 }
 
 .section {
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 10px;
+  margin: 40px 0;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
 }
 
 .photographer-list {
@@ -141,28 +151,39 @@ body {
 
 .photographer-card {
   padding: 15px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.footer {
+.photographer-info {
+  display: flex;
+  gap: 15px;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.bottom-buttons {
   display: flex;
   justify-content: center;
   margin-top: 40px;
 }
 </style>
 
-
 <script>
 import {
   joinCompetition,
   getAllPhotographers,
   voteForPhotographer,
-  hasVoted,
+  hasVoted, hasRegister,
 } from "../api/event";
 import {getUserInfo, notify, uploadImage} from "../api/user";
 
@@ -177,8 +198,11 @@ export default {
       user: {
         contact: "",
         description: "",
+        email: "",
+        headImg: "",
         photo: "",
-        email: ""
+        uname: "",
+        votes: ""
       },
     };
   },
@@ -190,14 +214,10 @@ export default {
         this.isLoggedIn = true;
         this.isPhotographer = res.data.data[0].role;
         this.user.email = res.data.data[0].email;
-
         // 检查是否已投票
         if (this.isPhotographer === "NORMAL") {
           hasVoted(this.user.email)
             .then((res) => {
-              console.log("here")
-              console.log(this.user.email)
-              console.log(res.data)
               this.hasVoted = res.data.hasVoted;
             })
             .catch(() => {
@@ -209,10 +229,22 @@ export default {
         this.isLoggedIn = false;
       });
 
+    //是否报名
+    hasRegister('3')
+        .then(res => {
+          this.hasJoined = res.data.code;
+        })
+        .catch(error => {
+          console.error('Error checking registration:', error);
+          this.$message.error('无法获取报名状态，请稍后重试');
+        });
+
     // 获取所有摄影师
     getAllPhotographers()
       .then((res) => {
+        console.log(res)
         this.photographers = res.data.data;
+        console.log(this.photographers)
       })
       .catch(() => {
         this.photographers = [];
@@ -235,7 +267,6 @@ export default {
     joinCompetition() {
       joinCompetition(this.user.contact, this.user.description, this.user.photo)
         .then((res) => {
-          console.log(res)
           this.hasJoined = true;
           this.$message.success("成功报名参选！");
         })
@@ -244,15 +275,27 @@ export default {
         });
     },
     vote(email) {
+      // 调用投票接口
       voteForPhotographer(email)
-        .then(() => {
-          this.hasVoted = true;
-          const photographer = this.photographers.find((p) => p.email === email);
-          if (photographer) photographer.votes += 1;
-          this.$message.success("投票成功！");
+        .then((res) => {
+          console.log(res)
+          console.log(email)
+          if (res.data.code === 1) {
+            this.hasVoted = true;
+            const photographer = this.photographers.find((p) => p.email === email);
+            if (photographer) photographer.votes += 1;
+            this.$message.success(res.data.message || "投票成功！");
+          } else {
+            this.$message.error(res.data.message || "投票失败，请稍后重试！");
+          }
         })
-        .catch(() => {
-          this.$message.error("投票失败，请稍后重试！");
+        .catch((error) => {
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.message || "投票失败，请稍后重试！";
+            this.$message.error(errorMessage);
+          } else {
+            this.$message.error("网络异常，请稍后重试！");
+          }
         });
     },
     isSelf(email) {
