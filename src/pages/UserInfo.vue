@@ -231,7 +231,7 @@ export default {
       console.log(this.pic)
       uploadImage(this.pic)
         .then((res) => {
-          if (res.data && res.data.code === 1) {
+          if (res.data) {
             notify(this, "头像保存成功!", "success");
           } else {
             notify(this, res.data.msg || "保存失败，请稍后重试", "error");
