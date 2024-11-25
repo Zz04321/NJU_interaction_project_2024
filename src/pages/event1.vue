@@ -52,7 +52,10 @@
       </div>
       <div class="activity-form">
         <h2>活动报名</h2>
-        <el-form ref="contact" :model="form" label-width="100px" class="form-container">
+        <div v-if="hasRegistered">
+          <p style="color: green;">您已报名此活动！</p>
+        </div>
+        <el-form v-else ref="contact" :model="form" label-width="100px" class="form-container">
           <el-form-item label="联系方式">
             <el-input v-model="form.contact"></el-input>
           </el-form-item>
@@ -143,7 +146,7 @@ body {
 </style>
 
 <script>
-import { submitFormData } from "../api/event";
+import {hasRegister, submitFormData} from "../api/event";
 export default {
   data() {
     return {
@@ -155,7 +158,8 @@ export default {
         require('../assets/event/event1_1.jpg'),
         require('../assets/event/event1_2.jpg'),
         require('../assets/event/event1_3.jpg'),
-      ]
+      ],
+      hasRegistered: false,
     };
   },
   methods: {
@@ -184,7 +188,21 @@ export default {
           console.error('Error submitting form:', error);
           this.$message.error('提交失败，请稍后重试');
         });
-    }
-  }
+    },
+    checkRegistration() {
+      hasRegister(this.form.eventId)
+        .then(res => {
+          console.log(res)
+          this.hasRegistered = res.data.code;
+        })
+        .catch(error => {
+          console.error('Error checking registration:', error);
+          this.$message.error('无法获取报名状态，请稍后重试');
+        });
+    },
+  },
+  mounted() {
+    this.checkRegistration();
+  },
 };
 </script>
