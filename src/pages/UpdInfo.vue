@@ -225,6 +225,7 @@ export default {
       if (res.data && res.data.data && res.data.data.length > 0) {
         const userInfo = res.data.data[0];
         this.user = {
+
           headImg: userInfo.headImg || '',
           uname: userInfo.uname || '',
           email: userInfo.email || '',
