@@ -7,7 +7,7 @@
           <ul class="px_tabs">
             <li><router-link to="/my-concern">我的关注</router-link></li>
           </ul>
-          <router-link to="/service/register" class="button application">申请提供摄影服务</router-link>
+          <a href="https://500px.com.cn/page/contractPhotographer/index" target="_blank" class="button application">申请提供摄影服务</a>
         </div>
       </div>
       <div class="recommend_users_container">
@@ -25,12 +25,7 @@
                 <p class="description">{{ photographer.description }}</p>
                 <span class="contact">Contact: {{ photographer.contact }}</span>
                 <div class="button-container">
-                  <a href="javascript:void(0)" class="button mini_follow follow"
-                     :class="{ disabled: photographer.followed }"
-                     @click="followPhotographer(photographer.email)"
-                     :disabled="photographer.followed">
-                    {{ photographer.followed ? '已关注' : '关注' }}
-                  </a>
+                  <a href="javascript:void(0)" class="button mini_follow follow">关注</a>
                 </div>
               </div>
             </div>
@@ -44,8 +39,7 @@
 </template>
 
 <script>
-import { getAll, collect, hasCollect } from '../api/service';
-import { notify } from "../api/user";
+import { getAll } from '../api/service';
 
 export default {
   data() {
@@ -62,45 +56,11 @@ export default {
         const response = await getAll();
         if (response.data.code === 1) {
           this.photographers = response.data.data;
-          await this.checkFollowStatus();
         } else {
           console.error('Error fetching photographers:', response.data.msg);
         }
       } catch (error) {
         console.error('Error fetching photographers:', error);
-      }
-    },
-    async checkFollowStatus() {
-      for (let photographer of this.photographers) {
-        try {
-          const response = await hasCollect(photographer.email);
-          if (response.data.code === 1) {
-            this.$set(photographer, 'followed', response.data.data);
-          } else {
-            console.error('Error checking follow status:', response.data.msg);
-          }
-        } catch (error) {
-          console.error('Error checking follow status:', error);
-        }
-      }
-    },
-    async followPhotographer(email) {
-      try {
-        const response = await collect(email);
-        if (response.data.code === 1) {
-          notify(this, "关注成功!", "success");
-          this.updateFollowStatus(email, true);
-        } else {
-          console.error('Error following photographer:', response.data.msg);
-        }
-      } catch (error) {
-        console.error('Error following photographer:', error);
-      }
-    },
-    updateFollowStatus(email, status) {
-      const photographer = this.photographers.find(p => p.email === email);
-      if (photographer) {
-        this.$set(photographer, 'followed', status);
       }
     }
   }
@@ -135,8 +95,6 @@ export default {
 }
 
 .px_tabs a {
-  font-size: 18px;
-  font-weight: bold;
   text-decoration: none;
   color: #333;
   padding: 10px 20px;
@@ -155,7 +113,6 @@ export default {
   color: #fff;
   transition: background-color 0.3s ease;
 }
-
 .user_item .button.mini_follow {
   display: inline-block;
   padding: 5px 10px;
@@ -172,28 +129,20 @@ export default {
   background-color: #2196F3; /* Blue background on hover */
   color: #fff; /* White text on hover */
 }
-
-.user_item .button.mini_follow.disabled {
-  pointer-events: none;
-  opacity: 0.6;
-}
-
 .button.home {
-  background-color: #2196F3; /* Blue */
-  border-radius: 20px; /* More rounded corners */
+  background-color: #4CAF50; /* Green */
 }
 
 .button.home:hover {
-  background-color: #0b7dda; /* Darker Blue */
+  background-color: #45a049; /* Darker Green */
 }
 
 .button.application {
-  background-color: #4CAF50; /* Green */
-  border-radius: 20px; /* More rounded corners */
+  background-color: #2196F3; /* Blue */
 }
 
 .button.application:hover {
-  background-color: #45a049; /* Darker Green */
+  background-color: #0b7dda; /* Darker Blue */
 }
 
 .recommend_users_container {
@@ -201,18 +150,18 @@ export default {
 }
 
 .recommend_users {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 每行显示五个资料卡 */
-  gap: 20px; /* 设置每个资料卡之间的间隙 */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .user_item {
+  width: 300px;
   background-color: #fff;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
   overflow: hidden;
   text-align: center;
-  box-sizing: border-box;
 }
 
 .user_item .top {
@@ -221,46 +170,12 @@ export default {
   background-position: center;
 }
 
-.user_item .avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  margin: -25px auto 10px;
-  overflow: hidden;
-  border: 2px solid #e0e0e0; /* Optional: Add a border for better visibility */
-}
-
-.user_item .bottom {
-  padding: 10px;
-}
-
-.user_item .name {
-  font-size: 18px;
-  display: block;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.user_item .description {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 10px;
-}
-
-.user_item .contact {
-  font-size: 12px;
-  color: #999;
-  margin-bottom: 10px;
-}
 
 .user_item .button-container {
   display: flex;
   justify-content: center;
   margin-top: 10px;
 }
-
 .user_item .button {
   display: inline-block;
   padding: 5px 10px;
@@ -281,7 +196,6 @@ export default {
   border-radius: 50%;
   cursor: pointer;
 }
-
 .representative_work {
   height: 150px;
   background-size: cover;

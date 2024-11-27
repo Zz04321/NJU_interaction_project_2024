@@ -14,6 +14,8 @@ import Exhibition4 from '../pages/event4.vue'
 import UpdInfo from '../pages/UpdInfo.vue'
 import PhotoShowDetail from "../components/PhotoShowDetail.vue";
 import ServicePage from "../components/ServicePage.vue";
+import MyConcern from "../components/MyConcern.vue";
+import ServiceRegister from "../components/ServiceRegister.vue";
 Vue.use(Router)
 
 export default new Router({
@@ -53,6 +55,20 @@ export default new Router({
     {
       path: '/UpdInfo',
       component: UpdInfo,
+      meta: {
+        needLogin: true
+      }
+    },
+    {
+      path: '/my-concern',
+      component: MyConcern,
+      meta: {
+        needLogin: true
+      }
+    },
+    {
+      path: '/service/register',
+      component: ServiceRegister,
       meta: {
         needLogin: true
       }
