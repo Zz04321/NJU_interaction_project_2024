@@ -22,13 +22,18 @@ export function getAll() {
 }
 
 export function getAllCollects() {
-  const url = `${API_BASE_URL}/service/getCollect`;
+  const url = `${API_BASE_URL}/service/getCollection`;
   return axios.get(url, {'Authorization': `${global.getToken()}`, 'Content-Type': 'application/json'});
 }
 
 export function collect(email) {
   const url = `${API_BASE_URL}/service/collect/${email}`;
-  return axios.post(url, {}, {'Authorization': `${global.getToken()}`, 'Content-Type': 'application/json'});
+  return axios.post(url, {}, {
+    headers: {
+      'Authorization': `${global.getToken()}`,
+      'Content-Type': 'application/json',
+    }
+  });
 }
 
 export function cancelCollect(email) {

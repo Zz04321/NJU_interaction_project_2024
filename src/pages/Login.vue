@@ -91,7 +91,8 @@ export default {
             localStorage.setItem("uid", res.data.data);
             setTimeout(() => this.$router.replace('/'), 1000);
           } else {
-            this.$notify({ message: res.data.msg, type: 'error', offset: 100 });
+            console.log(res);
+            this.$notify({ message: res.data.message, type: 'error', offset: 100 });
           }
         })
         .catch(error => console.error('登录失败:', error));
