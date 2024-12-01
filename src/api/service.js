@@ -28,7 +28,12 @@ export function getAllCollects() {
 
 export function collect(email) {
   const url = `${API_BASE_URL}/service/collect/${email}`;
-  return axios.post(url, {}, {'Authorization': `${global.getToken()}`, 'Content-Type': 'application/json'});
+  return axios.post(url, {}, {
+    headers: {
+      'Authorization': `${global.getToken()}`,
+      'Content-Type': 'application/json',
+    }
+  });
 }
 
 export function cancelCollect(email) {

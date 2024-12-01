@@ -15,7 +15,6 @@
             </div>
           <div class="text">
             <el-select v-model="role" placeholder="请选择身份">
-              <el-option label="管理员" :value="'ADMIN'"></el-option>
               <el-option label="摄影师" :value="'PHOTOGRAPHER'"></el-option>
               <el-option label="普通用户" :value="'NORMAL'"></el-option>
             </el-select>
@@ -110,7 +109,7 @@ export default {
             }, 1000);
           } else {
             this.$notify({
-              message: res.data.msg,
+              message: res.data.message,
               type: 'error',
               offset: 100
             });
