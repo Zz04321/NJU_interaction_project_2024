@@ -15,10 +15,14 @@
           <div class="sets_body">
             <div class="user_item px_card medium no_badge" v-for="photographer in photographers" :key="photographer.email">
               <div class="top">
-                <div class="representative_work" :style="{ backgroundImage: 'url(' + photographer.photo + ')' }"></div>
-                <div class="avatar_wrapper">
-                  <a class="avatar" :style="{ backgroundImage: 'url(' + photographer.headImg + ')' }"></a>
-                </div>
+                <router-link :to="'/personal-info/' + photographer.email">
+                  <div class="representative_work" :style="{ backgroundImage: 'url(' + photographer.photo + ')' }"></div>
+                </router-link>
+                <router-link :to="'/personal-info/' + photographer.email">
+                  <div class="avatar_wrapper">
+                    <a class="avatar" :style="{ backgroundImage: 'url(' + photographer.headImg + ')' }"></a>
+                  </div>
+                </router-link>
               </div>
               <div class="bottom">
                 <a class="name" :href="'https://500px.com.cn/community/user-details/' + photographer.email">{{ photographer.uname }}</a>
@@ -38,8 +42,6 @@
         </div>
       </div>
     </main>
-
-    <div class="scroll_to_top"><span class="end">顶部</span></div>
   </div>
 </template>
 
@@ -75,7 +77,11 @@ export default {
         try {
           const response = await hasCollect(photographer.email);
           if (response.data.code === 1) {
-            this.$set(photographer, 'followed', response.data.data);
+            if(response.data.message==="已收藏"){
+              this.$set(photographer, 'followed', true);
+            }else{
+              this.$set(photographer, 'followed', false);
+            }
           } else {
             console.error('Error checking follow status:', response.data.msg);
           }
@@ -91,7 +97,7 @@ export default {
           notify(this, "关注成功!", "success");
           this.updateFollowStatus(email, true);
         } else {
-          console.error('Error following photographer:', response.data.msg);
+          notify(this, "不能关注自己！", "error");
         }
       } catch (error) {
         console.error('Error following photographer:', error);
@@ -109,6 +115,11 @@ export default {
 
 <style scoped>
 .page-container {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
   font-family: Arial, sans-serif;
 }
 
@@ -269,17 +280,6 @@ export default {
   border-radius: 5px;
   text-decoration: none;
   font-size: 12px;
-}
-
-.scroll_to_top {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #2196F3; /* Blue */
-  color: #fff;
-  padding: 10px;
-  border-radius: 50%;
-  cursor: pointer;
 }
 
 .representative_work {

@@ -3,11 +3,10 @@
     <main class="main-content">
       <div class="profile_nav">
         <div class="tab_wrapper applyIntoVCG">
-          <router-link to="/" class="button home">返回首页</router-link>
+          <router-link to="/ServicePage" class="button home">返回</router-link>
           <ul class="px_tabs">
-            <li><router-link to="/my-concern">我的关注</router-link></li>
+            <li><router-link to="/my-concern">关注列表</router-link></li>
           </ul>
-          <a href="https://500px.com.cn/page/contractPhotographer/index" target="_blank" class="button application">申请提供摄影服务</a>
         </div>
       </div>
       <div class="recommend_users_container">
@@ -25,7 +24,10 @@
                 <p class="description">{{ photographer.description }}</p>
                 <span class="contact">Contact: {{ photographer.contact }}</span>
                 <div class="button-container">
-                  <a href="javascript:void(0)" class="button mini_follow follow">关注</a>
+                  <a href="javascript:void(0)" class="button mini_follow follow"
+                     @click="unfollowPhotographer(photographer.email)">
+                    取消关注
+                  </a>
                 </div>
               </div>
             </div>
@@ -33,13 +35,12 @@
         </div>
       </div>
     </main>
-
-    <div class="scroll_to_top"><span class="end">顶部</span></div>
   </div>
 </template>
 
 <script>
-import { getAll } from '../api/service';
+import { getAllCollects, cancelCollect } from '../api/service';
+import { notify } from "../api/user";
 
 export default {
   data() {
@@ -53,7 +54,7 @@ export default {
   methods: {
     async fetchPhotographers() {
       try {
-        const response = await getAll();
+        const response = await getAllCollects();
         if (response.data.code === 1) {
           this.photographers = response.data.data;
         } else {
@@ -62,13 +63,36 @@ export default {
       } catch (error) {
         console.error('Error fetching photographers:', error);
       }
+    },
+    async unfollowPhotographer(email) {
+      try {
+        const response = await cancelCollect(email);
+        if (response.data.code === 1) {
+          notify(this, "取消关注成功!", "success");
+          await this.fetchPhotographers();
+        } else {
+          console.error('Error unfollowing photographer:', response.data.msg);
+        }
+      } catch (error) {
+        console.error('Error unfollowing photographer:', error);
+      }
     }
   }
 };
 </script>
-
 <style scoped>
+html, body, .page-container, .main-content {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 .page-container {
+  background-color: #f7f8fa; /* Set the background color */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
   font-family: Arial, sans-serif;
 }
 
@@ -95,6 +119,8 @@ export default {
 }
 
 .px_tabs a {
+  font-size: 18px;
+  font-weight: bold;
   text-decoration: none;
   color: #333;
   padding: 10px 20px;
@@ -113,6 +139,7 @@ export default {
   color: #fff;
   transition: background-color 0.3s ease;
 }
+
 .user_item .button.mini_follow {
   display: inline-block;
   padding: 5px 10px;
@@ -129,20 +156,28 @@ export default {
   background-color: #2196F3; /* Blue background on hover */
   color: #fff; /* White text on hover */
 }
+
+.user_item .button.mini_follow.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
 .button.home {
-  background-color: #4CAF50; /* Green */
+  background-color: #2196F3; /* Blue */
+  border-radius: 20px; /* More rounded corners */
 }
 
 .button.home:hover {
-  background-color: #45a049; /* Darker Green */
+  background-color: #0b7dda; /* Darker Blue */
 }
 
 .button.application {
-  background-color: #2196F3; /* Blue */
+  background-color: #4CAF50; /* Green */
+  border-radius: 20px; /* More rounded corners */
 }
 
 .button.application:hover {
-  background-color: #0b7dda; /* Darker Blue */
+  background-color: #45a049; /* Darker Green */
 }
 
 .recommend_users_container {
@@ -150,18 +185,18 @@ export default {
 }
 
 .recommend_users {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 每行显示五个资料卡 */
+  gap: 20px; /* 设置每个资料卡之间的间隙 */
 }
 
 .user_item {
-  width: 300px;
   background-color: #fff;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
   overflow: hidden;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .user_item .top {
@@ -170,12 +205,53 @@ export default {
   background-position: center;
 }
 
+.user_item .avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  margin: -25px auto 10px;
+  overflow: hidden;
+  border: 2px solid #e0e0e0; /* Optional: Add a border for better visibility */
+}
 
+.user_item .bottom {
+  padding: 10px;
+}
+
+.user_item .name {
+  font-size: 18px;
+  display: block;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.user_item .description {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.user_item .contact {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 10px;
+}
+.user_item {
+  background-color: #fff;
+  border: 1px solid transparent;
+  border-radius: 0; /* Changed to 0 to make the shape square */
+  overflow: hidden;
+  text-align: center;
+  box-sizing: border-box;
+}
 .user_item .button-container {
   display: flex;
   justify-content: center;
   margin-top: 10px;
 }
+
 .user_item .button {
   display: inline-block;
   padding: 5px 10px;
@@ -186,16 +262,6 @@ export default {
   font-size: 12px;
 }
 
-.scroll_to_top {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #2196F3; /* Blue */
-  color: #fff;
-  padding: 10px;
-  border-radius: 50%;
-  cursor: pointer;
-}
 .representative_work {
   height: 150px;
   background-size: cover;

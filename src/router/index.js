@@ -16,6 +16,7 @@ import PhotoShowDetail from "../components/PhotoShowDetail.vue";
 import ServicePage from "../components/ServicePage.vue";
 import MyConcern from "../components/MyConcern.vue";
 import ServiceRegister from "../components/ServiceRegister.vue";
+import PersonalInfo from "../components/PersonalInfo.vue";
 Vue.use(Router)
 
 export default new Router({
@@ -97,6 +98,12 @@ export default new Router({
       path: '/ServicePage',
       component: ServicePage,
     },
-
+    {
+      path: '/personal-info/:email',
+      component: PersonalInfo,
+      meta: {
+        needLogin: true
+      }
+    }
   ]
 })

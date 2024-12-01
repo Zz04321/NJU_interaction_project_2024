@@ -22,8 +22,10 @@ export function getAll() {
 }
 
 export function getAllCollects() {
-  const url = `${API_BASE_URL}/service/getCollect`;
-  return axios.get(url, {'Authorization': `${global.getToken()}`, 'Content-Type': 'application/json'});
+  const url = `${API_BASE_URL}/service/getCollection`;
+  return axios.post(url, {},{headers: {
+      'Authorization': `${global.getToken()}`
+    }});
 }
 
 export function collect(email) {
@@ -43,5 +45,8 @@ export function hasCollect(email) {
 
 export function cancelCollect(email) {
   const url = `${API_BASE_URL}/service/cancelCollect/${email}`;
-  return axios.post(url, {}, {'Authorization': `${global.getToken()}`, 'Content-Type': 'application/json'});
+  return axios.post(url, {}, {headers: {
+      'Authorization': `${global.getToken()}`,
+      'Content-Type': 'application/json',
+    }});
 }
