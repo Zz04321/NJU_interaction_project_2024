@@ -1,314 +1,243 @@
 <template>
-  <div class="page-container">
-    <main class="main-content">
-      <div class="profile_nav">
-        <div class="tab_wrapper applyIntoVCG">
-          <router-link to="/" class="button home">返回首页</router-link>
-          <ul class="px_tabs">
-            <li><router-link to="/my-concern">我的关注</router-link></li>
-          </ul>
-          <router-link to="/service/register" class="button application">申请提供摄影服务</router-link>
-        </div>
+  <body>
+  <div id="box" style="margin-top: 150px; position: relative;">
+    <h1 style="color:black;">注册服务</h1>
+    <div class="block1">
+      <img v-bind:src="user.photo" alt="">
+      <div class="file-input-wrapper">
+        <el-button class="fileInput">选择代表作</el-button>
+        <input @change="uploadImg" type="file" class="fileInput" style="opacity: 0;" ref="input">
       </div>
-      <div class="recommend_users_container">
-        <div class="recommend_users">
-          <div class="sets_body">
-            <div class="user_item px_card medium no_badge" v-for="photographer in photographers" :key="photographer.email">
-              <div class="top">
-                <router-link :to="'/personal-info/' + photographer.email">
-                  <div class="representative_work" :style="{ backgroundImage: 'url(' + photographer.photo + ')' }"></div>
-                </router-link>
-                <router-link :to="'/personal-info/' + photographer.email">
-                  <div class="avatar_wrapper">
-                    <a class="avatar" :style="{ backgroundImage: 'url(' + photographer.headImg + ')' }"></a>
-                  </div>
-                </router-link>
-              </div>
-              <div class="bottom">
-                <a class="name" :href="'https://500px.com.cn/community/user-details/' + photographer.email">{{ photographer.uname }}</a>
-                <p class="description">{{ photographer.description }}</p>
-                <span class="contact">Contact: {{ photographer.contact }}</span>
-                <div class="button-container">
-                  <a href="javascript:void(0)" class="button mini_follow follow"
-                     :class="{ disabled: photographer.followed }"
-                     @click="followPhotographer(photographer.email)"
-                     :disabled="photographer.followed">
-                    {{ photographer.followed ? '已关注' : '关注' }}
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    </div>
+    <div class="block2">
+      <ul style="list-style:none; margin-top: 20px;">
+        <li>
+          <p>
+            <span>联系方式：</span>
+            <el-input v-model="user.contact"></el-input>
+          </p>
+        </li>
+        <li>
+          <p>
+            <span>描述：</span>
+            <el-input v-model="user.description"></el-input>
+          </p>
+        </li>
+      </ul>
+      <div class="submit-button-wrapper">
+        <el-button class="button" @click="submit">提交</el-button>
       </div>
-    </main>
+    </div>
   </div>
+  </body>
 </template>
 
 <script>
-import { getAll, collect, hasCollect } from '../api/service';
-import { notify } from "../api/user";
+import { uploadImage, notify } from '../api/user.js';
+import { register } from '../api/service.js';
 
 export default {
   data() {
     return {
-      photographers: []
+      user: {
+        contact: '',
+        description: '',
+        photo: ''
+      },
+      pic: null,
+      loading: false
     };
   },
-  mounted() {
-    this.fetchPhotographers();
-  },
   methods: {
-    async fetchPhotographers() {
-      try {
-        const response = await getAll();
-        if (response.data.code === 1) {
-          this.photographers = response.data.data;
-          await this.checkFollowStatus();
-        } else {
-          console.error('Error fetching photographers:', response.data.msg);
-        }
-      } catch (error) {
-        console.error('Error fetching photographers:', error);
+    saveImg() {
+      if (!this.pic) {
+        notify(this, "请先选择图片再保存!", "warning");
+        return;
       }
-    },
-    async checkFollowStatus() {
-      for (let photographer of this.photographers) {
-        try {
-          const response = await hasCollect(photographer.email);
-          if (response.data.code === 1) {
-            if(response.data.message==="已收藏"){
-              this.$set(photographer, 'followed', true);
-            }else{
-              this.$set(photographer, 'followed', false);
-            }
+      this.loading = true; // 加载中
+      uploadImage(this.pic)
+        .then((res) => {
+          if (res.data && res.data.code === 1) {
+            this.user.photo = res.data.data;
+            notify(this, "图片保存成功!", "success");
           } else {
-            console.error('Error checking follow status:', response.data.msg);
+            notify(this, res.data.msg || "保存失败，请稍后重试", "error");
           }
-        } catch (error) {
-          console.error('Error checking follow status:', error);
-        }
+        })
+        .catch(() => {
+          notify(this, "上传失败，请检查网络或稍后重试", "error");
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    uploadImg() {
+      let tmp = this.$refs.input.files;
+      if (tmp.length === 0) {
+        this.pic = null;
+      } else {
+        this.showImage(tmp[0]);
+        this.pic = tmp[0];
+        this.saveImg();
       }
     },
-    async followPhotographer(email) {
-      try {
-        const response = await collect(email);
-        if (response.data.code === 1) {
-          notify(this, "关注成功!", "success");
-          this.updateFollowStatus(email, true);
-        } else {
-          notify(this, "不能关注自己！", "error");
-        }
-      } catch (error) {
-        console.error('Error following photographer:', error);
-      }
+    showImage(img) {
+      let reader = new FileReader();
+      reader.readAsDataURL(img);
+      reader.onload = () => {
+        this.user.photo = reader.result.toString();
+      };
     },
-    updateFollowStatus(email, status) {
-      const photographer = this.photographers.find(p => p.email === email);
-      if (photographer) {
-        this.$set(photographer, 'followed', status);
+
+    submit() {
+      if (!this.user.photo) {
+        notify(this, "请先上传图片再提交!", "warning");
+        return;
       }
+      register(this.user.contact, this.user.description, this.user.photo)
+        .then((res) => {
+          if (res.data && res.data.code === 1) {
+            notify(this, "注册成功!", "success");
+            this.$router.push("/");
+          } else {
+            notify(this,  "已注册过，不能重复注册", "error");
+          }
+        })
+        .catch(() => {
+          notify(this, "已注册", "error");
+        });
     }
   }
 };
 </script>
 
 <style scoped>
-.page-container {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+.fileInput {
+  background-color: #bedcf6; /* 浅蓝色按钮 */
+  color: black;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: absolute;
+  overflow: hidden;
   width: 100%;
   height: 100%;
-  font-family: Arial, sans-serif;
+  top: 0;
+  left: 0;
+}
+.file-input-wrapper {
+  position: relative;
+  width: 100px;
+  height: 38px;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 30px;
+}
+.block2 ul li a {
+  cursor: pointer;
+}
+p {
+  font-size: 18px;
+  float: left;
+  margin-bottom: 20px;
+  width: 350px;
+}
+body {
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url("../assets/bg_left.png"), url("../assets/bg_right.png");
+  background-size: cover;
+  background-position: 100% 100%;
+  background-repeat: no-repeat;
 }
 
-.profile_nav {
-  background-color: #f0f0f0;
-  padding: 20px;
+#box {
+  height: 500px;
+  width: 700px;
+  margin: 0 auto;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+
 }
 
-.tab_wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.block1 {
+  margin: 0;
+  padding: 0;
+  height: 410px;
+  width: 300px;
+  float: left;
+  text-align: center;
 }
 
-.px_tabs {
-  display: flex;
+.block2 {
+  margin: 0;
+  padding: 0;
+  height: 410px;
+  width: 400px;
+  float: left;
+}
+
+.block1 img {
+  margin-top: 30px;
+  margin-left: 50px;
+  display: block;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background-color: white;
+  border: 3px solid  #bedcf6; /* 增加淡蓝边框 */
+}
+
+font {
+  font-size: 22px;
+  color: black;
+  font-family: monospace;
+}
+
+span {
+  color: #333; /* 调整文字颜色为深灰，便于阅读 */
+}
+
+h1 {
+  color: #444; /* 标题颜色调整为较深灰色 */
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+ul {
   list-style: none;
   padding: 0;
-  margin: 0 auto;
+  margin: 0;
 }
 
-.px_tabs li {
-  margin-right: 20px;
-}
-
-.px_tabs a {
+li {
+  margin-bottom: 15px;
   font-size: 18px;
-  font-weight: bold;
-  text-decoration: none;
-  color: #333;
+  color: #333; /* 调整文字颜色 */
+}
+
+button{
+  background-color: #bedcf6; /* 浅蓝色按钮 */
+  color: black;
+  border: none;
+  border-radius: 8px;
   padding: 10px 20px;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.px_tabs a:hover {
-  background-color: #e0e0e0;
-}
-
-.button {
-  padding: 10px 20px;
-  border-radius: 5px;
-  text-decoration: none;
-  color: #fff;
-  transition: background-color 0.3s ease;
-}
-
-.user_item .button.mini_follow {
-  display: inline-block;
-  padding: 5px 10px;
-  border: 1px solid #2196F3; /* Blue border */
-  background-color: transparent; /* Transparent background */
-  color: #2196F3; /* Blue text */
-  border-radius: 15px; /* More rounded corners */
-  text-decoration: none;
-  font-size: 12px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.user_item .button.mini_follow:hover {
-  background-color: #2196F3; /* Blue background on hover */
-  color: #fff; /* White text on hover */
-}
-
-.user_item .button.mini_follow.disabled {
-  pointer-events: none;
-  opacity: 0.6;
-}
-
-.button.home {
-  background-color: #2196F3; /* Blue */
-  border-radius: 20px; /* More rounded corners */
-}
-
-.button.home:hover {
-  background-color: #0b7dda; /* Darker Blue */
-}
-
-.button.application {
-  background-color: #4CAF50; /* Green */
-  border-radius: 20px; /* More rounded corners */
-}
-
-.button.application:hover {
-  background-color: #45a049; /* Darker Green */
-}
-
-.recommend_users_container {
-  padding: 20px;
-}
-
-.recommend_users {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 每行显示五个资料卡 */
-  gap: 20px; /* 设置每个资料卡之间的间隙 */
-}
-
-.user_item {
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  overflow: hidden;
+.submit-button-wrapper {
   text-align: center;
-  box-sizing: border-box;
+  margin-top: 20px;
 }
 
-.user_item .top {
-  height: 150px;
-  background-size: cover;
-  background-position: center;
-}
-
-.user_item .avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  margin: -25px auto 10px;
-  overflow: hidden;
-  border: 2px solid #e0e0e0; /* Optional: Add a border for better visibility */
-}
-
-.user_item .bottom {
-  padding: 10px;
-}
-
-.user_item .name {
-  font-size: 18px;
-  display: block;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.user_item .description {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 10px;
-}
-
-.user_item .contact {
-  font-size: 12px;
-  color: #999;
-  margin-bottom: 10px;
-}
-
-.user_item .button-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-.user_item .button {
-  display: inline-block;
-  padding: 5px 10px;
-  background-color: #2196F3; /* Blue */
-  color: #fff;
-  border-radius: 5px;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.representative_work {
-  height: 150px;
-  background-size: cover;
-  background-position: center;
-  position: relative;
-}
-
-.avatar_wrapper {
-  position: relative;
-  top: 5%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80px;
-  height: 80px;
-  background-color: transparent;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  border: 2px solid rgba(255, 255, 255, 0.5); /* Optional: Add a border for better visibility */
+.logout-btn:hover {
+  transform: scale(1.1);
 }
 </style>

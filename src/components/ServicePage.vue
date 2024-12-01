@@ -25,7 +25,7 @@
                 </router-link>
               </div>
               <div class="bottom">
-                <a class="name" :href="'https://500px.com.cn/community/user-details/' + photographer.email">{{ photographer.uname }}</a>
+                <a class="name" >{{ photographer.uname }}</a>
                 <p class="description">{{ photographer.description }}</p>
                 <span class="contact">Contact: {{ photographer.contact }}</span>
                 <div class="button-container">
@@ -47,7 +47,7 @@
 
 <script>
 import { getAll, collect, hasCollect } from '../api/service';
-import { notify } from "../api/user";
+import {getUserInfo, notify} from "../api/user";
 
 export default {
   data() {
@@ -83,7 +83,7 @@ export default {
               this.$set(photographer, 'followed', false);
             }
           } else {
-            console.error('Error checking follow status:', response.data.msg);
+            this.$set(photographer, 'followed', false);
           }
         } catch (error) {
           console.error('Error checking follow status:', error);
@@ -92,12 +92,18 @@ export default {
     },
     async followPhotographer(email) {
       try {
+        const userInfo = await getUserInfo();
+        if (!userInfo || !userInfo.data || userInfo.data.code !== 1) {
+          this.$notify({ message: '未登录', type: 'error', offset: 100 });
+          setTimeout(() => this.$router.replace('/Login'), 1000);
+          return;
+        }
         const response = await collect(email);
         if (response.data.code === 1) {
           notify(this, "关注成功!", "success");
           this.updateFollowStatus(email, true);
         } else {
-          notify(this, "不能关注自己！", "error");
+          notify(this, "不能关注自己 !", "error");
         }
       } catch (error) {
         console.error('Error following photographer:', error);
