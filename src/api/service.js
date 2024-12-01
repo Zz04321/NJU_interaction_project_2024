@@ -22,7 +22,7 @@ export function getAll() {
 }
 
 export function getAllCollects() {
-  const url = `${API_BASE_URL}/service/getCollect`;
+  const url = `${API_BASE_URL}/service/getCollection`;
   return axios.get(url, {'Authorization': `${global.getToken()}`, 'Content-Type': 'application/json'});
 }
 
