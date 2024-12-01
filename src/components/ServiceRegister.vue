@@ -13,13 +13,13 @@
       <ul style="list-style:none; margin-top: 20px;">
         <li>
           <p>
-            <span>联系方式：</span>
+            <span>联系方式（电话）：</span>
             <el-input v-model="user.contact"></el-input>
           </p>
         </li>
         <li>
           <p>
-            <span>描述：</span>
+            <span>个人简介：</span>
             <el-input v-model="user.description"></el-input>
           </p>
         </li>
@@ -90,8 +90,16 @@ export default {
     },
 
     submit() {
+      if (!this.user.description) {
+        notify(this, "请填写个人简介", "warning");
+        return;
+      }
+      if (!this.user.contact) {
+        notify(this, "请填写联系方式", "warning");
+        return;
+      }
       if (!this.user.photo) {
-        notify(this, "请先上传图片再提交!", "warning");
+        notify(this, "请上传代表作品", "warning");
         return;
       }
       register(this.user.contact, this.user.description, this.user.photo)
