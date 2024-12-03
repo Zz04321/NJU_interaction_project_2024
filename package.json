@@ -17,6 +17,7 @@
     "mevcl": "^0.3.28",
     "vue": "^2.2.2",
     "vue-router": "^2.3.0",
+    "vue2-waterfall": "^3.0.1",
     "vuex": "^2.3.0",
     "vuex-router-sync": "^4.1.2"
   },

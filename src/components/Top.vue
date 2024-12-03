@@ -13,7 +13,7 @@
                         <li><a href="#templatemo_banner_slide">服务对接</a></li>
                         <li><a href="#templatemo_about">图片展</a></li>
                         <li><a href="#templatemo_events">活动</a></li>
-                        <!-- <li><a href="#templatemo_timeline">Timeline</a></li> -->
+<!--                         <li><a href="#templatemo_timeline">Timeline</a></li> -->
                         <!-- <li><a href="#templatemo_contact">Contact</a></li> -->
                         <li>
                             <a @click="f1" class="fff" style="cursor:pointer;">

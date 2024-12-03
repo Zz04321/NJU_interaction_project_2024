@@ -12,7 +12,7 @@ import Exhibition3 from '../pages/event2.vue'
 import Exhibition4 from '../pages/event4.vue'
 
 import UpdInfo from '../pages/UpdInfo.vue'
-import PhotoShowDetail from "../components/PhotoShowDetail.vue";
+import PhotoShowDetail from "../pages/PhotoShowDetail.vue";
 import ServicePage from "../components/ServicePage.vue";
 Vue.use(Router)
 
@@ -80,7 +80,6 @@ export default new Router({
     {
       path: '/ServicePage',
       component: ServicePage,
-    },
-
+    }
   ]
 })
