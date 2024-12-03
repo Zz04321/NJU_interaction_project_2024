@@ -3,11 +3,10 @@
     <main class="main-content">
       <div class="profile_nav">
         <div class="tab_wrapper applyIntoVCG">
-          <router-link to="/" class="button home">返回首页</router-link>
+          <router-link to="/ServicePage" class="button home">返回</router-link>
           <ul class="px_tabs">
-            <li><router-link to="/my-concern">我的关注</router-link></li>
+            <li><router-link to="/my-concern">关注列表</router-link></li>
           </ul>
-          <router-link to="/service/register" class="button application">申请提供摄影服务</router-link>
         </div>
       </div>
       <div class="recommend_users_container">
@@ -26,14 +25,14 @@
             <div class="bottom">
               <a class="name">{{ photographer.uname ? photographer.uname : 'default' }}</a>
               <span class="contact" @mouseover="showUserDescription = photographer.description" @mouseleave="showUserDescription = ''">
-            {{ showUserDescription === photographer.description ? photographer.description : '个人简介' }}
-          </span>
+                {{ showUserDescription === photographer.description ? photographer.description : '个人简介' }}
+              </span>
               <div class="button-container">
                 <a href="javascript:void(0)" class="button mini_follow follow"
                    :class="{ disabled: photographer.followed }"
-                   @click="followPhotographer(photographer.email)"
+                   @click="unfollowPhotographer(photographer.email)"
                    :disabled="photographer.followed">
-                  {{ photographer.followed ? '已关注' : '关注' }}
+                  {{'取消关注'}}
                 </a>
               </div>
             </div>
@@ -45,28 +44,25 @@
 </template>
 
 <script>
-import { getAll, collect, hasCollect } from '../api/service';
-import { getUserInfo, notify } from "../api/user";
+import { getAllCollects, cancelCollect } from '../api/service';
+import { notify } from "../api/user";
 
 export default {
   data() {
     return {
       photographers: [],
-      showUserDescription: '',
-      userDescription: ''
+      showUserDescription: ''
     };
   },
   mounted() {
     this.fetchPhotographers();
-    this.fetchUserDescription();
   },
   methods: {
     async fetchPhotographers() {
       try {
-        const response = await getAll();
+        const response = await getAllCollects();
         if (response.data.code === 1) {
           this.photographers = response.data.data;
-          await this.checkFollowStatus();
         } else {
           console.error('Error fetching photographers:', response.data.msg);
         }
@@ -74,55 +70,17 @@ export default {
         console.error('Error fetching photographers:', error);
       }
     },
-    async fetchUserDescription() {
+    async unfollowPhotographer(email) {
       try {
-        const userInfo = await getUserInfo();
-        if (userInfo.data.code === 1) {
-          this.userDescription = userInfo.data.data.description;
-        } else {
-          console.error('Error fetching user description:', userInfo.data.msg);
-        }
-      } catch (error) {
-        console.error('Error fetching user description:', error);
-      }
-    },
-    async checkFollowStatus() {
-      for (let photographer of this.photographers) {
-        try {
-          const response = await hasCollect(photographer.email);
-          if (response.data.code === 1) {
-            this.$set(photographer, 'followed', response.data.message === "已收藏");
-          } else {
-            this.$set(photographer, 'followed', false);
-          }
-        } catch (error) {
-          console.error('Error checking follow status:', error);
-        }
-      }
-    },
-    async followPhotographer(email) {
-      try {
-        const userInfo = await getUserInfo();
-        if (!userInfo || !userInfo.data || userInfo.data.code !== 1) {
-          this.$notify({ message: '未登录', type: 'error', offset: 100 });
-          setTimeout(() => this.$router.replace('/Login'), 1000);
-          return;
-        }
-        const response = await collect(email);
+        const response = await cancelCollect(email);
         if (response.data.code === 1) {
-          notify(this, "关注成功!", "success");
-          this.updateFollowStatus(email, true);
+          notify(this, "取消关注成功!", "success");
+          await this.fetchPhotographers();
         } else {
-          notify(this, "不能关注自己 !", "error");
+          console.error('Error unfollowing photographer:', response.data.msg);
         }
       } catch (error) {
-        console.error('Error following photographer:', error);
-      }
-    },
-    updateFollowStatus(email, status) {
-      const photographer = this.photographers.find(p => p.email === email);
-      if (photographer) {
-        this.$set(photographer, 'followed', status);
+        console.error('Error unfollowing photographer:', error);
       }
     }
   }
@@ -186,61 +144,51 @@ export default {
 .user_item .button.mini_follow {
   display: inline-block;
   padding: 5px 10px;
-  border: 1px solid #2196F3; /* Blue border */
-  background-color: transparent; /* Transparent background */
-  color: #2196F3; /* Blue text */
-  border-radius: 15px; /* More rounded corners */
+  border: 1px solid #2196F3;
+  background-color: transparent;
+  color: #2196F3;
+  border-radius: 15px;
   text-decoration: none;
   font-size: 12px;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
 .user_item .top:hover {
-  transform: scale(1.05); /* Slightly enlarge the image */
-  transition: transform 0.3s ease; /* Smooth transition */
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
 }
 
 .user_item .avatar_wrapper:hover .avatar {
-  transform: scale(1.1); /* Slightly enlarge the avatar */
-  transition: transform 0.3s ease; /* Smooth transition */
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
 }
+
 .user_item .button.mini_follow:hover {
-  background-color: #2196F3; /* Blue background on hover */
-  color: #fff; /* White text on hover */
+  background-color: #2196F3;
+  color: #fff;
 }
 
 .user_item .button.mini_follow.disabled {
   pointer-events: none;
   opacity: 0.6;
 }
-.bottom {
-  padding-top: 20px; /* Increase the distance between the username and the image */
-}
 
-.contact {
-  display: inline-block;
-  position: relative;
-  cursor: pointer;
-}
-
-.contact:hover {
-  color: #2196F3; /* Change color on hover */
-}
 .button.home {
-  background-color: #2196F3; /* Blue */
-  border-radius: 20px; /* More rounded corners */
+  background-color: #2196F3;
+  border-radius: 20px;
 }
 
 .button.home:hover {
-  background-color: #0b7dda; /* Darker Blue */
+  background-color: #0b7dda;
 }
 
 .button.application {
-  background-color: #4CAF50; /* Green */
-  border-radius: 20px; /* More rounded corners */
+  background-color: #4CAF50;
+  border-radius: 20px;
 }
 
 .button.application:hover {
-  background-color: #45a049; /* Darker Green */
+  background-color: #45a049;
 }
 
 .recommend_users_container {
@@ -249,8 +197,8 @@ export default {
 
 .recommend_users {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 每行显示五个资料卡 */
-  gap: 20px; /* 设置每个资料卡之间的间隙 */
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
 }
 
 .user_item {
@@ -276,7 +224,7 @@ export default {
   background-position: center;
   margin: -25px auto 10px;
   overflow: hidden;
-  border: 2px solid #e0e0e0; /* Optional: Add a border for better visibility */
+  border: 2px solid #e0e0e0;
 }
 
 .user_item .bottom {
@@ -311,7 +259,7 @@ export default {
 .user_item .button {
   display: inline-block;
   padding: 5px 10px;
-  background-color: #2196F3; /* Blue */
+  background-color: #2196F3;
   color: #fff;
   border-radius: 5px;
   text-decoration: none;
@@ -345,6 +293,6 @@ export default {
   border-radius: 50%;
   background-size: cover;
   background-position: center;
-  border: 2px solid rgba(255, 255, 255, 0.5); /* Optional: Add a border for better visibility */
+  border: 2px solid rgba(255, 255, 255, 0.5);
 }
 </style>
