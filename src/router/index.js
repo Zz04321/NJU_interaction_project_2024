@@ -99,7 +99,7 @@ export default new Router({
       component: ServicePage,
     },
     {
-      path: '/personal-info/:email',
+      path: '/personal-info',
       component: PersonalInfo,
       meta: {
         needLogin: true

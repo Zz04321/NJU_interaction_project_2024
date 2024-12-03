@@ -11,24 +11,29 @@
       </div>
       <div class="recommend_users_container">
         <div class="recommend_users">
-          <div class="sets_body">
-            <div class="user_item px_card medium no_badge" v-for="photographer in photographers" :key="photographer.email">
-              <div class="top">
+          <div class="user_item" v-for="photographer in photographers" :key="photographer.email">
+            <div class="top">
+              <router-link :to="{ path: '/personal-info', query: { photographer: JSON.stringify(photographer) } }">
                 <div class="representative_work" :style="{ backgroundImage: 'url(' + photographer.photo + ')' }"></div>
+              </router-link>
+              <router-link :to="{ path: '/personal-info', query: { photographer: JSON.stringify(photographer) } }">
                 <div class="avatar_wrapper">
                   <a class="avatar" :style="{ backgroundImage: 'url(' + photographer.headImg + ')' }"></a>
                 </div>
-              </div>
-              <div class="bottom">
-                <a class="name" :href="'https://500px.com.cn/community/user-details/' + photographer.email">{{ photographer.uname }}</a>
-                <p class="description">{{ photographer.description }}</p>
-                <span class="contact">Contact: {{ photographer.contact }}</span>
-                <div class="button-container">
-                  <a href="javascript:void(0)" class="button mini_follow follow"
-                     @click="unfollowPhotographer(photographer.email)">
-                    取消关注
-                  </a>
-                </div>
+              </router-link>
+            </div>
+            <div class="bottom">
+              <a class="name">{{ photographer.uname ? photographer.uname : 'default' }}</a>
+              <span class="contact" @mouseover="showUserDescription = photographer.description" @mouseleave="showUserDescription = ''">
+                {{ showUserDescription === photographer.description ? photographer.description : '个人简介' }}
+              </span>
+              <div class="button-container">
+                <a href="javascript:void(0)" class="button mini_follow follow"
+                   :class="{ disabled: photographer.followed }"
+                   @click="unfollowPhotographer(photographer.email)"
+                   :disabled="photographer.followed">
+                  {{'取消关注'}}
+                </a>
               </div>
             </div>
           </div>
@@ -45,7 +50,8 @@ import { notify } from "../api/user";
 export default {
   data() {
     return {
-      photographers: []
+      photographers: [],
+      showUserDescription: ''
     };
   },
   mounted() {
@@ -80,14 +86,9 @@ export default {
   }
 };
 </script>
+
 <style scoped>
-html, body, .page-container, .main-content {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
 .page-container {
-  background-color: #f7f8fa; /* Set the background color */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -143,18 +144,28 @@ html, body, .page-container, .main-content {
 .user_item .button.mini_follow {
   display: inline-block;
   padding: 5px 10px;
-  border: 1px solid #2196F3; /* Blue border */
-  background-color: transparent; /* Transparent background */
-  color: #2196F3; /* Blue text */
-  border-radius: 15px; /* More rounded corners */
+  border: 1px solid #2196F3;
+  background-color: transparent;
+  color: #2196F3;
+  border-radius: 15px;
   text-decoration: none;
   font-size: 12px;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.user_item .top:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+.user_item .avatar_wrapper:hover .avatar {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
 .user_item .button.mini_follow:hover {
-  background-color: #2196F3; /* Blue background on hover */
-  color: #fff; /* White text on hover */
+  background-color: #2196F3;
+  color: #fff;
 }
 
 .user_item .button.mini_follow.disabled {
@@ -163,21 +174,21 @@ html, body, .page-container, .main-content {
 }
 
 .button.home {
-  background-color: #2196F3; /* Blue */
-  border-radius: 20px; /* More rounded corners */
+  background-color: #2196F3;
+  border-radius: 20px;
 }
 
 .button.home:hover {
-  background-color: #0b7dda; /* Darker Blue */
+  background-color: #0b7dda;
 }
 
 .button.application {
-  background-color: #4CAF50; /* Green */
-  border-radius: 20px; /* More rounded corners */
+  background-color: #4CAF50;
+  border-radius: 20px;
 }
 
 .button.application:hover {
-  background-color: #45a049; /* Darker Green */
+  background-color: #45a049;
 }
 
 .recommend_users_container {
@@ -186,8 +197,8 @@ html, body, .page-container, .main-content {
 
 .recommend_users {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 每行显示五个资料卡 */
-  gap: 20px; /* 设置每个资料卡之间的间隙 */
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
 }
 
 .user_item {
@@ -213,7 +224,7 @@ html, body, .page-container, .main-content {
   background-position: center;
   margin: -25px auto 10px;
   overflow: hidden;
-  border: 2px solid #e0e0e0; /* Optional: Add a border for better visibility */
+  border: 2px solid #e0e0e0;
 }
 
 .user_item .bottom {
@@ -238,14 +249,7 @@ html, body, .page-container, .main-content {
   color: #999;
   margin-bottom: 10px;
 }
-.user_item {
-  background-color: #fff;
-  border: 1px solid transparent;
-  border-radius: 0; /* Changed to 0 to make the shape square */
-  overflow: hidden;
-  text-align: center;
-  box-sizing: border-box;
-}
+
 .user_item .button-container {
   display: flex;
   justify-content: center;
@@ -255,7 +259,7 @@ html, body, .page-container, .main-content {
 .user_item .button {
   display: inline-block;
   padding: 5px 10px;
-  background-color: #2196F3; /* Blue */
+  background-color: #2196F3;
   color: #fff;
   border-radius: 5px;
   text-decoration: none;
@@ -289,6 +293,6 @@ html, body, .page-container, .main-content {
   border-radius: 50%;
   background-size: cover;
   background-position: center;
-  border: 2px solid rgba(255, 255, 255, 0.5); /* Optional: Add a border for better visibility */
+  border: 2px solid rgba(255, 255, 255, 0.5);
 }
 </style>

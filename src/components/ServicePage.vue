@@ -12,30 +12,29 @@
       </div>
       <div class="recommend_users_container">
         <div class="recommend_users">
-          <div class="sets_body">
-            <div class="user_item px_card medium no_badge" v-for="photographer in photographers" :key="photographer.email">
-              <div class="top">
-                <router-link :to="'/personal-info/' + photographer.email">
-                  <div class="representative_work" :style="{ backgroundImage: 'url(' + photographer.photo + ')' }"></div>
-                </router-link>
-                <router-link :to="'/personal-info/' + photographer.email">
-                  <div class="avatar_wrapper">
-                    <a class="avatar" :style="{ backgroundImage: 'url(' + photographer.headImg + ')' }"></a>
-                  </div>
-                </router-link>
-              </div>
-              <div class="bottom">
-                <a class="name" >{{ photographer.uname }}</a>
-                <p class="description">{{ photographer.description }}</p>
-                <span class="contact">Contact: {{ photographer.contact }}</span>
-                <div class="button-container">
-                  <a href="javascript:void(0)" class="button mini_follow follow"
-                     :class="{ disabled: photographer.followed }"
-                     @click="followPhotographer(photographer.email)"
-                     :disabled="photographer.followed">
-                    {{ photographer.followed ? '已关注' : '关注' }}
-                  </a>
+          <div class="user_item" v-for="photographer in photographers" :key="photographer.email">
+            <div class="top">
+              <router-link :to="{ path: '/personal-info', query: { photographer: JSON.stringify(photographer) } }">
+                <div class="representative_work" :style="{ backgroundImage: 'url(' + photographer.photo + ')' }"></div>
+              </router-link>
+              <router-link :to="{ path: '/personal-info', query: { photographer: JSON.stringify(photographer) } }">
+                <div class="avatar_wrapper">
+                  <a class="avatar" :style="{ backgroundImage: 'url(' + photographer.headImg + ')' }"></a>
                 </div>
+              </router-link>
+            </div>
+            <div class="bottom">
+              <a class="name">{{ photographer.uname ? photographer.uname : 'default' }}</a>
+              <span class="contact" @mouseover="showUserDescription = photographer.description" @mouseleave="showUserDescription = ''">
+            {{ showUserDescription === photographer.description ? photographer.description : '个人简介' }}
+          </span>
+              <div class="button-container">
+                <a href="javascript:void(0)" class="button mini_follow follow"
+                   :class="{ disabled: photographer.followed }"
+                   @click="followPhotographer(photographer.email)"
+                   :disabled="photographer.followed">
+                  {{ photographer.followed ? '已关注' : '关注' }}
+                </a>
               </div>
             </div>
           </div>
@@ -47,16 +46,19 @@
 
 <script>
 import { getAll, collect, hasCollect } from '../api/service';
-import {getUserInfo, notify} from "../api/user";
+import { getUserInfo, notify } from "../api/user";
 
 export default {
   data() {
     return {
-      photographers: []
+      photographers: [],
+      showUserDescription: '',
+      userDescription: ''
     };
   },
   mounted() {
     this.fetchPhotographers();
+    this.fetchUserDescription();
   },
   methods: {
     async fetchPhotographers() {
@@ -72,16 +74,24 @@ export default {
         console.error('Error fetching photographers:', error);
       }
     },
+    async fetchUserDescription() {
+      try {
+        const userInfo = await getUserInfo();
+        if (userInfo.data.code === 1) {
+          this.userDescription = userInfo.data.data.description;
+        } else {
+          console.error('Error fetching user description:', userInfo.data.msg);
+        }
+      } catch (error) {
+        console.error('Error fetching user description:', error);
+      }
+    },
     async checkFollowStatus() {
       for (let photographer of this.photographers) {
         try {
           const response = await hasCollect(photographer.email);
           if (response.data.code === 1) {
-            if(response.data.message==="已收藏"){
-              this.$set(photographer, 'followed', true);
-            }else{
-              this.$set(photographer, 'followed', false);
-            }
+            this.$set(photographer, 'followed', response.data.message === "已收藏");
           } else {
             this.$set(photographer, 'followed', false);
           }
@@ -184,7 +194,15 @@ export default {
   font-size: 12px;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+.user_item .top:hover {
+  transform: scale(1.05); /* Slightly enlarge the image */
+  transition: transform 0.3s ease; /* Smooth transition */
+}
 
+.user_item .avatar_wrapper:hover .avatar {
+  transform: scale(1.1); /* Slightly enlarge the avatar */
+  transition: transform 0.3s ease; /* Smooth transition */
+}
 .user_item .button.mini_follow:hover {
   background-color: #2196F3; /* Blue background on hover */
   color: #fff; /* White text on hover */
@@ -194,7 +212,19 @@ export default {
   pointer-events: none;
   opacity: 0.6;
 }
+.bottom {
+  padding-top: 20px; /* Increase the distance between the username and the image */
+}
 
+.contact {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+}
+
+.contact:hover {
+  color: #2196F3; /* Change color on hover */
+}
 .button.home {
   background-color: #2196F3; /* Blue */
   border-radius: 20px; /* More rounded corners */
