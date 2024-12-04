@@ -4,12 +4,10 @@
     <header>
       <NewTop></NewTop>
     </header>
-
+    <!-- 内容区 -->
     <div class="content">
-      <!-- 左侧内容区（瀑布流展示） -->
-      <div class="left-container">
         <div class="waterfall-container" @scroll="onScroll">
-          <Waterfall>
+          <Waterfall class="waterfall-container" @scroll="onScroll">
             <WaterfallItem v-for="(item, index) in list" :key="index">
               <div class="waterfall-item-content">
                 <ImageCard title="Love" description="Love you" author="Asuka" :src="item.src"></ImageCard>
@@ -17,7 +15,6 @@
             </WaterfallItem>
           </Waterfall>
         </div>
-      </div>
     </div>
   </div>
 </template>
@@ -63,7 +60,7 @@ export default {
         setTimeout(() => {
           this.list.push(...this.generateRandomImages(10));
           this.loading = false;
-        }, 500); // 模拟加载延迟
+        }, 1000); // 模拟加载延迟
       }
     },
   },
@@ -78,54 +75,27 @@ export default {
   height: 100vh;
 }
 
-.navbar-controls button {
-  margin-left: 10px;
-  padding: 5px 10px;
-  background-color: #555;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.navbar-controls button:hover {
-  background-color: #777;
-}
-
 /* 内容区 */
 .content {
   display: flex;
   flex: 1;
   overflow: hidden;
-}
-
-/* 左侧内容区 */
-.left-container {
-  //flex: 3;
-  display: flex;
   flex-direction: column;
   background-color: #f8f8f8;
-  overflow: hidden; /* 防止多余空白 */
   padding: 10px;
-  //align-items: center;
   justify-content: center;
   align-items: center; /* 垂直方向居中 */
   width: 100%;
 }
 
 .waterfall-container {
-  //flex: 1;
   overflow-y: auto;
-  //padding: 20px; /* 增加左右间距 */
   width: 100%;
+  border-radius: 15px;
 }
 
 .waterfall-item-content {
   margin: 10px;
-}
-
-.waterfall-item-image {
-  width: 100%;
-  height: auto;
+  border-radius: 15px;
 }
 </style>

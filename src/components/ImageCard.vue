@@ -50,6 +50,7 @@ export default {
   position: relative;
   display: inline-block;
   overflow: hidden;
+  border-radius: 15px;
 }
 
 .image {
