@@ -1,12 +1,8 @@
 <template>
   <div class="main-container">
     <!-- 顶部导航栏 -->
-    <header class="navbar">
-      <div class="navbar-title">Photography Platform</div>
-      <div class="navbar-controls">
-        <button @click="refreshImages">刷新</button>
-        <button>登录</button>
-      </div>
+    <header>
+      <NewTop></NewTop>
     </header>
 
     <div class="content">
@@ -16,21 +12,10 @@
           <Waterfall>
             <WaterfallItem v-for="(item, index) in list" :key="index">
               <div class="waterfall-item-content">
-                <img :src="item.src" alt="" class="waterfall-item-image"/>
+                <ImageCard title="Love" description="Love you" author="Asuka" :src="item.src"></ImageCard>
               </div>
             </WaterfallItem>
           </Waterfall>
-        </div>
-      </div>
-
-      <!-- 右侧用户信息栏 -->
-      <div class="user-info-container">
-        <div class="user-info-card">
-          <img :src="user.avatar" alt="用户头像" class="user-avatar" />
-          <div class="user-details">
-            <p class="user-name">{{ user.name }}</p>
-            <p class="user-bio">{{ user.bio }}</p>
-          </div>
         </div>
       </div>
     </div>
@@ -39,20 +24,19 @@
 
 <script>
 import { Waterfall, WaterfallItem } from "vue2-waterfall";
+import NewTop  from "../components/NewTop.vue";
+import ImageCard  from "../components/ImageCard.vue";
 export default {
   components: {
     Waterfall,
     WaterfallItem,
+    NewTop,
+    ImageCard
   },
   data() {
     return {
       list: [],
       loading: false,
-      user: {
-        name: "John Doe",
-        avatar: "https://via.placeholder.com/100",
-        bio: "A passionate photographer and nature lover.",
-      },
     };
   },
   mounted() {
@@ -61,9 +45,9 @@ export default {
   methods: {
     generateRandomImages(count) {
       const images = [];
-      const width = 350; // 固定宽度
+      const width = 250; // 固定宽度
       for (let i = 0; i < count; i++) {
-        const height = Math.floor(Math.random() * (600 - 300 + 1)) + 300; // 随机高度
+        const height = Math.floor(Math.random() * (400 - 300 + 1)) + 200; // 随机高度
         images.push({ src: `https://picsum.photos/${width}/${height}` });
       }
       return images;
@@ -82,9 +66,6 @@ export default {
         }, 500); // 模拟加载延迟
       }
     },
-    refreshImages() {
-      this.list = this.generateRandomImages(20);
-    },
   },
 };
 </script>
@@ -95,23 +76,6 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100vh;
-}
-
-/* 顶部导航栏 */
-.navbar {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #333;
-  color: white;
-  //padding: 10px 20px;
-  font-size: 18px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.navbar-title {
-  font-weight: bold;
 }
 
 .navbar-controls button {
@@ -146,7 +110,7 @@ export default {
   //align-items: center;
   justify-content: center;
   align-items: center; /* 垂直方向居中 */
-  width: 80%;
+  width: 100%;
 }
 
 .waterfall-container {
@@ -163,44 +127,5 @@ export default {
 .waterfall-item-image {
   width: 100%;
   height: auto;
-}
-
-/* 右侧用户信息栏 */
-.user-info-container {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #fff;
-  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
-}
-
-.user-info-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  padding: 20px;
-  background-color: #fafafa;
-}
-
-.user-avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  margin-bottom: 10px;
-}
-
-.user-name {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.user-bio {
-  font-size: 14px;
-  color: #666;
 }
 </style>
