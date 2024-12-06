@@ -8,9 +8,16 @@
     <div class="content" @scroll="onScroll">
         <div class="waterfall-container">
           <Waterfall class="waterfall-container">
-            <WaterfallItem v-for="(item, index) in list" :key="index">
+            <WaterfallItem v-for="(item, index) in list" :key="index" @click.native="viewPhotoDetail(item)">
               <div class="waterfall-item-content">
-                <ImageCard title="Love" description="Love you" author="Asuka" :src="item.src"></ImageCard>
+                <ImageCard
+                  :title="item.title"
+                  :theme="item.theme"
+                  :description="item.description"
+                  :uname="item.uname"
+                  :user-email="item.userEmail"
+                  :url="item.url"
+                />
               </div>
             </WaterfallItem>
           </Waterfall>
@@ -23,6 +30,9 @@
 import { Waterfall, WaterfallItem } from "vue2-waterfall";
 import NewTop  from "../components/NewTop.vue";
 import ImageCard  from "../components/ImageCard.vue";
+import { getAll, getAllByEmail, getAllByTheme} from "../api/photo";
+import {list} from "nightwatch/lib/core/queue";
+
 export default {
   components: {
     Waterfall,
@@ -34,21 +44,23 @@ export default {
     return {
       list: [],
       loading: false,
+      page: 0,
+      limit: 1,
+      hasMore: true,
     };
   },
   mounted() {
-    this.list = this.generateRandomImages(50);
+    this.fetchAllPhotos();
   },
   methods: {
-    generateRandomImages(count) {
-      const images = [];
-      const width = 250; // 固定宽度
-      for (let i = 0; i < count; i++) {
-        const height = Math.floor(Math.random() * (400 - 300 + 1)) + 200; // 随机高度
-        images.push({ src: `https://picsum.photos/${width}/${height}` });
-      }
-      return images;
+    fetchAllPhotos() {
+      // 真实从后端获取图片
+      console.log("fetchAllPhotos")
+      getAll(this.page, this.limit).then((res) => {
+        this.list=res.data.data;
+      })
     },
+
     onScroll() {
       const container = document.querySelector(".waterfall-container");
       if (
@@ -58,10 +70,14 @@ export default {
       ) {
         this.loading = true;
         setTimeout(() => {
-          this.list.push(...this.generateRandomImages(10));
+          this.list.push(...this.fetchAllPhotos());
           this.loading = false;
         }, 1000); // 模拟加载延迟
       }
+    },
+
+    viewPhotoDetail(item) {
+      this.$router.push({ name: "PhotoDetail", params: { image: item } });
     },
   },
 };
