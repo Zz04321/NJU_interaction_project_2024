@@ -5,9 +5,9 @@
       <NewTop></NewTop>
     </header>
     <!-- 内容区 -->
-    <div class="content">
-        <div class="waterfall-container" @scroll="onScroll">
-          <Waterfall class="waterfall-container" @scroll="onScroll">
+    <div class="content" @scroll="onScroll">
+        <div class="waterfall-container">
+          <Waterfall class="waterfall-container">
             <WaterfallItem v-for="(item, index) in list" :key="index">
               <div class="waterfall-item-content">
                 <ImageCard title="Love" description="Love you" author="Asuka" :src="item.src"></ImageCard>
@@ -37,7 +37,7 @@ export default {
     };
   },
   mounted() {
-    this.list = this.generateRandomImages(20);
+    this.list = this.generateRandomImages(50);
   },
   methods: {
     generateRandomImages(count) {
@@ -79,19 +79,22 @@ export default {
 .content {
   display: flex;
   flex: 1;
-  overflow: hidden;
+  overflow-y: auto;
   flex-direction: column;
   background-color: #f8f8f8;
-  padding: 10px;
   justify-content: center;
   align-items: center; /* 垂直方向居中 */
   width: 100%;
+  padding: 10px 20px 10px 10px;
+  box-sizing: border-box
 }
 
 .waterfall-container {
-  overflow-y: auto;
+  //overflow-y: auto;
   width: 100%;
   border-radius: 15px;
+  padding-right: 10px;
+  box-sizing: border-box
 }
 
 .waterfall-item-content {
