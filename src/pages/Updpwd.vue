@@ -2,7 +2,7 @@
     <body>
     <NewTop></NewTop>
     <div id="box" style="margin-top: 150px">
-        <h1 style="color:white">修改密码Update</h1>
+        <h1 style="color:white">修改密码</h1>
         <div class="input">
             <div class="text">
                 <el-input type="text" v-model="email" placeholder="请输入账号/邮箱"></el-input>
@@ -31,7 +31,7 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        background-image: url("../assets/banner-home3.jpg");
+        background-image: url("../assets/banner-home2.jpg");
         background-size: cover;
         background-position: 100% 100%;
         background-repeat: no-repeat;
