@@ -20,7 +20,7 @@
         <li>
           <p>
             <span>个人简介：</span>
-            <el-input v-model="user.description" maxlength="200"></el-input>
+            <textarea v-model="user.description" maxlength="200" rows="4" class="description-textarea"></textarea>
           </p>
         </li>
       </ul>
@@ -50,7 +50,7 @@ export default {
   },
   computed: {
     isPhoneNumberValid() {
-      const phoneRegex = /^[0-9]{10,15}$/;
+      const phoneRegex = /^[0-9]{11}$/;
       return phoneRegex.test(this.user.contact);
     }
   },
@@ -99,8 +99,8 @@ export default {
         notify(this, "请填写个人简介", "warning");
         return;
       }
-      if (this.user.description.length > 200) {
-        notify(this, "个人简介不能超过200字", "warning");
+      if (this.user.description.length > 100) {
+        notify(this, "个人简介不能超过100个字", "warning");
         return;
       }
       if (!this.user.contact) {
@@ -260,5 +260,21 @@ button{
 
 .logout-btn:hover {
   transform: scale(1.1);
+}
+
+.description-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  resize: vertical; /* 允许垂直方向调整大小 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s;
+}
+
+.description-textarea:focus {
+  border-color: #2196F3; /* 聚焦时边框颜色 */
+  outline: none;
 }
 </style>
