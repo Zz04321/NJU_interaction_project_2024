@@ -20,7 +20,7 @@
         <li>
           <p>
             <span>个人简介：</span>
-            <el-input v-model="user.description"></el-input>
+            <el-input v-model="user.description" maxlength="200"></el-input>
           </p>
         </li>
       </ul>
@@ -47,6 +47,12 @@ export default {
       pic: null,
       loading: false
     };
+  },
+  computed: {
+    isPhoneNumberValid() {
+      const phoneRegex = /^[0-9]{10,15}$/;
+      return phoneRegex.test(this.user.contact);
+    }
   },
   methods: {
     saveImg() {
@@ -88,14 +94,21 @@ export default {
         this.user.photo = reader.result.toString();
       };
     },
-
     submit() {
       if (!this.user.description) {
         notify(this, "请填写个人简介", "warning");
         return;
       }
+      if (this.user.description.length > 200) {
+        notify(this, "个人简介不能超过200字", "warning");
+        return;
+      }
       if (!this.user.contact) {
         notify(this, "请填写联系方式", "warning");
+        return;
+      }
+      if (!this.isPhoneNumberValid) {
+        notify(this, "请填写有效的电话号码", "warning");
         return;
       }
       if (!this.user.photo) {
@@ -108,7 +121,7 @@ export default {
             notify(this, "注册成功!", "success");
             this.$router.push("/");
           } else {
-            notify(this,  "已注册过，不能重复注册", "error");
+            notify(this, "已注册过，不能重复注册", "error");
           }
         })
         .catch(() => {

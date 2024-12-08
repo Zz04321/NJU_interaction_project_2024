@@ -165,16 +165,17 @@ export default {
   font-size: 18px;
   font-weight: bold;
   text-decoration: none;
-  color: #333;
+  color: #fff;
   padding: 10px 20px;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+  border-radius: 15px; /* More rounded corners */
+  background-color: #ffcc80; /* Softer orange background */
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .px_tabs a:hover {
-  background-color: #e0e0e0;
+  background-color: #ffb74d; /* Darker soft orange on hover */
+  transform: scale(1.05); /* Slightly enlarge on hover */
 }
-
 .button {
   padding: 10px 20px;
   border-radius: 5px;
