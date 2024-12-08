@@ -13,16 +13,10 @@
         <span>Explore</span>
       </nav>
         <div class="upload-button-container">
-          <button class="upload-button" @click="triggerFileInput">
-            <i class="upload-icon"></i>
-            Upload
-          </button>
-          <input
-            type="file"
-            class="upload-input"
-            ref="fileInput"
-            @change="upload"
-            accept="image/*"
+          <button @click="openModal">Upload</button>
+          <UploadModal :isVisible="isModalVisible"
+                       @close="closeModal"
+                       @upload="refresh"
           />
         </div>
     </div>
@@ -51,16 +45,16 @@
 import { Waterfall, WaterfallItem } from "vue2-waterfall";
 import NewTop  from "../components/Top.vue";
 import ImageCard  from "../components/ImageCard.vue";
+import UploadModal from "../components/UploadModal.vue";
 import {fetchPhotos, uploadPhoto, fetchPhotosByEmail, fetchPhotosByTheme} from "../api/photo";
-import {uploadImage} from "../api/user";
-import {notify} from "../api/user";
 
 export default {
   components: {
     Waterfall,
     WaterfallItem,
     NewTop,
-    ImageCard
+    ImageCard,
+    UploadModal,
   },
   data() {
     return {
@@ -69,6 +63,7 @@ export default {
       page: 0,
       limit: 10,
       hasMore: true,
+      isModalVisible: false,
     };
   },
   mounted() {
@@ -117,49 +112,19 @@ export default {
       this.$router.push({ name: "PhotoDetail", params: { image: item } });
     },
 
-    upload() {
-      const fileInput = this.$refs.fileInput;
-      if (fileInput && fileInput.files.length > 0) {
-        let url = "";
-        const file = fileInput.files[0];
-        uploadImage(file)
-          .then((imageResponse) => {
-            // 获取上传的图片 URL
-            url = imageResponse.data.data;
-            console.log("Upload image success.");
-            // 调用 uploadPhoto，并确保顺序正确
-            return uploadPhoto(url, "hahaha", "NATURE");
-          })
-          .then((photoResponse) => {
-            if (photoResponse.data.code === 1) {
-              notify(this,"Upload photo success.", "success");
-              console.log("Upload photo success.");
-            } else {
-              notify(this,"Upload photo failed.", "error");
-              console.log("Upload photo failed.");
-            }
-          })
-          .catch((error) => {
-            // 统一错误处理
-            notify(this, "Upload failed. Please try again.", "error");
-            console.error("Error uploading file:", error);
-          })
-          .finally(() => {
-            // 确保文件输入框被清空
-            fileInput.value = "";
-          });
-      } else {
-        notify("Please select a file to upload.", "warning");
-      }
+    refresh() {
+      this.list = [];
+      this.page = 0;
+      this.hasMore = true;
+      this.initPhotos()
     },
 
-    triggerFileInput() {
-      const fileInput = this.$refs.fileInput;
-      if (fileInput) {
-        fileInput.click();
-      }
-    }
-
+    openModal() {
+      this.isModalVisible = true; // 打开弹窗
+    },
+    closeModal() {
+      this.isModalVisible = false; // 关闭弹窗
+    },
   },
 };
 </script>
@@ -180,7 +145,7 @@ export default {
   height: 10%;
   padding: 0 20px;
   position: relative;
-  margin-top: 100px;
+  margin-top: 95px;
 }
 
 
@@ -197,7 +162,7 @@ export default {
   padding: 10px 20px 10px 10px;
   box-sizing: border-box;
   position: relative;
-  padding-top: 80px;
+  padding-top: 85px;
 }
 
 .waterfall-container {
