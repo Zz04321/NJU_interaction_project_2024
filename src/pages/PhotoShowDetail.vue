@@ -16,7 +16,7 @@
           <button @click="openModal">Upload</button>
           <UploadModal :isVisible="isModalVisible"
                        @close="closeModal"
-                       @upload="refresh"
+                       @uploaded="refresh"
           />
         </div>
     </div>
@@ -115,7 +115,7 @@ export default {
     refresh() {
       this.list = [];
       this.page = 0;
-      this.hasMore = true;
+      this.isModalVisible = false;
       this.initPhotos()
     },
 
@@ -181,47 +181,4 @@ export default {
 .upload-button-container {
    position: relative;
  }
-
-/* 上传按钮样式 */
-.upload-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px; /* 图标和文字之间的间距 */
-  padding: 10px 20px;
-  border: 1px solid #000;
-  border-radius: 20px;
-  background-color: #fff;
-  color: #000;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.upload-button:hover {
-  background-color: #000;
-  color: #fff;
-}
-
-/* 上传图标样式 */
-.upload-icon {
-  width: 16px;
-  height: 16px;
-  display: inline-block;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-upload'%3E%3Cpath d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'%3E%3C/path%3E%3Cpolyline points='17 8 12 3 7 8'%3E%3C/polyline%3E%3Cline x1='12' y1='3' x2='12' y2='15'%3E%3C/line%3E%3C/svg%3E")
-  no-repeat center center;
-  background-size: contain;
-}
-
-/* 隐藏文件输入框 */
-.upload-input {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-}
 </style>

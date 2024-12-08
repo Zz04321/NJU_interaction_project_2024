@@ -6,7 +6,9 @@
         <div class="header-icon">
           <img src="upload-icon.svg" alt="Upload" />
         </div>
-        <h2>Upload</h2>
+        <div>
+          <h2>Upload</h2>
+        </div>
         <button class="close-button" @click="cancel">×</button>
       </div>
 
@@ -51,7 +53,7 @@
             <img src="cloud-upload-icon.svg" alt="Upload Icon" />
           </div>
           <p class="upload-title">Drag files to upload</p>
-          <button class="upload-button" @click="triggerFileInput">Add photos</button>
+          <button class="upload-button" @click="confirmUpload">Add photos</button>
           <p class="upload-restriction">JPEG file types only. Maximum image size 200mb</p>
           <input
             type="file"
@@ -100,6 +102,7 @@ export default {
       }
     },
     cancel() {
+      // console.log("cancel");
       this.$emit("close");
     },
     confirmUpload() {
@@ -125,8 +128,8 @@ export default {
         })
         .then(() => {
           alert("Upload successful!");
-          this.$emit("close");
-          this.$emit("refresh"); // 通知父组件刷新列表
+          // this.$emit("close");
+          this.$emit("uploaded"); // 通知父组件刷新列表
         })
         .catch((error) => {
           console.error("Upload failed", error);
