@@ -6,7 +6,7 @@
           <router-link to="/ServicePage" class="button home">返回</router-link>
           <ul class="px_tabs">
             <li><router-link to="/my-concern">关注列表</router-link></li>
-          </ul>
+          </ul>gi
         </div>
       </div>
       <div class="recommend_users_container">
