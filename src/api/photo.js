@@ -8,7 +8,7 @@ export function uploadPhoto(photoUrl, description, theme) {
   const url = `${API_BASE_URL}/photo/add`;
 
   return axios.post(url, {
-    url: description,
+    url: photoUrl,
     description: description,
     theme: theme,
   }, {

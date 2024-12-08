@@ -132,16 +132,16 @@ export default {
           })
           .then((photoResponse) => {
             if (photoResponse.data.code === 1) {
-              notify("Upload photo success.", "success");
+              notify(this,"Upload photo success.", "success");
               console.log("Upload photo success.");
             } else {
-              notify("Upload photo failed.", "error");
+              notify(this,"Upload photo failed.", "error");
               console.log("Upload photo failed.");
             }
           })
           .catch((error) => {
             // 统一错误处理
-            notify("Upload failed. Please try again.", "error");
+            notify(this, "Upload failed. Please try again.", "error");
             console.error("Error uploading file:", error);
           })
           .finally(() => {
