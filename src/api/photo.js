@@ -4,17 +4,18 @@ import global from './global.vue';
 const API_BASE_URL = global.url;
 
 // 上传照片api
-export function uploadImage(file) {
-  const url = `${API_BASE_URL}/image/upload`;
-  let bodyFormData = new FormData();
-  bodyFormData.append('file', file);
+export function uploadPhoto(photoUrl, description, theme) {
+  const url = `${API_BASE_URL}/photo/add`;
 
-  return axios.post(url, bodyFormData, {
-    headers: {
-      'Authorization': `${global.getToken()}`,
-      'Content-Type': 'multipart/form-data'
+  return axios.post(url, {
+    url: description,
+    description: description,
+    theme: theme,
+  }, {
+    headers:{
+      'Authorization': `${global.getToken()}`
     }
-  });
+  })
 }
 
 export function fetchPhotos(page, limit) {
