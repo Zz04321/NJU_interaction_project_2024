@@ -1,9 +1,22 @@
 <template>
   <div class="main-container">
     <!-- 顶部导航栏 -->
-    <header>
+    <div class="bar">
       <NewTop></NewTop>
-    </header>
+    </div>
+    <!-- 中间导航栏 -->
+    <div class="middle-bar">
+      <nav>
+        <span>Daily dose</span>
+        <span>Following</span>
+        <span class="active">For You</span>
+        <span>Explore</span>
+      </nav>
+      <div class="tools">
+        <button>Slide show</button>
+        <button>Layout</button>
+      </div>
+    </div>
     <!-- 内容区 -->
     <div class="content" @scroll="onScroll">
         <div class="waterfall-container">
@@ -27,7 +40,7 @@
 
 <script>
 import { Waterfall, WaterfallItem } from "vue2-waterfall";
-import NewTop  from "../components/NewTop.vue";
+import NewTop  from "../components/Top.vue";
 import ImageCard  from "../components/ImageCard.vue";
 import {fetchPhotos, fetchPhotosByEmail, fetchPhotosByTheme} from "../api/photo";
 import {list} from "nightwatch/lib/core/queue";
@@ -67,6 +80,9 @@ export default {
       fetchPhotos(this.page, this.limit).then((res) => {
         console.log(res.data)
         this.list.push(...res.data.data)
+        if (res.data.data.length < this.limit || this.list.length >= 50) {
+          this.hasMore = false;
+        }
       })
       console.log(this.list.length)
       this.page++;
@@ -77,7 +93,7 @@ export default {
       if (
         container.scrollHeight - container.scrollTop <=
         container.clientHeight + 100 &&
-        !this.loading
+        !this.loading && this.hasMore
       ) {
         this.loading = true;
         setTimeout(() => {
@@ -102,6 +118,14 @@ export default {
   height: 100vh;
 }
 
+.bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
 /* 内容区 */
 .content {
   display: flex;
@@ -113,7 +137,9 @@ export default {
   align-items: center; /* 垂直方向居中 */
   width: 100%;
   padding: 10px 20px 10px 10px;
-  box-sizing: border-box
+  box-sizing: border-box;
+  margin-top: 80px;
+  height: calc(100vh - 80px);
 }
 
 .waterfall-container {
@@ -121,7 +147,7 @@ export default {
   width: 100%;
   border-radius: 15px;
   padding-right: 10px;
-  box-sizing: border-box
+  height: 100%;
 }
 
 .waterfall-item-content {
