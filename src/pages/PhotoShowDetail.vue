@@ -11,13 +11,12 @@
             <WaterfallItem v-for="(item, index) in list" :key="index" @click.native="viewPhotoDetail(item)">
               <div class="waterfall-item-content">
                 <ImageCard
+                  :url="item.url"
+                  :description="item.description"
                   :title="item.title"
                   :theme="item.theme"
-                  :description="item.description"
                   :uname="item.uname"
-                  :user-email="item.userEmail"
-                  :url="item.url"
-                />
+                ></ImageCard>
               </div>
             </WaterfallItem>
           </Waterfall>
@@ -30,7 +29,7 @@
 import { Waterfall, WaterfallItem } from "vue2-waterfall";
 import NewTop  from "../components/NewTop.vue";
 import ImageCard  from "../components/ImageCard.vue";
-import { getAll, getAllByEmail, getAllByTheme} from "../api/photo";
+import {fetchPhotos, fetchPhotosByEmail, fetchPhotosByTheme} from "../api/photo";
 import {list} from "nightwatch/lib/core/queue";
 
 export default {
@@ -45,20 +44,32 @@ export default {
       list: [],
       loading: false,
       page: 0,
-      limit: 1,
+      limit: 10,
       hasMore: true,
     };
   },
   mounted() {
-    this.fetchAllPhotos();
+    this.initPhotos()
   },
   methods: {
+    initPhotos() {
+      console.log("initPhotos")
+      fetchPhotos(0, 30).then((res)=>{
+        this.list.push(...res.data.data)
+      })
+      this.page += (30 / this.limit)
+    },
+
     fetchAllPhotos() {
       // 真实从后端获取图片
-      console.log("fetchAllPhotos")
-      getAll(this.page, this.limit).then((res) => {
-        this.list=res.data.data;
+      console.log("fetchPhotos")
+      console.log(this.page, this.limit)
+      fetchPhotos(this.page, this.limit).then((res) => {
+        console.log(res.data)
+        this.list.push(...res.data.data)
       })
+      console.log(this.list.length)
+      this.page++;
     },
 
     onScroll() {
@@ -70,7 +81,7 @@ export default {
       ) {
         this.loading = true;
         setTimeout(() => {
-          this.list.push(...this.fetchAllPhotos());
+          this.fetchAllPhotos();
           this.loading = false;
         }, 1000); // 模拟加载延迟
       }

@@ -4,11 +4,11 @@
       <button @click="goBack">返回</button>
     </header>
     <div class="image-detail-content">
-      <img :src="image.url" alt="Image" class="image-detail-img" />
+      <img :src="url" alt="Image" class="image-detail-img" />
       <div class="image-detail-info">
-        <h2>{{ image.title }}</h2>
-        <p>{{ image.description }}</p>
-        <p>作者: {{ image.author }}</p>
+        <h2>{{ title }}</h2>
+        <p>{{ description }}</p>
+        <p>作者: {{ author }}</p>
       </div>
     </div>
   </div>
@@ -16,12 +16,7 @@
 
 <script>
 export default {
-  props: {
-    image: {
-      type: Object,
-      required: true,
-    },
-  },
+  props: ['url', 'title', 'description', 'author'],
   methods: {
     goBack() {
       this.$router.go(-1); // 返回上一页

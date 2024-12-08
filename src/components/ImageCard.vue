@@ -24,15 +24,7 @@ export default {
       type: String,
       required: true
     },
-    userEmail: {
-      type: String,
-      required: true
-    },
     description: {
-      type: String,
-      required: true
-    },
-    theme: {
       type: String,
       required: true
     },

@@ -17,8 +17,8 @@ export function uploadImage(file) {
   });
 }
 
-export function getAll(page, limit) {
-  const url = `${API_BASE_URL}/photo/getAll`;
+export function fetchPhotos(page, limit) {
+  const url = `${API_BASE_URL}/photo/fetchPhotos`;
   return axios.post(url, {}, {
     params: {
       page: page,
@@ -27,8 +27,8 @@ export function getAll(page, limit) {
   });
 }
 
-export function getAllByEmail(email, page, limit) {
-  const url = `${API_BASE_URL}/photo/getAllByEmail`;
+export function fetchPhotosByEmail(email, page, limit) {
+  const url = `${API_BASE_URL}/photo/fetchPhotosByEmail`;
   return axios.post(url, {}, {
     params: {
       email: email,
@@ -38,8 +38,8 @@ export function getAllByEmail(email, page, limit) {
   });
 }
 
-export function getAllByTheme(theme, page, limit) {
-  const url = `${API_BASE_URL}/photo/getAllByTheme`;
+export function fetchPhotosByTheme(theme, page, limit) {
+  const url = `${API_BASE_URL}/photo/fetchPhotosByTheme`;
   return axios.post(url, {}, {
     params: {
       theme: theme,
