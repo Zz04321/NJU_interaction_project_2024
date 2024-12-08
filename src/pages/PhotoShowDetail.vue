@@ -1,18 +1,18 @@
 <template>
   <div class="main-container">
     <!-- 顶部导航栏 -->
-    <div class="bar">
+    <div class="top-bar">
       <NewTop></NewTop>
     </div>
-    <!-- 中间导航栏 -->
+<!--     中间导航栏 -->
     <div class="middle-bar">
       <nav>
         <span>Daily dose</span>
         <span>Following</span>
-        <span class="active">For You</span>
+        <span>For You</span>
         <span>Explore</span>
       </nav>
-      <div class="tools">
+      <div>
         <button>Slide show</button>
         <button>Layout</button>
       </div>
@@ -118,13 +118,17 @@ export default {
   height: 100vh;
 }
 
-.bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
+.middle-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f8f8;
+  height: 10%;
+  padding: 0 20px;
+  position: relative;
+  margin-top: 150px;
 }
+
 
 /* 内容区 */
 .content {
@@ -137,9 +141,7 @@ export default {
   align-items: center; /* 垂直方向居中 */
   width: 100%;
   padding: 10px 20px 10px 10px;
-  box-sizing: border-box;
-  margin-top: 80px;
-  height: calc(100vh - 80px);
+  box-sizing: border-box
 }
 
 .waterfall-container {
@@ -147,7 +149,7 @@ export default {
   width: 100%;
   border-radius: 15px;
   padding-right: 10px;
-  height: 100%;
+  box-sizing: border-box
 }
 
 .waterfall-item-content {
