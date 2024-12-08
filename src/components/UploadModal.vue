@@ -14,7 +14,7 @@
       <div class="upload-modal-content">
         <!-- Form Fields -->
         <div class="form-group">
-          <label for="title">Title</label>
+          <label class="form-label" for="title">Title</label>
           <input
             id="title"
             v-model="title"
@@ -25,17 +25,7 @@
         </div>
 
         <div class="form-group">
-          <label for="description">Description</label>
-          <textarea
-            id="description"
-            v-model="description"
-            class="form-textarea"
-            placeholder="Enter photo description"
-          ></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="theme">Theme</label>
+          <label class="form-label" for="theme">Theme</label>
           <input
             id="theme"
             v-model="theme"
@@ -43,6 +33,16 @@
             class="form-input"
             placeholder="Enter photo theme"
           />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="description">Description</label>
+          <textarea
+            id="description"
+            v-model="description"
+            class="form-textarea"
+            placeholder="Enter photo description"
+          ></textarea>
         </div>
 
         <!-- Upload Area -->
@@ -88,6 +88,7 @@ export default {
     return {
       title: "",
       description: "",
+      theme:"",
       file: null,
     };
   },
@@ -147,7 +148,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 8000;
 }
 
 .modal-container {
@@ -186,6 +187,37 @@ h2 {
   cursor: pointer;
   padding: 0;
 }
+
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.form-label {
+  width: 20%;
+  text-align: right;
+  margin-right: 20px;
+}
+
+.form-input,
+.form-textarea {
+  width: 80%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.form-textarea {
+  resize: none;
+  height: 80px;
+}
+
 
 .upload-modal-content {
   text-align: center;
@@ -228,18 +260,6 @@ h2 {
   font-size: 12px;
   color: #999;
 }
-
-.upload-info {
-  font-size: 14px;
-  color: #666;
-}
-
-.membership-link {
-  color: #007bff;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
 .file-input {
   display: none;
 }
