@@ -72,7 +72,7 @@ body {
 #box {
   height: auto;
   width: 600px;
-  margin: 140px auto;
+  margin: 150px auto;
   border-radius: 10px;
   background-color: rgba(59, 59, 62, 0.86);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -110,14 +110,15 @@ span {
   padding: 8px;
   border: 1px solid #ddd; /* 边框颜色 */
   border-radius: 5px;
-  background-color: rgba(255, 255, 255, 0.3); /* 调整为稍浅的透明白色 */
+  background-color: rgba(255, 255, 255, 0.85); /* 调整为稍浅的透明白色 */
   color: white; /* 保持文字颜色为白色 */
   transition: background-color 0.3s, color 0.3s; /* 增加颜色过渡效果 */
+  font-size: 16px;
 }
 
 .input-field:focus {
   border-color: #40a9ff; /* 聚焦时边框为浅蓝色 */
-  background-color: rgba(255, 255, 255, 0.6); /* 聚焦时背景更亮 */
+  background-color: rgba(255, 255, 255, 0.64); /* 聚焦时背景更亮 */
   color: black; /* 聚焦时文字变为黑色，提高对比度 */
 }
 
