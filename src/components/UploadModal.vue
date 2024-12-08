@@ -1,21 +1,21 @@
 <template>
-  <div v-if="isVisible" class="modal-overlay">
-    <div class="modal-container">
+  <div v-if="isVisible" class="overlay">
+    <div class="main-container">
       <!-- Header -->
-      <div class="modal-header">
+      <div class="header">
         <div class="header-icon">
-          <img src="upload-icon.svg" alt="Upload" />
+          <img src="../assets/icons/cloud_upload.svg" alt="Upload" />
         </div>
         <div>
-          <h2>Upload</h2>
+          <h2>上传</h2>
         </div>
-        <button class="close-button" @click="cancel">×</button>
+        <button class="header-button" @click="cancel">×</button>
       </div>
 
       <!-- Content -->
       <div class="upload-modal-content">
         <!-- Form Fields -->
-        <div class="form-group">
+        <div class="upload-form-group">
           <label class="form-label" for="title">Title</label>
           <input
             id="title"
@@ -26,7 +26,7 @@
           />
         </div>
 
-        <div class="form-group">
+        <div class="upload-form-group">
           <label class="form-label" for="theme">Theme</label>
           <input
             id="theme"
@@ -37,7 +37,7 @@
           />
         </div>
 
-        <div class="form-group">
+        <div class="upload-form-group">
           <label class="form-label" for="description">Description</label>
           <textarea
             id="description"
@@ -48,35 +48,36 @@
         </div>
 
         <!-- Upload Area -->
-        <div class="upload-area">
-          <div class="upload-icon">
-            <img src="cloud-upload-icon.svg" alt="Upload Icon" />
-          </div>
-          <p class="upload-title">Drag files to upload</p>
-          <button class="upload-button" @click="confirmUpload">Add photos</button>
-          <p class="upload-restriction">JPEG file types only. Maximum image size 200mb</p>
-          <input
-            type="file"
-            ref="fileInput"
-            class="file-input"
-            accept="image/jpeg"
-            @change="onFileChange"
-          />
-        </div>
-      </div>
+        <el-upload
+          class="upload-area"
+          drag
+          :auto-upload="false"
+          :on-change="syncFile">
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+          <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
 
-      <!-- Actions -->
-      <div class="modal-actions">
-        <button class="button cancel-button" @click="cancel">Cancel</button>
-        <button class="button confirm-button" @click="confirmUpload">Upload</button>
+        <!-- Actions -->
+        <div class="modal-actions">
+          <button class="upload-button" @click="cancel">
+            <label class="modal-label" >Cancel</label>
+          </button>
+          <button
+            class="upload-button"
+            :disabled="!isFormValid"
+            @click="confirmUpload"
+          >
+            <label class="modal-label" >Confirm</label>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
-
 <script>
-import { uploadImage} from "../api/user";
+import { uploadImage } from "../api/user";
 import { uploadPhoto } from "../api/photo";
 
 export default {
@@ -90,45 +91,38 @@ export default {
     return {
       title: "",
       description: "",
-      theme:"",
+      theme: "",
       file: null,
     };
   },
-  methods: {
-    onFileChange(event) {
-      const files = event.target.files;
-      if (files && files.length > 0) {
-        this.file = files[0];
-      }
+  computed: {
+    // 动态校验表单是否有效
+    isFormValid() {
+      return this.title.trim() !== "" && this.description.trim() !== "" && this.theme.trim() !== "" && this.file !== null;
     },
+  },
+  methods: {
     cancel() {
-      // console.log("cancel");
+      this.title = "";
+      this.description = "";
+      this.theme = "";
+      this.file = null;
       this.$emit("close");
     },
     confirmUpload() {
-      if (!this.title || !this.description || !this.file) {
-        alert("Please fill in all fields.");
+      if (!this.isFormValid) {
+        alert("Please fill in all required fields.");
         return;
       }
 
-      const formData = new FormData();
-      formData.append("file", this.file);
-
       // 上传图片
-      uploadImage(formData)
+      uploadImage(this.file)
         .then((response) => {
-          const imageUrl = response.data.url;
-          const photoData = {
-            title: this.title,
-            description: this.description,
-            url: imageUrl,
-          };
-          // 调用上传照片接口
-          return uploadPhoto(photoData);
+          const imageUrl = response.data.data;
+          return uploadPhoto(imageUrl,this.description,this.theme,this.title);
         })
         .then(() => {
           alert("Upload successful!");
-          // this.$emit("close");
           this.$emit("uploaded"); // 通知父组件刷新列表
         })
         .catch((error) => {
@@ -136,12 +130,23 @@ export default {
           alert("Upload failed. Please try again.");
         });
     },
+    syncFile(file) {
+      this.file = file.raw;
+    },
   },
 };
 </script>
 
+<style>
+.el-upload__input {
+  display: none !important; /* 确保隐藏 input */
+}
+</style>
+
+
 <style scoped>
-.modal-overlay {
+
+.overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -152,29 +157,40 @@ export default {
   align-items: center;
   justify-content: center;
   z-index: 8000;
+  font-family: Arial, sans-serif;
 }
 
-.modal-container {
-  background: #fff;
+.main-container {
+  display: flex;
+  align-content: center;
+  flex-direction: column;
+  background-color: #fff;
   border-radius: 12px;
   padding: 20px;
   width: 600px;
   max-width: 90%;
-  font-family: Arial, sans-serif;
-  position: relative;
-  box-shadow: none;
 }
 
-.modal-header {
+.header {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
+  background-color: #FFFFFF;
 }
 
 .header-icon img {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
+}
+
+.header-button {
+  background-color: transparent;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  padding: 0;
 }
 
 h2 {
@@ -183,15 +199,7 @@ h2 {
   font-weight: bold;
 }
 
-.close-button {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 0;
-}
-
-.form-group {
+.upload-form-group {
   margin-bottom: 20px;
   display: flex;
   flex-direction: row;
@@ -202,6 +210,12 @@ h2 {
 .form-label {
   width: 20%;
   text-align: right;
+  margin-right: 20px;
+}
+
+.modal-label {
+  width: 20%;
+  text-align: center;
   margin-right: 20px;
 }
 
@@ -221,16 +235,12 @@ h2 {
   height: 80px;
 }
 
-
 .upload-modal-content {
   text-align: center;
 }
 
-.upload-area {
-  border: 2px dashed #ccc;
-  border-radius: 10px;
-  padding: 40px 20px;
-  margin-bottom: 20px;
+.upload-area input[type="file"] {
+  display: none !important;
 }
 
 .upload-icon img {
@@ -246,25 +256,25 @@ h2 {
 }
 
 .upload-button {
-  background: #007bff;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  border: 2px solid whitesmoke;
+  border-radius: 20px;
+  color: black;
   cursor: pointer;
+  background-color: white;
+  transition: all 0.3s ease;
+  font-family: Arial, sans-serif;
 }
 
-.upload-button:hover {
-  background: #0056b3;
-}
-
-.upload-restriction {
-  font-size: 12px;
-  color: #999;
-}
-.file-input {
-  display: none;
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 </style>
 
