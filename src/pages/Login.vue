@@ -2,7 +2,7 @@
     <body>
     <NewTop></NewTop>
     <div id="box" style="margin-top: 150px">
-        <h1 style="color:white">用户登录Login</h1>
+        <h1 style="color:white">用户登录</h1>
         <div class="input">
             <div class="text">
                 <el-input type="text" v-model="email" placeholder="请输入账号/邮箱"></el-input>
@@ -25,20 +25,18 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        background: url("../assets/banner-home3.jpg");
+        background: url("../assets/banner-home2.jpg");
         background-size: cover;
-        background-position: 100% 100%;
-        background-repeat: no-repeat;
     }
     #box {
-        /* margin-top: 150px; */
-        height: 350px;
-        width: 400px;
-        /* background-color: #0f0f0f0f; */
-        opacity: 0.7;
-        background-color: black;
-        margin: 0 auto;
-        border-radius: 5%;
+      position: relative; /* 相对位置 */
+      top: 60px; /* 下移 150px */
+      height: 350px;
+      width: 400px;
+      opacity: 0.7;
+      background-color: black;
+      margin: 0 auto;
+      border-radius: 5%;
     }
     #box .input {
         padding: 0 30px;

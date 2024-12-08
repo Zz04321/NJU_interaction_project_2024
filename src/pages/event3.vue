@@ -92,7 +92,7 @@
                 <p>简介：{{ photographer.description }}</p>
                 <p>联系方式：{{ photographer.contact }}</p>
                 <p>邮箱：{{ photographer.email }}</p>
-                <img :src="photographer.photo" alt="图片展示" class="avatar"/>
+                <img :src="photographer.photo" alt="图片展示" class="avatar1"/>
               </div>
             </div>
             <span>票数：{{ photographer.votes }}</span>
@@ -230,25 +230,43 @@ body {
 }
 
 .photographer-card {
-  padding: 15px;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+  background: #f9f9f9;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
+.photographer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+
 .photographer-info {
-  display: flex;
-  gap: 15px;
+  text-align: center;
+  margin-top: 15px;
 }
 
 .avatar {
-  width: 60px;
-  height: 60px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
+  margin-bottom: 10px;
   object-fit: cover;
+  border: 2px solid #ddd;
+}
+
+.avatar1 {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #ddd;
+  margin-bottom: 10px;
 }
 </style>
 
