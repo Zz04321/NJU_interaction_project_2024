@@ -48,6 +48,20 @@ export default {
 };
 </script>
 
+<style>
+.el-dialog__body {
+  display: flex; /* 使用 Flexbox 布局 */
+  flex-direction: column; /* 垂直方向布局 */
+  align-items: center; /* 水平方向居中对齐 */
+  justify-content: center; /* 垂直方向居中对齐 */
+  padding: 0; /* 去掉可能的默认内边距 */
+  margin: 0 auto; /* 内容居中 */
+  width: 100%; /* 适配宽度 */
+  box-sizing: border-box; /* 确保 padding 不影响宽度计算 */
+}
+</style>
+
+
 <style scoped>
 /* 统一遮罩层样式 */
 .image-detail-dialog {
@@ -69,8 +83,8 @@ export default {
 .dialog-content {
   background: #fff;
   border-radius: 12px;
-  padding: 20px;
-  width: 700px;
+  //padding: 20px;
+  //width: 700px;
   max-width: 90%;
   display: flex;
   max-height: 350px;
@@ -82,16 +96,30 @@ export default {
   text-align: center;
 }
 
+.el-dialog__body {
+  display: flex; /* 使用 Flexbox 布局 */
+  flex-direction: column; /* 垂直方向布局 */
+  align-items: center; /* 水平方向居中对齐 */
+  justify-content: center; /* 垂直方向居中对齐 */
+  padding: 0; /* 去掉可能的默认内边距 */
+  margin: 0 auto; /* 内容居中 */
+  width: 100%; /* 适配宽度 */
+  box-sizing: border-box; /* 确保 padding 不影响宽度计算 */
+}
+
+
 /* 图片样式，放大展示细节 */
 .image-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   max-width: 90%; /* 图片宽度最大为容器宽度的 90% */
   max-height: 300px; /* 限制图片最大高度 */
   margin-bottom: 20px;
+  margin-left: 20px;
   border-radius: 10px;
   padding: 10px;
   object-fit: contain; /* 确保图片等比例缩放，且不会裁剪内容 */
-  display: block;
-  margin-left: auto;
   margin-right: auto; /* 图片居中 */
 }
 

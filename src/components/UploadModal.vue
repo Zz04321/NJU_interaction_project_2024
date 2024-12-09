@@ -150,13 +150,12 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 // 不要注释这个, 这个是动态获取的！！！
-.el-upload__text,
-.el-upload,
-.el-upload__input{
+.el-upload__input {
   display: none !important;
 }
+
 </style>
 
 
