@@ -10,7 +10,6 @@ import Exhibition1 from '../pages/event1.vue'
 import Exhibition2 from '../pages/event3.vue'
 import Exhibition3 from '../pages/event2.vue'
 import Exhibition4 from '../pages/event4.vue'
-import PhotoDetail from '../pages/PhotoDetail.vue'
 import UpdInfo from '../pages/UpdInfo.vue'
 import PhotoShowDetail from "../pages/PhotoShowDetail.vue";
 import ServicePage from "../components/ServicePage.vue";
@@ -105,12 +104,6 @@ export default new Router({
       meta: {
         needLogin: true
       }
-    },
-    {
-      path: "/PhotoDetail",
-      name: "PhotoDetail",
-      component: PhotoDetail,
-      props: (route) => ({ image: route.params.image }), // 将路由参数传递为组件的 props
-    },
+    }
   ]
 })
