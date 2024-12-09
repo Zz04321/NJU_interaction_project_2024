@@ -1,9 +1,9 @@
 <template>
   <div class="image-container" @mouseover="handleMouseOver" @mouseleave="handleMouseLeave">
-    <img :src="src" :alt="title" class="image" />
+    <img :src="url" :alt="title" class="image" @load="handleImageLoad" />
     <div class="image-info" v-if="showInfo">
       <p class="image-title">{{ title }}</p>
-      <p class="image-author">Author: {{ author }}</p>
+      <p class="image-author">Author: {{ uname }}</p>
       <p class="image-description">{{ description }}</p>
     </div>
   </div>
@@ -12,7 +12,7 @@
 <script>
 export default {
   props: {
-    src: {
+    url: {
       type: String,
       required: true
     },
@@ -20,14 +20,14 @@ export default {
       type: String,
       required: true
     },
-    author: {
+    uname: {
       type: String,
       required: true
     },
     description: {
       type: String,
       required: true
-    }
+    },
   },
   data() {
     return {
@@ -40,6 +40,9 @@ export default {
     },
     handleMouseLeave() {
       this.showInfo = false;
+    },
+    handleImageLoad(event) {
+      this.$emit('imageLoaded', event);
     }
   }
 };
