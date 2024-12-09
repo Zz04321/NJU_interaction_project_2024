@@ -11,13 +11,13 @@
       <div class="image-info">
         <h3>{{ image.title }}</h3>
         <p>{{ image.description }}</p>
-        <p><b>Theme:</b> {{ image.theme }}</p>
-        <p><b>Author:</b> {{ image.uname }}</p>
+        <p><b>主题:</b> {{ image.theme }}</p>
+        <p><b>作者:</b> {{ image.uname }}</p>
       </div>
     </div>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="downloadImage">Download</el-button>
       <el-button @click="closeModal" type="primary">Close</el-button>
+      <el-button @click="downloadImage">Download</el-button>
     </div>
   </el-dialog>
 </template>
@@ -85,28 +85,16 @@ export default {
   border-radius: 12px;
   //padding: 20px;
   //width: 700px;
-  max-width: 90%;
+  max-width:100%;
   display: flex;
   max-height: 350px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  //box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   text-align: center;
 }
-
-.el-dialog__body {
-  display: flex; /* 使用 Flexbox 布局 */
-  flex-direction: column; /* 垂直方向布局 */
-  align-items: center; /* 水平方向居中对齐 */
-  justify-content: center; /* 垂直方向居中对齐 */
-  padding: 0; /* 去掉可能的默认内边距 */
-  margin: 0 auto; /* 内容居中 */
-  width: 100%; /* 适配宽度 */
-  box-sizing: border-box; /* 确保 padding 不影响宽度计算 */
-}
-
 
 /* 图片样式，放大展示细节 */
 .image-display {
@@ -115,12 +103,10 @@ export default {
   justify-content: center;
   max-width: 90%; /* 图片宽度最大为容器宽度的 90% */
   max-height: 300px; /* 限制图片最大高度 */
-  margin-bottom: 20px;
-  margin-left: 20px;
+  margin: auto;
   border-radius: 10px;
   padding: 10px;
   object-fit: contain; /* 确保图片等比例缩放，且不会裁剪内容 */
-  margin-right: auto; /* 图片居中 */
 }
 
 /* 图片信息区域 */
@@ -131,7 +117,6 @@ export default {
   padding: 10px 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .image-info h3 {
@@ -158,7 +143,7 @@ export default {
 .dialog-footer {
   display: flex;
   justify-content: space-evenly;
-  margin-top: 20px;
+  //margin-top: 20px;
   width: 100%;
 }
 
@@ -173,7 +158,7 @@ export default {
   font-weight: bold;
   text-align: center;
   width: 120px;
-  padding: 10px;
+  //padding: 10px;
 }
 
 .dialog-footer button:hover {
