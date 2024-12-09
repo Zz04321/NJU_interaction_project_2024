@@ -35,18 +35,16 @@
 <!--            class="form-input"-->
 <!--            placeholder="选择一个主题吧 ~"-->
 <!--          />-->
-            <select class="form-input" v-model="theme">
-              <option value="" disabled hidden>
-                <div class="form-input">请选择一个主题 ~
-                </div>
-              </option>
-              <option v-for="item in themeOptions" :key="item.value" :value="item.value">
-                {{ item.label }}
-              </option>
-            </select>
+          <select class="form-input" v-model="theme">
+            <option value="" disabled hidden>
+              <label class="form-placeholder">请选择一个主题 ~
+              </label>
+            </option>
+            <option v-for="item in themeOptions" :key="item.value" :value="item.value">
+              {{ item.label }}
+            </option>
+          </select>
         </div>
-
-
 
         <div class="form-group">
           <label class="form-label" for="description">描述</label>
@@ -248,17 +246,20 @@ h2 {
   place-content: center;
 }
 
+.form-input::placeholder,
+.form-textarea::placeholder {
+  width: 70%;
+  border-radius: 8px;
+  box-sizing: border-box;
+  text-align: left;
+  place-content: center;
+  padding-left: 5px;
+  color: #333333;
+}
+
 .form-textarea {
   resize: none;
   height: 80px;
-}
-
-.upload-area {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
 .upload-area input {
