@@ -13,7 +13,7 @@
         <span>Explore</span>
       </nav>
         <div class="upload-button-container">
-          <button class="upload-button" @click="openModal">Upload</button>
+          <button class="confirm-button" @click="openModal">Upload</button>
           <UploadModal :isVisible="isModalVisible"
                        @close="closeModal"
                        @uploaded="refresh"
@@ -165,18 +165,19 @@ export default {
   padding-left: 35px;
 }
 
-.upload-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: 500;
-  border: 2px solid black;
-  border-radius: 20px;
-  color: black;
-  cursor: pointer;
-  transition: all 0.3s ease;
+.confirm-button {
+  //display: flex;
+  //align-items: center;
+  //justify-content: center;
+  //padding: 10px 20px;
+  //font-size: 16px;
+  //font-weight: 500;
+  ////border: 2px solid black;
+  //border-radius: 20px;
+  //color: black;
+  //cursor: pointer;
+  //transition: all 0.3s ease;
+  //width: 100px;
 }
 
 .waterfall-container {

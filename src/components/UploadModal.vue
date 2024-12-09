@@ -13,63 +13,70 @@
       </div>
 
       <!-- Content -->
-      <div class="upload-modal-content">
+      <div class="content">
         <!-- Form Fields -->
-        <div class="upload-form-group">
-          <label class="form-label" for="title">Title</label>
+        <div class="form-group">
+          <label class="form-label" for="title">标题</label>
           <input
             id="title"
             v-model="title"
             type="text"
             class="form-input"
-            placeholder="Enter photo title"
+            placeholder="请输入作品标题 ~"
           />
         </div>
 
-        <div class="upload-form-group">
-          <label class="form-label" for="theme">Theme</label>
-          <input
-            id="theme"
-            v-model="theme"
-            type="text"
-            class="form-input"
-            placeholder="Enter photo theme"
-          />
+        <div class="form-group">
+          <label class="form-label" for="theme">主题</label>
+<!--          <input-->
+<!--            id="theme"-->
+<!--            v-model="theme"-->
+<!--            type="text"-->
+<!--            class="form-input"-->
+<!--            placeholder="选择一个主题吧 ~"-->
+<!--          />-->
+            <select class="form-input" v-model="theme">
+              <option value="" disabled hidden>
+                <div class="form-input">请选择一个主题 ~
+                </div>
+              </option>
+              <option v-for="item in themeOptions" :key="item.value" :value="item.value">
+                {{ item.label }}
+              </option>
+            </select>
         </div>
 
-        <div class="upload-form-group">
-          <label class="form-label" for="description">Description</label>
+
+
+        <div class="form-group">
+          <label class="form-label" for="description">描述</label>
           <textarea
             id="description"
             v-model="description"
             class="form-textarea"
-            placeholder="Enter photo description"
+            placeholder="分享所思所感 ~"
           ></textarea>
         </div>
 
         <!-- Upload Area -->
         <el-upload
-          class="upload-area"
+          class="upload-demo"
           drag
           :auto-upload="false"
           :on-change="syncFile">
-          <i class="el-icon-upload"></i>
+          <img class="upload-icon el-icon-upload" src ="../assets/icons/cloud_upload.svg" alt="upload-img">
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
           <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
         </el-upload>
 
         <!-- Actions -->
-        <div class="modal-actions">
-          <button class="upload-button" @click="cancel">
-            <label class="modal-label" >Cancel</label>
-          </button>
+        <div class="actions">
+          <button class="confirm-button" @click="cancel">取消</button>
           <button
-            class="upload-button"
+            class="confirm-button"
             :disabled="!isFormValid"
             @click="confirmUpload"
-          >
-            <label class="modal-label" >Confirm</label>
-          </button>
+          >确认</button>
         </div>
       </div>
     </div>
@@ -79,8 +86,10 @@
 <script>
 import { uploadImage } from "../api/user";
 import { uploadPhoto } from "../api/photo";
+import ImageCard from "./ImageCard.vue";
 
 export default {
+  components: {ImageCard},
   props: {
     isVisible: {
       type: Boolean,
@@ -93,6 +102,12 @@ export default {
       description: "",
       theme: "",
       file: null,
+      themeOptions: [ {value: 'NATURE', label: '自然'},
+        {value: 'ANIMAL', label: '动物'},
+        {value: 'CITY', label: '城市'},
+        {value: 'PEOPLE', label: '人物'},
+        {value: 'OTHER', label: '其他'}
+      ],
     };
   },
   computed: {
@@ -137,9 +152,12 @@ export default {
 };
 </script>
 
-<style>
-.el-upload__input {
-  display: none !important; /* 确保隐藏 input */
+<style scoped>
+// 不要注释这个, 这个是动态获取的！！！
+.el-upload__text,
+.el-upload,
+.el-upload__input{
+  display: none !important;
 }
 </style>
 
@@ -167,7 +185,7 @@ export default {
   background-color: #fff;
   border-radius: 12px;
   padding: 20px;
-  width: 600px;
+  width: 450px;
   max-width: 90%;
 }
 
@@ -199,35 +217,35 @@ h2 {
   font-weight: bold;
 }
 
-.upload-form-group {
+.content {
+   text-align: center;
+}
+
+.form-group {
+  width: 100%;
   margin-bottom: 20px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-evenly;
 }
 
 .form-label {
-  width: 20%;
+  width: 10%;
   text-align: right;
-  margin-right: 20px;
-}
-
-.modal-label {
-  width: 20%;
-  text-align: center;
-  margin-right: 20px;
+  margin-right: 10px;
+  justify-content: center;
 }
 
 .form-input,
 .form-textarea {
-  width: 80%;
-  padding: 10px;
+  width: 70%;
+  padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  font-size: 14px;
   box-sizing: border-box;
-  text-align: center;
+  text-align: left;
+  place-content: center;
 }
 
 .form-textarea {
@@ -235,33 +253,31 @@ h2 {
   height: 80px;
 }
 
-.upload-modal-content {
-  text-align: center;
+.upload-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.upload-area input[type="file"] {
-  display: none !important;
+.upload-area input {
+  visibility: hidden;
 }
 
-.upload-icon img {
+.upload-icon {
   width: 50px;
   height: 50px;
   margin-bottom: 15px;
 }
 
-.upload-title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 
-.upload-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  font-size: 15px;
-  font-weight: 500;
+.confirm-button {
   border: 2px solid whitesmoke;
   border-radius: 20px;
   color: black;
@@ -269,12 +285,10 @@ h2 {
   background-color: white;
   transition: all 0.3s ease;
   font-family: Arial, sans-serif;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+  font-weight: bold;
+  text-align: center;
+  place-content: center;
+  width: 100px;
 }
 </style>
 
