@@ -24,7 +24,10 @@
     <div class="content" @scroll="onScroll">
         <div class="waterfall-container">
           <Waterfall class="waterfall-container">
-            <WaterfallItem v-for="(item, index) in list" :key="index" @click.native="viewPhotoDetail(item)">
+            <WaterfallItem v-for="(item, index) in list"
+                           :key="index"
+                           @click.native="viewPhotoDetail(item)"
+                           :style="{ height: calculateHeight(index) + 'px', width: containerWidth + 'px' }">
               <div class="waterfall-item-content">
                 <ImageCard
                   :url="item.url"
@@ -32,6 +35,7 @@
                   :title="item.title"
                   :theme="item.theme"
                   :uname="item.uname"
+                  @imageLoaded="updateAspectRatio(index, $event)"
                 ></ImageCard>
               </div>
             </WaterfallItem>
@@ -64,6 +68,8 @@ export default {
       limit: 10,
       hasMore: true,
       isModalVisible: false,
+      aspectRatios: [], // 用于存储图片的宽高比
+      containerWidth: 300, // 固定的图片容器宽度
     };
   },
   mounted() {
@@ -74,6 +80,7 @@ export default {
       console.log("initPhotos")
       fetchPhotos(0, 30).then((res)=>{
         this.list.push(...res.data.data)
+        this.aspectRatios = new Array(this.list.length).fill(1);
       })
       this.page += (30 / this.limit)
     },
@@ -85,6 +92,8 @@ export default {
       fetchPhotos(this.page, this.limit).then((res) => {
         console.log(res.data)
         this.list.push(...res.data.data)
+        const newRatios = new Array(res.data.data.length).fill(1);
+        this.aspectRatios.push(...newRatios);
         if (res.data.data.length < this.limit || this.list.length >= 50) {
           this.hasMore = false;
         }
@@ -114,6 +123,7 @@ export default {
 
     refresh() {
       this.list = [];
+      this.aspectRatios =[];
       this.page = 0;
       this.isModalVisible = false;
       this.initPhotos()
@@ -124,6 +134,15 @@ export default {
     },
     closeModal() {
       this.isModalVisible = false; // 关闭弹窗
+    },
+    updateAspectRatio(index, event) {
+      const img = event.target;
+      const aspectRatio = img.naturalHeight / img.naturalWidth;
+      this.$set(this.aspectRatios, index, aspectRatio); // 动态更新宽高比
+    },
+    calculateHeight(index) {
+      console.log(this.containerWidth * this.aspectRatios[index])
+      return this.containerWidth * this.aspectRatios[index];
     },
   },
 };
@@ -191,6 +210,9 @@ export default {
 .waterfall-item-content {
   margin: 10px;
   border-radius: 15px;
+  //height: 100%; /* 继承父级高度 */
+  //overflow: hidden;
+  padding: 10px;
 }
  /* 按钮容器 */
 .upload-button-container {

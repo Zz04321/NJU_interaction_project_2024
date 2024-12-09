@@ -1,6 +1,6 @@
 <template>
   <div class="image-container" @mouseover="handleMouseOver" @mouseleave="handleMouseLeave">
-    <img :src="url" :alt="title" class="image" />
+    <img :src="url" :alt="title" class="image" @load="handleImageLoad" />
     <div class="image-info" v-if="showInfo">
       <p class="image-title">{{ title }}</p>
       <p class="image-author">Author: {{ uname }}</p>
@@ -40,6 +40,9 @@ export default {
     },
     handleMouseLeave() {
       this.showInfo = false;
+    },
+    handleImageLoad(event) {
+      this.$emit('imageLoaded', event);
     }
   }
 };
