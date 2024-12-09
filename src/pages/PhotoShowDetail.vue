@@ -42,7 +42,13 @@
           </Waterfall>
         </div>
     </div>
+    <ImageDetailModal
+    :isVisible="isImageModalVisible"
+    :image="selectedImage"
+    @close="closeImageModal"
+    />
   </div>
+
 </template>
 
 <script>
@@ -50,7 +56,9 @@ import { Waterfall, WaterfallItem } from "vue2-waterfall";
 import NewTop  from "../components/Top.vue";
 import ImageCard  from "../components/ImageCard.vue";
 import UploadModal from "../components/UploadModal.vue";
+import ImageDetailModal from "../components/ImageDetailModal.vue";
 import {fetchPhotos, uploadPhoto, fetchPhotosByEmail, fetchPhotosByTheme} from "../api/photo";
+
 
 export default {
   components: {
@@ -59,6 +67,7 @@ export default {
     NewTop,
     ImageCard,
     UploadModal,
+    ImageDetailModal
   },
   data() {
     return {
@@ -70,6 +79,8 @@ export default {
       isModalVisible: false,
       aspectRatios: [], // 用于存储图片的宽高比
       containerWidth: 300, // 固定的图片容器宽度
+      selectedImage: null, // 当前选中的图片信息
+      isImageModalVisible: false
     };
   },
   mounted() {
@@ -118,7 +129,12 @@ export default {
     },
 
     viewPhotoDetail(item) {
-      this.$router.push({ name: "PhotoDetail", params: { image: item } });
+      this.selectedImage = item;
+      this.isImageModalVisible = true;
+    },
+
+    closeImageModal() {
+      this.isImageModalVisible = false;
     },
 
     refresh() {

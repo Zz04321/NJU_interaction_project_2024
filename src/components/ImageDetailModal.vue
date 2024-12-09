@@ -1,0 +1,160 @@
+<template>
+  <el-dialog
+    :visible.sync="isVisible"
+    width="60%"
+    :close-on-click-modal="false"
+    class="image-detail-dialog"
+    @close="closeModal"
+  >
+    <div class="dialog-content">
+      <img :src="image.url" alt="image" class="image-display" />
+      <div class="image-info">
+        <h3>{{ image.title }}</h3>
+        <p>{{ image.description }}</p>
+        <p><b>Theme:</b> {{ image.theme }}</p>
+        <p><b>Author:</b> {{ image.uname }}</p>
+      </div>
+    </div>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="downloadImage">Download</el-button>
+      <el-button @click="closeModal" type="primary">Close</el-button>
+    </div>
+  </el-dialog>
+</template>
+
+<script>
+export default {
+  props: {
+    isVisible: {
+      type: Boolean,
+      required: true,
+    },
+    image: {
+      type: Object,
+      required: true,
+    },
+  },
+  methods: {
+    closeModal() {
+      this.$emit("close");
+    },
+    downloadImage() {
+      const link = document.createElement("a");
+      link.href = this.image.url;
+      link.download = this.image.title || "download";
+      link.click();
+    },
+  },
+};
+</script>
+
+<style scoped>
+/* 统一遮罩层样式 */
+.image-detail-dialog {
+  font-family: Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 8000;
+  overflow-y: auto;
+}
+
+/* 对话框的主体容器 */
+.dialog-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  width: 700px;
+  max-width: 90%;
+  display: flex;
+  max-height: 350px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-align: center;
+}
+
+/* 图片样式，放大展示细节 */
+.image-display {
+  max-width: 90%; /* 图片宽度最大为容器宽度的 90% */
+  max-height: 300px; /* 限制图片最大高度 */
+  margin-bottom: 20px;
+  border-radius: 10px;
+  padding: 10px;
+  object-fit: contain; /* 确保图片等比例缩放，且不会裁剪内容 */
+  display: block;
+  margin-left: auto;
+  margin-right: auto; /* 图片居中 */
+}
+
+/* 图片信息区域 */
+.image-info {
+  width: 100%;
+  text-align: left;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.image-info h3 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.image-info p {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #666;
+}
+
+.image-info span {
+  display: block;
+  margin: 5px 0;
+  font-size: 14px;
+  color: #999;
+}
+
+/* 按钮区域 */
+.dialog-footer {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.dialog-footer button {
+  border: 2px solid #ddd;
+  border-radius: 20px;
+  color: #333;
+  cursor: pointer;
+  background-color: white;
+  transition: all 0.3s ease;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  text-align: center;
+  width: 120px;
+  padding: 10px;
+}
+
+.dialog-footer button:hover {
+  background-color: #f2f2f2;
+  border-color: #bbb;
+}
+
+.dialog-footer button:active {
+  background-color: #e6e6e6;
+}
+</style>
+
