@@ -12,13 +12,11 @@
         <span>For You</span>
         <span>Explore</span>
       </nav>
-        <div class="upload-button-container">
-          <button class="upload-button" @click="openModal">Upload</button>
+          <el-button class="upload-button" @click="openModal">Upload</el-button>
           <UploadModal :isVisible="isModalVisible"
                        @close="closeModal"
                        @uploaded="refresh"
           />
-        </div>
     </div>
     <!-- 内容区 -->
     <div class="content" @scroll="onScroll">
@@ -197,18 +195,27 @@ export default {
 }
 
 .upload-button {
-  border: 2px solid black;
+  border: 2px solid #ddd;
   border-radius: 20px;
-  color: black;
+  color: #333;
   cursor: pointer;
-  background: none;
+  background-color: white;
   transition: all 0.3s ease;
   font-family: Arial, sans-serif;
   font-weight: bold;
   text-align: center;
-  place-content: center;
-  width: 100px;
-  padding: 15px;
+  width: 120px;
+  margin: 10px;
+}
+
+.upload-button:hover {
+  background-color: #f2f2f2;
+  border-color: #bbb;
+  color: black;
+}
+
+.upload-button:active {
+  background-color: #e6e6e6;
 }
 
 .waterfall {

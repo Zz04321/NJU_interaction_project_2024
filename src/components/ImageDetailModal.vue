@@ -16,8 +16,8 @@
       </div>
     </div>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="closeModal" type="primary">Close</el-button>
-      <el-button @click="downloadImage">Download</el-button>
+      <el-button @click="closeModal" type="primary">关闭</el-button>
+      <el-button @click="downloadImage" type="primary">下载</el-button>
     </div>
   </el-dialog>
 </template>
@@ -159,7 +159,6 @@ export default {
   text-align: center;
   width: 120px;
   margin: 10px;
-  //padding: 10px;
 }
 
 .dialog-footer button:hover {
