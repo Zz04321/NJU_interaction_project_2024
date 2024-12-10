@@ -74,7 +74,7 @@ export default {
       hasMore: true,
       isModalVisible: false,
       aspectRatios: [], // 用于存储图片的宽高比
-      containerWidth: 300, // 固定的图片容器宽度
+      containerWidth: 335, // 固定的图片容器宽度
       selectedImage: null, // 当前选中的图片信息
       isImageModalVisible: false
     };
@@ -212,19 +212,16 @@ export default {
 }
 
 .waterfall {
-  //overflow-y: auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   width: 100%;
-  border-radius: 15px;
-  padding-right: 10px;
-  box-sizing: border-box
+  margin-left: 60px;
 }
 
-.waterfall-item {
+.Waterfall-item {
   border-radius: 15px;
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
  /* 按钮容器 */
 .upload-button-container {
