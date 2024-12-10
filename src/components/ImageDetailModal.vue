@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     :visible.sync="isVisible"
-    width="60%"
+    width="70%"
     :close-on-click-modal="false"
     class="image-detail-dialog"
     @close="closeModal"
@@ -48,7 +48,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .el-dialog__body {
   display: flex; /* 使用 Flexbox 布局 */
   flex-direction: column; /* 垂直方向布局 */
@@ -57,12 +57,16 @@ export default {
   padding: 0; /* 去掉可能的默认内边距 */
   margin: 0 auto; /* 内容居中 */
   width: 100%; /* 适配宽度 */
+  height: 100%;
   box-sizing: border-box; /* 确保 padding 不影响宽度计算 */
 }
-</style>
 
+.el-dialog {
+  height: 80%;
+  padding: 10px;
+  margin: 10px
+}
 
-<style scoped>
 /* 统一遮罩层样式 */
 .image-detail-dialog {
   font-family: Arial, sans-serif;
@@ -83,15 +87,12 @@ export default {
 .dialog-content {
   background: #fff;
   border-radius: 12px;
-  //padding: 20px;
-  //width: 700px;
-  max-width:100%;
+  max-width: 100%;
+  height: 60vh;
   display: flex;
-  max-height: 350px;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  //box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   text-align: center;
 }
@@ -101,17 +102,18 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 80%;
   max-width: 90%; /* 图片宽度最大为容器宽度的 90% */
-  max-height: 300px; /* 限制图片最大高度 */
-  margin: auto;
+  max-height: 500px; /* 限制图片最大高度 */
+  margin: 10px;
   border-radius: 10px;
-  padding: 10px;
+  //padding: 10px;
   object-fit: contain; /* 确保图片等比例缩放，且不会裁剪内容 */
 }
 
 /* 图片信息区域 */
 .image-info {
-  width: 100%;
+  width: 20%;
   text-align: left;
   margin-top: 15px;
   padding: 10px 20px;
@@ -142,7 +144,7 @@ export default {
 /* 按钮区域 */
 .dialog-footer {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   //margin-top: 20px;
   width: 100%;
 }
@@ -158,6 +160,7 @@ export default {
   font-weight: bold;
   text-align: center;
   width: 120px;
+  margin: 10px;
   //padding: 10px;
 }
 
