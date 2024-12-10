@@ -9,9 +9,9 @@
     <div class="dialog-content">
       <img :src="image.url" alt="image" class="image-display" />
       <div class="image-info">
+        <UserInfoCard :user-email="image.userEmail"></UserInfoCard>
         <h3>{{ image.title }}</h3>
         <p>{{ image.description }}</p>
-        <p><b>主题:</b> {{ image.theme }}</p>
         <p><b>作者:</b> {{ image.uname }}</p>
       </div>
     </div>
@@ -23,7 +23,11 @@
 </template>
 
 <script>
+import UserInfoCard from "./UserInfoCard.vue";
 export default {
+  components: {
+    UserInfoCard,
+  },
   props: {
     isVisible: {
       type: Boolean,
@@ -112,10 +116,8 @@ export default {
 
 /* 图片信息区域 */
 .image-info {
-  width: 20%;
+  width: 30%;
   text-align: left;
-  margin-top: 15px;
-  padding: 10px 20px;
   background-color: #f9f9f9;
   border-radius: 5px;
 }

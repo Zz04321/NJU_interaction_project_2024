@@ -31,6 +31,7 @@
                   :title="item.title"
                   :theme="item.theme"
                   :uname="item.uname"
+                  :user-email="item.userEmail"
                   @imageLoaded="updateAspectRatio(index, $event)"
                 ></ImageCard>
             </WaterfallItem>
@@ -124,6 +125,7 @@ export default {
 
     viewPhotoDetail(item) {
       this.selectedImage = item;
+      console.log(this.selectedImage)
       this.isImageModalVisible = true;
     },
 

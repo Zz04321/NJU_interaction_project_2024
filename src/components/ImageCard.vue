@@ -28,6 +28,10 @@ export default {
       type: String,
       required: true
     },
+    userEmail: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {

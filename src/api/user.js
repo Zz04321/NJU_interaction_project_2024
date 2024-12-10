@@ -64,6 +64,15 @@ export function logout(router) {
   router.replace('/Login');
 }
 
+export function getInfoByEmail(email) {
+  const url = `${API_BASE_URL}/user/getInfoByEmail`;
+  return axios.post(url, {},{
+    params: {
+      'email': email,
+    }
+  })
+}
+
 export function notify(vm, message, type = 'success') {
   vm.$notify({
     message: message,

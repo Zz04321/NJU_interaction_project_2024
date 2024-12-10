@@ -1,55 +1,67 @@
 <template>
   <div class="card">
-    <!-- 用户信息部分 -->
     <div class="user-info">
       <img class="avatar" :src="user.avatar" alt="User Avatar" />
       <h3 class="name">{{ user.name }}</h3>
-      <p class="location">{{ user.location }}</p>
-      <button class="follow-btn" @click="follow">{{ isFollowing ? 'Following' : 'Follow' }}</button>
-    </div>
-
-    <!-- 相机信息部分 -->
-    <div class="camera-info">
-      <p>
-        <i class="icon-camera"></i> {{ camera.model }}
-      </p>
-      <p>
-        <i class="icon-lens"></i> {{ camera.lens }}
-      </p>
-      <p class="details">
-        <span>{{ camera.focalLength }}</span>
-        <span>f/{{ camera.aperture }}</span>
-        <span>{{ camera.shutterSpeed }}</span>
-        <span>ISO {{ camera.iso }}</span>
-      </p>
+      <el-button
+        v-if="!isSelf"
+        class="follow-btn"
+        @click="follow">{{ isFollowing ? 'Following' : 'Follow' }}</el-button>
     </div>
   </div>
 </template>
 
 <script>
+import {getInfoByEmail} from "../api/user";
+import {hasCollect} from "../api/service";
+import {collect} from "../api/service";
+import {notify} from "../api/user";
+
 export default {
-  name: "ProfileCard",
+  props: {
+    userEmail: {
+      type: String,
+      required: true,
+    }
+  },
   data() {
     return {
       user: {
-        name: "Christian Graf",
-        location: "Munich, Germany",
+        name: "default",
         avatar: "https://via.placeholder.com/100", // 替换为真实图片地址
       },
-      camera: {
-        model: "SONY ILCE-7M4",
-        lens: "E 28-75mm F2.8 A063",
-        focalLength: "28.0mm",
-        aperture: "4.5",
-        shutterSpeed: "1/0s",
-        iso: "100",
-      },
       isFollowing: false,
+      isSelf: false
     };
+  },
+  mounted() {
+    getInfoByEmail(this.userEmail).then((res)=>{
+      this.user.name=res.data.data.uname;
+      this.user.avatar=res.data.data.headImg;
+    }).catch((error)=>{
+      notify(this, "获取作者信息失败", "error")
+    })
+
+    this.isSelf = (this.userEmail === localStorage.getItem("email"));
+    console.log(this.isSelf)
+    if (this.email === localStorage.getItem("email")) {
+      this.isFollowing = true;
+    } else {
+      hasCollect(this.userEmail).then((res)=>{
+        this.isFollowing=res.data.code === 1;
+      }).catch((error)=>{
+        notify(this, "获取关注信息失败", "error")
+      })
+    }
   },
   methods: {
     follow() {
-      this.isFollowing = !this.isFollowing;
+      collect(this.userEmail).then((res)=>{
+        this.isFollowing=res.data.code === 1;
+        notify(this, "关注成功", "success")
+      }).catch((error)=>{
+        notify(this, "关注失败", "error")
+      })
     },
   },
 };
@@ -63,6 +75,7 @@ export default {
   padding: 20px;
   margin: 20px;
   max-width: 300px;
+  max-height: 500px;
   font-family: Arial, sans-serif;
 }
 
@@ -103,19 +116,8 @@ export default {
   background: #0056b3;
 }
 
-.camera-info {
-  font-size: 14px;
-  color: #555;
-}
-
 .camera-info p {
   margin: 5px 0;
-}
-
-.icon-camera,
-.icon-lens {
-  margin-right: 5px;
-  color: #888;
 }
 
 .details span {
