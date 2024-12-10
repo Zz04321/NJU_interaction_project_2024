@@ -7,7 +7,9 @@
     @close="closeModal"
   >
     <div class="dialog-content">
-      <img :src="image.url" alt="image" class="image-display" />
+      <div class="image-container">
+        <img :src="image.url" alt="image" class="image-display" />
+      </div>
       <div class="image-info">
         <UserInfoCard :user-email="image.userEmail"></UserInfoCard>
         <h3>{{ image.title }}</h3>
@@ -89,16 +91,25 @@ export default {
 
 /* 对话框的主体容器 */
 .dialog-content {
-  background: #fff;
+  background: whitesmoke;
   border-radius: 5px;
   max-width: 100%;
   height: 55vh;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   overflow: hidden;
   text-align: center;
+}
+
+.image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+  height: 100%;
 }
 
 /* 图片样式，放大展示细节 */
@@ -112,6 +123,7 @@ export default {
   margin: 10px;
   border-radius: 5px;
   object-fit: contain; /* 确保图片等比例缩放，且不会裁剪内容 */
+
 }
 
 /* 图片信息区域 */
