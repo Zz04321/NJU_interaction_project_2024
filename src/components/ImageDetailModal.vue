@@ -86,9 +86,9 @@ export default {
 /* 对话框的主体容器 */
 .dialog-content {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 5px;
   max-width: 100%;
-  height: 60vh;
+  height: 55vh;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -106,8 +106,7 @@ export default {
   max-width: 90%; /* 图片宽度最大为容器宽度的 90% */
   max-height: 500px; /* 限制图片最大高度 */
   margin: 10px;
-  border-radius: 10px;
-  //padding: 10px;
+  border-radius: 5px;
   object-fit: contain; /* 确保图片等比例缩放，且不会裁剪内容 */
 }
 
@@ -118,7 +117,7 @@ export default {
   margin-top: 15px;
   padding: 10px 20px;
   background-color: #f9f9f9;
-  border-radius: 8px;
+  border-radius: 5px;
 }
 
 .image-info h3 {
@@ -145,7 +144,6 @@ export default {
 .dialog-footer {
   display: flex;
   justify-content: space-between;
-  //margin-top: 20px;
   width: 100%;
 }
 
