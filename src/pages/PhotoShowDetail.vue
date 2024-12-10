@@ -22,13 +22,11 @@
     </div>
     <!-- 内容区 -->
     <div class="content" @scroll="onScroll">
-        <div class="waterfall-container">
-          <Waterfall class="waterfall-container">
+          <Waterfall>
             <WaterfallItem v-for="(item, index) in list"
                            :key="index"
                            @click.native="viewPhotoDetail(item)"
                            :style="{ height: calculateHeight(index) + 'px', width: containerWidth + 'px' }">
-              <div class="waterfall-item-content">
                 <ImageCard
                   :url="item.url"
                   :description="item.description"
@@ -37,10 +35,8 @@
                   :uname="item.uname"
                   @imageLoaded="updateAspectRatio(index, $event)"
                 ></ImageCard>
-              </div>
             </WaterfallItem>
           </Waterfall>
-        </div>
     </div>
     <ImageDetailModal
     :isVisible="isImageModalVisible"
@@ -193,11 +189,11 @@ export default {
   justify-content: center;
   align-items: center; /* 垂直方向居中 */
   width: 100%;
-  padding: 10px 20px 10px 10px;
-  box-sizing: border-box;
+  //padding: 10px 20px 10px 10px;
+  //box-sizing: border-box;
   position: relative;
   padding-top: 85px;
-  padding-left: 35px;
+  //padding-left: 35px;
 }
 
 .upload-button {
@@ -215,20 +211,20 @@ export default {
   padding: 15px;
 }
 
-.waterfall-container {
+.waterfall {
   //overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   border-radius: 15px;
   padding-right: 10px;
   box-sizing: border-box
 }
 
-.waterfall-item-content {
-  margin: 10px;
+.waterfall-item {
   border-radius: 15px;
-  //height: 100%; /* 继承父级高度 */
-  //overflow: hidden;
-  padding: 10px;
 }
  /* 按钮容器 */
 .upload-button-container {

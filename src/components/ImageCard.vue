@@ -51,9 +51,9 @@ export default {
 <style scoped>
 .image-container {
   position: relative;
-  display: inline-block;
+  //display: inline-block;
   overflow: hidden;
-  border-radius: 15px;
+  border-radius: 5px;
 }
 
 .image {
