@@ -12,11 +12,25 @@
         <span>For You</span>
         <span>Explore</span>
       </nav>
+
+          <div class="layout-adjust">
+            <span>Layout</span>
+            <el-button
+              class="upload-button"
+              @click="toggleDenseMode"
+              type="text"
+              size="small"
+            >
+              {{ denseMode ? "Sparse" : "Dense" }}
+            </el-button>
+          </div>
+
           <el-button class="upload-button" @click="openModal">Upload</el-button>
           <UploadModal :isVisible="isModalVisible"
                        @close="closeModal"
                        @uploaded="refresh"
           />
+
     </div>
     <!-- 内容区 -->
     <div class="content" @scroll="onScroll">
@@ -78,7 +92,8 @@ export default {
       isImageModalVisible: false,
       columnCount: 5, // 当前列数
       maxContainerWidth: 400, // 单个卡片的最大宽度
-      minContainerWidth: 250 // 单个卡片的最小宽度
+      minContainerWidth: 250, // 单个卡片的最小宽度
+      denseMode: true, // 是否为紧凑模式
     };
   },
 
@@ -100,6 +115,12 @@ export default {
         this.aspectRatios = new Array(this.list.length).fill(1);
       })
       this.page += (30 / this.limit)
+      this.updateContainerWidth();
+    },
+
+    toggleDenseMode() {
+      this.maxContainerWidth = this.denseMode ? 500 : 400;
+      this.denseMode = !this.denseMode;
       this.updateContainerWidth();
     },
 
