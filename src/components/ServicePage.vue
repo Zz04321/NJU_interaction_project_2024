@@ -4,10 +4,12 @@
       <div class="profile_nav">
         <div class="tab_wrapper applyIntoVCG">
           <router-link to="/" class="button home">返回首页</router-link>
-          <ul class="px_tabs">
-            <li><router-link to="/my-concern">我的关注</router-link></li>
-          </ul>
-          <router-link to="/service/register" class="button application">加入社区</router-link>
+<!--          <ul class="px_tabs">-->
+<!--            <li><router-link to="/my-concern">我的关注</router-link></li>-->
+<!--          </ul>-->
+          <router-link v-if="!isJoined" to="/service/register" class="button application">加入社区</router-link>
+          <el-button v-else class="upload-button" @click="openModal">上传图片</el-button>
+          <NewUploadModal v-if="isJoined" :isVisible="isModalVisible" @close="closeModal" @uploaded="refresh" />
         </div>
       </div>
       <div class="recommend_users_container">
@@ -25,13 +27,13 @@
             </div>
             <div class="bottom">
               <a class="name">{{ photographer.uname ? photographer.uname : 'default' }}</a>
-              <span class="contact" @mouseover="showUserDescription = photographer.description" @mouseleave="showUserDescription = ''">
-            {{ showUserDescription === photographer.description ? photographer.description : '个人简介' }}
-          </span>
+              <span class="contact" @mouseover="showUserDescription = photographer.description"
+                    @mouseleave="showUserDescription = ''">
+                {{ showUserDescription === photographer.description ? photographer.description : '个人简介' }}
+              </span>
               <div class="button-container">
                 <a href="javascript:void(0)" class="button mini_follow follow"
-                   :class="{ disabled: photographer.followed }"
-                   @click="followPhotographer(photographer.email)"
+                   :class="{ disabled: photographer.followed }" @click="followPhotographer(photographer.email)"
                    :disabled="photographer.followed">
                   {{ photographer.followed ? '已关注' : '关注' }}
                 </a>
@@ -45,20 +47,27 @@
 </template>
 
 <script>
-import { getAll, collect, hasCollect } from '../api/service';
-import { getUserInfo, notify } from "../api/user";
+import {getAll, collect, hasCollect, hasJoined} from '../api/service';
+import {getUserInfo, notify} from "../api/user";
+import NewUploadModal from "../components/CommunityUploadModal.vue";
 
 export default {
+  components: {
+    NewUploadModal
+  },
   data() {
     return {
       photographers: [],
       showUserDescription: '',
-      userDescription: ''
+      userDescription: '',
+      isJoined: false,
+      isModalVisible: false
     };
   },
   mounted() {
     this.fetchPhotographers();
     this.fetchUserDescription();
+    this.checkJoinStatus();
   },
   methods: {
     async fetchPhotographers() {
@@ -100,11 +109,23 @@ export default {
         }
       }
     },
+    async checkJoinStatus() {
+      try {
+        const response = await hasJoined();
+        if (response.data.code === 1) {
+          this.isJoined = true;
+        } else {
+          this.isJoined = false;
+        }
+      } catch (error) {
+        console.error('Error checking join status:', error);
+      }
+    },
     async followPhotographer(email) {
       try {
         const userInfo = await getUserInfo();
         if (!userInfo || !userInfo.data || userInfo.data.code !== 1) {
-          this.$notify({ message: '未登录', type: 'error', offset: 100 });
+          this.$notify({message: '未登录', type: 'error', offset: 100});
           setTimeout(() => this.$router.replace('/Login'), 1000);
           return;
         }
@@ -124,6 +145,15 @@ export default {
       if (photographer) {
         this.$set(photographer, 'followed', status);
       }
+    },
+    openModal() {
+      this.isModalVisible = true;
+    },
+    closeModal() {
+      this.isModalVisible = false;
+    },
+    refresh() {
+      this.fetchPhotographers();
     }
   }
 };
@@ -176,6 +206,7 @@ export default {
   background-color: #ffb74d; /* Darker soft orange on hover */
   transform: scale(1.05); /* Slightly enlarge on hover */
 }
+
 .button {
   padding: 10px 20px;
   border-radius: 5px;
@@ -195,6 +226,7 @@ export default {
   font-size: 12px;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
 .user_item .top:hover {
   transform: scale(1.05); /* Slightly enlarge the image */
   transition: transform 0.3s ease; /* Smooth transition */
@@ -204,6 +236,7 @@ export default {
   transform: scale(1.1); /* Slightly enlarge the avatar */
   transition: transform 0.3s ease; /* Smooth transition */
 }
+
 .user_item .button.mini_follow:hover {
   background-color: #2196F3; /* Blue background on hover */
   color: #fff; /* White text on hover */
@@ -213,6 +246,7 @@ export default {
   pointer-events: none;
   opacity: 0.6;
 }
+
 .bottom {
   padding-top: 20px; /* Increase the distance between the username and the image */
 }
@@ -226,6 +260,7 @@ export default {
 .contact:hover {
   color: #2196F3; /* Change color on hover */
 }
+
 .button.home {
   background-color: #2196F3; /* Blue */
   border-radius: 20px; /* More rounded corners */
@@ -347,5 +382,23 @@ export default {
   background-size: cover;
   background-position: center;
   border: 2px solid rgba(255, 255, 255, 0.5); /* Optional: Add a border for better visibility */
+}
+
+.upload-button {
+  background-color: #4CAF50; /* Green */
+  border-radius: 20px; /* More rounded corners */
+  color: #fff; /* White text */
+  cursor: pointer;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.upload-button:hover {
+  background-color: #45a049; /* Darker Green */
+  color: #fff; /* Ensure text color remains white */
 }
 </style>
