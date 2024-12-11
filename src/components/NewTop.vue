@@ -96,8 +96,8 @@ export default {
             // this.reload()
         },
         toHome : function() {
-            this.$router.replace('/')
-            this.herf="#templatemo_banner_slide"
+          this.$router.push('/ServicePage');
+          this.herf="#templatemo_banner_slide"
         },
         toAboutNews : function() {
             this.$router.replace('/')

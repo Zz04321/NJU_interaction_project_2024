@@ -1,7 +1,7 @@
 <template>
   <body>
   <div id="box" style="margin-top: 150px; position: relative;">
-    <h1 style="color:black;">注册服务</h1>
+    <h1 style="color:black;">个人信息登记</h1>
     <div class="block1">
       <img v-bind:src="user.photo" alt="">
       <div class="file-input-wrapper">
@@ -209,7 +209,7 @@ body {
   display: block;
   width: 200px;
   height: 200px;
-  border-radius: 50%;
+  border-radius: 31%;
   background-color: white;
   border: 3px solid  #bedcf6; /* 增加淡蓝边框 */
 }

@@ -7,7 +7,7 @@
           <ul class="px_tabs">
             <li><router-link to="/my-concern">我的关注</router-link></li>
           </ul>
-          <router-link to="/service/register" class="button application">申请提供摄影服务</router-link>
+          <router-link to="/service/register" class="button application">加入社区</router-link>
         </div>
       </div>
       <div class="recommend_users_container">
