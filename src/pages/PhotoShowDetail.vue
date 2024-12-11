@@ -104,13 +104,13 @@ export default {
     },
 
     updateContainerWidth() {
-      const containerWidth = document.body.clientWidth; // 获取浏览器当前宽度
+      const containerWidth = document.body.clientWidth - 120; // 获取浏览器当前宽度
       const columnCount = Math.floor(containerWidth / this.maxContainerWidth); // 计算列数
       this.columnCount = Math.max(1, columnCount); // 至少一列
       this.containerWidth = Math.max(
         this.minContainerWidth,
         Math.floor(containerWidth / this.columnCount) // 动态计算单列宽度
-      );
+      ) ;
     },
 
     onResize() {
@@ -250,7 +250,9 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-left: 60px;
+  //margin-left: 80px;
+  //margin-right: 60px;
+  padding-left: 50px;
 }
 
 .Waterfall-item {
