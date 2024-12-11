@@ -6,31 +6,36 @@
     </div>
     <!-- 中间导航栏 -->
     <div class="middle-bar">
-      <nav>
-        <span>Daily dose</span>
-        <span>Following</span>
-        <span>For You</span>
-        <span>Explore</span>
-      </nav>
 
-          <div class="layout-adjust">
-            <span>Layout</span>
-            <el-button
-              class="upload-button"
-              @click="toggleDenseMode"
-              type="text"
-              size="small"
-            >
-              {{ denseMode ? "Sparse" : "Dense" }}
-            </el-button>
-          </div>
+      <div class="tab-buttons">
+        <el-button-group>
+          <el-button
+            v-for="(tab, index) in tabs"
+            :key="index"
+            type="text"
+            :class="{ active: activeTab === index }"
+            @click="selectTab(index)"
+          >
+            {{ tab }}
+          </el-button>
+        </el-button-group>
+      </div>
 
-          <el-button class="upload-button" @click="openModal">Upload</el-button>
+      <div class="photo-buttons">
+        <div class="right-buttons">
+          <el-button
+            class="middle-bar-button"
+            @click="toggleDenseMode"
+          >
+            {{ denseMode ? "Sparse" : "Dense" }}
+          </el-button>
+
+          <el-button class="middle-bar-button" @click="openModal">Upload</el-button>
           <UploadModal :isVisible="isModalVisible"
                        @close="closeModal"
-                       @uploaded="refresh"
-          />
-
+                       @uploaded="refresh"/>
+        </div>
+      </div>
     </div>
     <!-- 内容区 -->
     <div class="content" @scroll="onScroll">
@@ -94,6 +99,8 @@ export default {
       maxContainerWidth: 400, // 单个卡片的最大宽度
       minContainerWidth: 250, // 单个卡片的最小宽度
       denseMode: true, // 是否为紧凑模式
+      tabs: ['Following', 'For You', 'Explore'], // 按钮名称
+      activeTab: 0, // 当前选中的 tab 索引
     };
   },
 
@@ -132,6 +139,11 @@ export default {
         this.minContainerWidth,
         Math.floor(containerWidth / this.columnCount) // 动态计算单列宽度
       ) ;
+    },
+
+    selectTab(index) {
+      this.activeTab = index; // 切换选中的 tab
+      console.log(`Selected tab: ${this.tabs[index]}`); // 可根据需要触发其他逻辑
     },
 
     onResize() {
@@ -217,6 +229,7 @@ export default {
 
 .middle-bar {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
   background-color: #f8f8f8;
@@ -243,7 +256,7 @@ export default {
   //padding-left: 35px;
 }
 
-.upload-button {
+.middle-bar-button {
   border: 2px solid #ddd;
   border-radius: 20px;
   color: #333;
@@ -257,15 +270,63 @@ export default {
   margin: 10px;
 }
 
-.upload-button:hover {
+.middle-bar-button:hover {
   background-color: #f2f2f2;
   border-color: #bbb;
   color: black;
 }
 
-.upload-button:active {
+.middle-bar-button:active {
   background-color: #e6e6e6;
 }
+
+.tab-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.tab-buttons .el-button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.tab-buttons .el-button {
+  color: #bfbfbf;
+  font-weight: normal;
+  font-size: 16px;
+}
+
+.tab-buttons .el-button:hover {
+  color: #333;
+}
+
+.tab-buttons .el-button.active {
+  color: #333;
+  font-weight: bold;
+  border-bottom: 2px solid #409eff; /* 下划线 */
+}
+
+.tab-buttons .el-button:focus {
+  outline: none;
+}
+
+.photo-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.right-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 10%;
+  min-width: 200px;
+}
+
 
 .waterfall {
   display: flex;
