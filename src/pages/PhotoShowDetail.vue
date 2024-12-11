@@ -75,12 +75,23 @@ export default {
       aspectRatios: [], // 用于存储图片的宽高比
       containerWidth: 335, // 固定的图片容器宽度
       selectedImage: null, // 当前选中的图片信息
-      isImageModalVisible: false
+      isImageModalVisible: false,
+      columnCount: 5, // 当前列数
+      maxContainerWidth: 400, // 单个卡片的最大宽度
+      minContainerWidth: 250 // 单个卡片的最小宽度
     };
   },
+
   mounted() {
     this.initPhotos()
+    this.updateContainerWidth();
+    window.addEventListener("resize", this.onResize); // 监听窗口变化
   },
+
+  beforeDestroy() {
+    window.removeEventListener("resize", this.onResize); // 移除监听器
+  },
+
   methods: {
     initPhotos() {
       console.log("initPhotos")
@@ -89,6 +100,21 @@ export default {
         this.aspectRatios = new Array(this.list.length).fill(1);
       })
       this.page += (30 / this.limit)
+      this.updateContainerWidth();
+    },
+
+    updateContainerWidth() {
+      const containerWidth = document.body.clientWidth; // 获取浏览器当前宽度
+      const columnCount = Math.floor(containerWidth / this.maxContainerWidth); // 计算列数
+      this.columnCount = Math.max(1, columnCount); // 至少一列
+      this.containerWidth = Math.max(
+        this.minContainerWidth,
+        Math.floor(containerWidth / this.columnCount) // 动态计算单列宽度
+      );
+    },
+
+    onResize() {
+      this.updateContainerWidth();
     },
 
     fetchAllPhotos() {
