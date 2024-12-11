@@ -31,7 +31,10 @@
 </template>
 
 <style scoped>
-    .fff {
+  #logo_img {
+    border-radius: 80%;
+  }
+  .fff {
         width: 300px;
         display: table-cell;
         /* margin-left: 50px; */
