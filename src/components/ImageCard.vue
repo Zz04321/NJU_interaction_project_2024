@@ -3,7 +3,7 @@
     <img :src="url" :alt="title" class="image" @load="handleImageLoad" />
     <div class="image-info" v-if="showInfo">
       <p class="image-title">{{ title }}</p>
-      <p class="image-author">Author: {{ uname }}</p>
+      <p class="image-author">作者: {{ uname }}</p>
       <p class="image-description">{{ description }}</p>
     </div>
   </div>
@@ -28,6 +28,10 @@ export default {
       type: String,
       required: true
     },
+    userEmail: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
@@ -51,21 +55,21 @@ export default {
 <style scoped>
 .image-container {
   position: relative;
-  display: inline-block;
+  //display: inline-block;
   overflow: hidden;
-  border-radius: 15px;
+  border-radius: 5px;
 }
 
 .image {
   width: 100%;
   height: auto;
-  border-radius: 15px;
+  border-radius:5px;
   transition: transform 0.3s ease-in-out; /* 平滑过渡 */
 }
 
 .image:hover {
   transform: scale(1.05); /* 鼠标悬停时放大一点 */
-  border-radius: 15px;
+  border-radius: 5px;
 }
 
 .image-info {
@@ -84,7 +88,7 @@ export default {
 
 .image-container:hover .image-info {
   opacity: 1; /* 鼠标悬停时显示底部信息 */
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 .image-title,

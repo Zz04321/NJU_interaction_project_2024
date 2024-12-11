@@ -26,8 +26,8 @@
           />
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="theme">主题</label>
+<!--        <div class="form-group">-->
+<!--          <label class="form-label" for="theme">主题</label>-->
 <!--          <input-->
 <!--            id="theme"-->
 <!--            v-model="theme"-->
@@ -35,16 +35,16 @@
 <!--            class="form-input"-->
 <!--            placeholder="选择一个主题吧 ~"-->
 <!--          />-->
-          <select class="form-input" v-model="theme">
-            <option value="" disabled hidden>
-              <label class="form-placeholder">请选择一个主题 ~
-              </label>
-            </option>
-            <option v-for="item in themeOptions" :key="item.value" :value="item.value">
-              {{ item.label }}
-            </option>
-          </select>
-        </div>
+<!--          <select class="form-input" v-model="theme">-->
+<!--            <option value="" disabled hidden>-->
+<!--              <label class="form-placeholder">请选择一个主题 ~-->
+<!--              </label>-->
+<!--            </option>-->
+<!--            <option v-for="item in themeOptions" :key="item.value" :value="item.value">-->
+<!--              {{ item.label }}-->
+<!--            </option>-->
+<!--          </select>-->
+<!--        </div>-->
 
         <div class="form-group">
           <label class="form-label" for="description">描述</label>
@@ -69,12 +69,11 @@
 
         <!-- Actions -->
         <div class="actions">
-          <button class="confirm-button" @click="cancel">取消</button>
-          <button
-            class="confirm-button"
+          <el-button class="confirm-button" @click="cancel">取消</el-button>
+          <el-button class="confirm-button"
             :disabled="!isFormValid"
             @click="confirmUpload"
-          >确认</button>
+          >确认</el-button>
         </div>
       </div>
     </div>
@@ -98,7 +97,6 @@ export default {
     return {
       title: "",
       description: "",
-      theme: "",
       file: null,
       themeOptions: [ {value: 'NATURE', label: '自然'},
         {value: 'ANIMAL', label: '动物'},
@@ -111,7 +109,7 @@ export default {
   computed: {
     // 动态校验表单是否有效
     isFormValid() {
-      return this.title.trim() !== "" && this.description.trim() !== "" && this.theme.trim() !== "" && this.file !== null;
+      return this.title.trim() !== "" && this.description.trim() !== "" && this.file !== null;
     },
   },
   methods: {
@@ -289,6 +287,16 @@ h2 {
   text-align: center;
   place-content: center;
   width: 100px;
+}
+
+button:hover {
+  background-color: #f2f2f2;
+  border-color: #bbb;
+  color: black;
+}
+
+button:active {
+  background-color: #e6e6e6;
 }
 </style>
 

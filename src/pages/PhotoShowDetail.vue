@@ -12,35 +12,30 @@
         <span>For You</span>
         <span>Explore</span>
       </nav>
-        <div class="upload-button-container">
-          <button class="upload-button" @click="openModal">Upload</button>
+          <el-button class="upload-button" @click="openModal">Upload</el-button>
           <UploadModal :isVisible="isModalVisible"
                        @close="closeModal"
                        @uploaded="refresh"
           />
-        </div>
     </div>
     <!-- 内容区 -->
     <div class="content" @scroll="onScroll">
-        <div class="waterfall-container">
-          <Waterfall class="waterfall-container">
+          <Waterfall>
             <WaterfallItem v-for="(item, index) in list"
                            :key="index"
                            @click.native="viewPhotoDetail(item)"
                            :style="{ height: calculateHeight(index) + 'px', width: containerWidth + 'px' }">
-              <div class="waterfall-item-content">
                 <ImageCard
                   :url="item.url"
                   :description="item.description"
                   :title="item.title"
                   :theme="item.theme"
                   :uname="item.uname"
+                  :user-email="item.userEmail"
                   @imageLoaded="updateAspectRatio(index, $event)"
                 ></ImageCard>
-              </div>
             </WaterfallItem>
           </Waterfall>
-        </div>
     </div>
     <ImageDetailModal
     :isVisible="isImageModalVisible"
@@ -78,7 +73,7 @@ export default {
       hasMore: true,
       isModalVisible: false,
       aspectRatios: [], // 用于存储图片的宽高比
-      containerWidth: 300, // 固定的图片容器宽度
+      containerWidth: 335, // 固定的图片容器宽度
       selectedImage: null, // 当前选中的图片信息
       isImageModalVisible: false
     };
@@ -130,6 +125,7 @@ export default {
 
     viewPhotoDetail(item) {
       this.selectedImage = item;
+      console.log(this.selectedImage)
       this.isImageModalVisible = true;
     },
 
@@ -193,42 +189,48 @@ export default {
   justify-content: center;
   align-items: center; /* 垂直方向居中 */
   width: 100%;
-  padding: 10px 20px 10px 10px;
-  box-sizing: border-box;
+  //padding: 10px 20px 10px 10px;
+  //box-sizing: border-box;
   position: relative;
   padding-top: 85px;
-  padding-left: 35px;
+  //padding-left: 35px;
 }
 
 .upload-button {
-  border: 2px solid black;
+  border: 2px solid #ddd;
   border-radius: 20px;
-  color: black;
+  color: #333;
   cursor: pointer;
-  background: none;
+  background-color: white;
   transition: all 0.3s ease;
   font-family: Arial, sans-serif;
   font-weight: bold;
   text-align: center;
-  place-content: center;
-  width: 100px;
-  padding: 15px;
-}
-
-.waterfall-container {
-  //overflow-y: auto;
-  width: 100%;
-  border-radius: 15px;
-  padding-right: 10px;
-  box-sizing: border-box
-}
-
-.waterfall-item-content {
+  width: 120px;
   margin: 10px;
+}
+
+.upload-button:hover {
+  background-color: #f2f2f2;
+  border-color: #bbb;
+  color: black;
+}
+
+.upload-button:active {
+  background-color: #e6e6e6;
+}
+
+.waterfall {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-left: 60px;
+}
+
+.Waterfall-item {
   border-radius: 15px;
-  //height: 100%; /* 继承父级高度 */
-  //overflow: hidden;
-  padding: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
  /* 按钮容器 */
 .upload-button-container {

@@ -1,29 +1,35 @@
 <template>
   <el-dialog
     :visible.sync="isVisible"
-    width="60%"
+    width="70%"
     :close-on-click-modal="false"
     class="image-detail-dialog"
     @close="closeModal"
   >
     <div class="dialog-content">
-      <img :src="image.url" alt="image" class="image-display" />
+      <div class="image-container">
+        <img :src="image.url" alt="image" class="image-display" />
+      </div>
       <div class="image-info">
+        <UserInfoCard :user-email="image.userEmail"></UserInfoCard>
         <h3>{{ image.title }}</h3>
         <p>{{ image.description }}</p>
-        <p><b>主题:</b> {{ image.theme }}</p>
         <p><b>作者:</b> {{ image.uname }}</p>
       </div>
     </div>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="closeModal" type="primary">Close</el-button>
-      <el-button @click="downloadImage">Download</el-button>
+      <el-button @click="closeModal" type="primary">关闭</el-button>
+      <el-button @click="downloadImage" type="primary">下载</el-button>
     </div>
   </el-dialog>
 </template>
 
 <script>
+import UserInfoCard from "./UserInfoCard.vue";
 export default {
+  components: {
+    UserInfoCard,
+  },
   props: {
     isVisible: {
       type: Boolean,
@@ -48,7 +54,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .el-dialog__body {
   display: flex; /* 使用 Flexbox 布局 */
   flex-direction: column; /* 垂直方向布局 */
@@ -57,12 +63,16 @@ export default {
   padding: 0; /* 去掉可能的默认内边距 */
   margin: 0 auto; /* 内容居中 */
   width: 100%; /* 适配宽度 */
+  height: 100%;
   box-sizing: border-box; /* 确保 padding 不影响宽度计算 */
 }
-</style>
 
+.el-dialog {
+  height: 80%;
+  padding: 10px;
+  margin: 10px
+}
 
-<style scoped>
 /* 统一遮罩层样式 */
 .image-detail-dialog {
   font-family: Arial, sans-serif;
@@ -81,19 +91,25 @@ export default {
 
 /* 对话框的主体容器 */
 .dialog-content {
-  background: #fff;
-  border-radius: 12px;
-  //padding: 20px;
-  //width: 700px;
-  max-width:100%;
+  background: whitesmoke;
+  border-radius: 5px;
+  max-width: 100%;
+  height: 55vh;
   display: flex;
-  max-height: 350px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+  text-align: center;
+}
+
+.image-container {
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  //box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  text-align: center;
+  width: 70%;
+  height: 100%;
 }
 
 /* 图片样式，放大展示细节 */
@@ -101,22 +117,21 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 80%;
   max-width: 90%; /* 图片宽度最大为容器宽度的 90% */
-  max-height: 300px; /* 限制图片最大高度 */
-  margin: auto;
-  border-radius: 10px;
-  padding: 10px;
+  max-height: 500px; /* 限制图片最大高度 */
+  margin: 10px;
+  border-radius: 5px;
   object-fit: contain; /* 确保图片等比例缩放，且不会裁剪内容 */
+
 }
 
 /* 图片信息区域 */
 .image-info {
-  width: 100%;
+  width: 30%;
   text-align: left;
-  margin-top: 15px;
-  padding: 10px 20px;
   background-color: #f9f9f9;
-  border-radius: 8px;
+  border-radius: 5px;
 }
 
 .image-info h3 {
@@ -142,8 +157,7 @@ export default {
 /* 按钮区域 */
 .dialog-footer {
   display: flex;
-  justify-content: space-evenly;
-  //margin-top: 20px;
+  justify-content: space-between;
   width: 100%;
 }
 
@@ -158,7 +172,7 @@ export default {
   font-weight: bold;
   text-align: center;
   width: 120px;
-  //padding: 10px;
+  margin: 10px;
 }
 
 .dialog-footer button:hover {
