@@ -1,67 +1,160 @@
 <template>
   <div class="main-container">
     <!-- 顶部导航栏 -->
-    <header>
+    <div class="top-bar">
       <NewTop></NewTop>
-    </header>
+    </div>
+    <!-- 中间导航栏 -->
+    <div class="middle-bar">
+      <nav>
+        <span>Daily dose</span>
+        <span>Following</span>
+        <span>For You</span>
+        <span>Explore</span>
+      </nav>
+          <el-button class="upload-button" @click="openModal">Upload</el-button>
+          <UploadModal :isVisible="isModalVisible"
+                       @close="closeModal"
+                       @uploaded="refresh"
+          />
+    </div>
     <!-- 内容区 -->
-    <div class="content">
-        <div class="waterfall-container" @scroll="onScroll">
-          <Waterfall class="waterfall-container" @scroll="onScroll">
-            <WaterfallItem v-for="(item, index) in list" :key="index">
-              <div class="waterfall-item-content">
-                <ImageCard title="Love" description="Love you" author="Asuka" :src="item.src"></ImageCard>
-              </div>
+    <div class="content" @scroll="onScroll">
+          <Waterfall>
+            <WaterfallItem v-for="(item, index) in list"
+                           :key="index"
+                           @click.native="viewPhotoDetail(item)"
+                           :style="{ height: calculateHeight(index) + 'px', width: containerWidth + 'px' }">
+                <ImageCard
+                  :url="item.url"
+                  :description="item.description"
+                  :title="item.title"
+                  :theme="item.theme"
+                  :uname="item.uname"
+                  :user-email="item.userEmail"
+                  @imageLoaded="updateAspectRatio(index, $event)"
+                ></ImageCard>
             </WaterfallItem>
           </Waterfall>
-        </div>
     </div>
+    <ImageDetailModal
+    :isVisible="isImageModalVisible"
+    :image="selectedImage"
+    @close="closeImageModal"
+    />
   </div>
+
 </template>
 
 <script>
 import { Waterfall, WaterfallItem } from "vue2-waterfall";
-import NewTop  from "../components/NewTop.vue";
+import NewTop  from "../components/Top.vue";
 import ImageCard  from "../components/ImageCard.vue";
+import UploadModal from "../components/UploadModal.vue";
+import ImageDetailModal from "../components/ImageDetailModal.vue";
+import {fetchPhotos, uploadPhoto, fetchPhotosByEmail, fetchPhotosByTheme} from "../api/photo";
+
+
 export default {
   components: {
     Waterfall,
     WaterfallItem,
     NewTop,
-    ImageCard
+    ImageCard,
+    UploadModal,
+    ImageDetailModal
   },
   data() {
     return {
       list: [],
       loading: false,
+      page: 0,
+      limit: 10,
+      hasMore: true,
+      isModalVisible: false,
+      aspectRatios: [], // 用于存储图片的宽高比
+      containerWidth: 335, // 固定的图片容器宽度
+      selectedImage: null, // 当前选中的图片信息
+      isImageModalVisible: false
     };
   },
   mounted() {
-    this.list = this.generateRandomImages(20);
+    this.initPhotos()
   },
   methods: {
-    generateRandomImages(count) {
-      const images = [];
-      const width = 250; // 固定宽度
-      for (let i = 0; i < count; i++) {
-        const height = Math.floor(Math.random() * (400 - 300 + 1)) + 200; // 随机高度
-        images.push({ src: `https://picsum.photos/${width}/${height}` });
-      }
-      return images;
+    initPhotos() {
+      console.log("initPhotos")
+      fetchPhotos(0, 30).then((res)=>{
+        this.list.push(...res.data.data)
+        this.aspectRatios = new Array(this.list.length).fill(1);
+      })
+      this.page += (30 / this.limit)
     },
+
+    fetchAllPhotos() {
+      // 真实从后端获取图片
+      console.log("fetchPhotos")
+      console.log(this.page, this.limit)
+      fetchPhotos(this.page, this.limit).then((res) => {
+        console.log(res.data)
+        this.list.push(...res.data.data)
+        const newRatios = new Array(res.data.data.length).fill(1);
+        this.aspectRatios.push(...newRatios);
+        if (res.data.data.length < this.limit || this.list.length >= 50) {
+          this.hasMore = false;
+        }
+      })
+      console.log(this.list.length)
+      this.page++;
+    },
+
     onScroll() {
       const container = document.querySelector(".waterfall-container");
       if (
         container.scrollHeight - container.scrollTop <=
         container.clientHeight + 100 &&
-        !this.loading
+        !this.loading && this.hasMore
       ) {
         this.loading = true;
         setTimeout(() => {
-          this.list.push(...this.generateRandomImages(10));
+          this.fetchAllPhotos();
           this.loading = false;
         }, 1000); // 模拟加载延迟
       }
+    },
+
+    viewPhotoDetail(item) {
+      this.selectedImage = item;
+      console.log(this.selectedImage)
+      this.isImageModalVisible = true;
+    },
+
+    closeImageModal() {
+      this.isImageModalVisible = false;
+    },
+
+    refresh() {
+      this.list = [];
+      this.aspectRatios =[];
+      this.page = 0;
+      this.isModalVisible = false;
+      this.initPhotos()
+    },
+
+    openModal() {
+      this.isModalVisible = true; // 打开弹窗
+    },
+    closeModal() {
+      this.isModalVisible = false; // 关闭弹窗
+    },
+    updateAspectRatio(index, event) {
+      const img = event.target;
+      const aspectRatio = img.naturalHeight / img.naturalWidth;
+      this.$set(this.aspectRatios, index, aspectRatio); // 动态更新宽高比
+    },
+    calculateHeight(index) {
+      console.log(this.containerWidth * this.aspectRatios[index])
+      return this.containerWidth * this.aspectRatios[index];
     },
   },
 };
@@ -75,27 +168,72 @@ export default {
   height: 100vh;
 }
 
+.middle-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f8f8;
+  height: 10%;
+  padding: 0 20px;
+  position: relative;
+  margin-top: 95px;
+}
+
 /* 内容区 */
 .content {
   display: flex;
   flex: 1;
-  overflow: hidden;
+  overflow-y: auto;
   flex-direction: column;
   background-color: #f8f8f8;
-  padding: 10px;
   justify-content: center;
   align-items: center; /* 垂直方向居中 */
   width: 100%;
+  //padding: 10px 20px 10px 10px;
+  //box-sizing: border-box;
+  position: relative;
+  padding-top: 85px;
+  //padding-left: 35px;
 }
 
-.waterfall-container {
-  overflow-y: auto;
-  width: 100%;
-  border-radius: 15px;
-}
-
-.waterfall-item-content {
+.upload-button {
+  border: 2px solid #ddd;
+  border-radius: 20px;
+  color: #333;
+  cursor: pointer;
+  background-color: white;
+  transition: all 0.3s ease;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  text-align: center;
+  width: 120px;
   margin: 10px;
-  border-radius: 15px;
 }
+
+.upload-button:hover {
+  background-color: #f2f2f2;
+  border-color: #bbb;
+  color: black;
+}
+
+.upload-button:active {
+  background-color: #e6e6e6;
+}
+
+.waterfall {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-left: 60px;
+}
+
+.Waterfall-item {
+  border-radius: 15px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+ /* 按钮容器 */
+.upload-button-container {
+   position: relative;
+ }
 </style>

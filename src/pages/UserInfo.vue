@@ -218,7 +218,7 @@ export default {
             this.user.headImg = res.data.data;
             notify(this, "头像保存成功!", "success");
             resetUserInfo(this.user)
-            setTimeout(() => this.$router.replace('/'), 1000);
+            setTimeout(() => this.$router.replace('/UserInfo'), 1000);
           } else {
             notify(this, res.data.msg || "保存失败，请稍后重试", "error");
           }

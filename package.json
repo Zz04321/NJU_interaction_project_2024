@@ -13,7 +13,7 @@
   "dependencies": {
     "axios": "^0.24.0",
     "echarts": "^4.9.0",
-    "element-ui": "^2.15.6",
+    "element-ui": "^2.15.14",
     "mevcl": "^0.3.28",
     "swiper": "^11.1.15",
     "vue": "^2.2.2",

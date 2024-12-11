@@ -147,6 +147,8 @@ h1 {
 .templatemo_banner_slide_01 {
     background: url('../images/background1.jpg');
   background-size: 1100px 580px; /* 设置为具体的宽度和高度 */
+  border-bottom-left-radius: 50% 20px; /* 左下角曲线 */
+  border-bottom-right-radius: 50% 20px; /* 右下角曲线 */
 }
 /*about our organization*/
 #templatemo_about {

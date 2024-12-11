@@ -87,6 +87,7 @@ export default {
             console.log(res.data)
             this.$notify({ message: "登录成功!...正在跳转主页", type: "success", offset: 100 });
             localStorage.setItem("uid", res.data.data);
+            localStorage.setItem("email", this.email);
             setTimeout(() => this.$router.replace('/'), 1000);
           } else {
             console.log(res);
