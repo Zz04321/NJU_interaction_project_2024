@@ -6,15 +6,14 @@
       <el-button
         v-if="!isSelf"
         class="follow-btn"
-        @click="follow">{{ isFollowing ? 'Following' : 'Follow' }}</el-button>
+        @click="isFollowing !== true ? follow: unfollow">{{ isFollowing ? 'Following' : 'Follow' }}</el-button>
     </div>
   </div>
 </template>
 
 <script>
 import {getInfoByEmail} from "../api/user";
-import {hasCollect} from "../api/service";
-import {collect} from "../api/service";
+import {hasCollect, collect, cancelCollect} from "../api/service";
 import {notify} from "../api/user";
 
 export default {
@@ -63,6 +62,14 @@ export default {
         notify(this, "关注失败", "error")
       })
     },
+    unfollow() {
+      cancelCollect(this.userEmail).then((res)=>{
+        this.isFollowing=res.data.code === 1;
+        notify(this, "取消关注成功", "success")
+      }).catch((error)=>{
+        notify(this, "取消关注失败", "error")
+      })
+    }
   },
 };
 </script>

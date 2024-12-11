@@ -5,8 +5,8 @@
         <div class="tab_wrapper applyIntoVCG">
           <router-link to="/ServicePage" class="button home">返回</router-link>
           <ul class="px_tabs">
-            <li><router-link to="/my-concern">关注列表</router-link></li>
-          </ul>gi
+            <li><router-link to="/my-concern" class="title">关注列表</router-link></li>
+          </ul>
         </div>
       </div>
       <div class="recommend_users_container">
@@ -88,6 +88,23 @@ export default {
 </script>
 
 <style scoped>
+.personal-description-button {
+  background-color: #bedcf6; /* Light blue background */
+  color: black;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: inline-block;
+  font-size: 16px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.personal-description-button:hover {
+  background-color: #a0c4e2; /* Slightly darker blue on hover */
+}
 .page-container {
   background-size: cover;
   background-position: center;
@@ -126,11 +143,15 @@ export default {
   color: #333;
   padding: 10px 20px;
   border-radius: 5px;
-  transition: background-color 0.3s ease;
 }
 
-.px_tabs a:hover {
-  background-color: #e0e0e0;
+.px_tabs a.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2196F3;
+  background-color: transparent;
+  border: none;
+  cursor: default;
 }
 
 .button {
