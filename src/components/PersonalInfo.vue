@@ -1,6 +1,10 @@
 <template>
-  <body>
-    <div class="personal-info-container">
+  <div class="personal-info-container">
+    <div class="representative-work">
+      <img :src="photographer.photo" class="top-img">
+    </div>
+
+    <div class="info">
       <div class="header">
         <img :src="photographer.headImg" alt="Head Image" class="head-img">
         <h1>{{ photographer.uname }}</h1>
@@ -8,20 +12,14 @@
       </div>
       <div class="content">
         <div class="description">
-          <h2>个人简介</h2>
           <p>{{ photographer.description }}</p>
         </div>
         <div class="contact">
-          <h2>联系方式</h2>
           <p>{{ photographer.contact }}</p>
-        </div>
-        <div class="representative-work">
-          <h2>代表作</h2>
-          <img :src="photographer.photo" alt="Representative Work" class="representative-photo">
         </div>
       </div>
     </div>
-  </body>
+  </div>
 </template>
 
 <script>
@@ -33,76 +31,98 @@ export default {
   }
 };
 </script>
+
 <style scoped>
 body {
   background: url("../assets/bg_right.png") no-repeat center center fixed;
   background-size: cover;
   margin: 0;
   padding: 0;
+  font-family: 'Arial', sans-serif;
 }
 
-.personal-info-container {
-  max-width: 800px; /* Set a max-width for the container */
-  margin: 0 auto; /* Center the container horizontally */
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center the content horizontally */
-  justify-content: center; /* Center the content vertically */
-  min-height: 100vh; /* Ensure the container takes at least the full height of the viewport */
-}
 
-/* Other styles remain unchanged */
 .header {
   text-align: center;
   margin-bottom: 20px;
+  z-index: 1;
+  margin-top: 100px; /* Add this line to move the header down */
 }
 
 .head-img {
-  width: 150px;
-  height: 150px;
+  width: 150px; /* Reduced width */
+  height: 150px; /* Reduced height */
   border-radius: 50%;
-  margin-bottom: 10px;
-  border: 5px solid #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  margin-top: -200px; /* Move the avatar upwards */
+  border: 3px solid white; /* Add a small circular white border */
 }
 
 .header h1 {
-  margin: 10px 0;
-  font-size: 24px;
+  margin: 15px 0;
+  font-size: 28px;
   color: #333;
 }
 
 .header .email {
-  font-size: 16px;
+  font-size: 18px;
   color: #777;
 }
 
 .content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+  width: 100%;
+  z-index: 1;
 }
 
-.description, .contact, .representative-work {
-  background-color: #fff;
+.description, .contact {
   padding: 20px;
+  background-color: #fff;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.description h2, .contact h2, .representative-work h2 {
-  margin-bottom: 10px;
-  font-size: 20px;
+.description h2, .contact h2 {
+  margin-bottom: 15px;
+  font-size: 22px;
   color: #333;
 }
 
-.representative-photo {
+.description p, .contact p {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.representative-work {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw; /* Set the width to the full viewport width */
+  height: 220vh; /* Set the height to the full viewport height */
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover; /* Ensure the background image covers the entire container */
+  z-index: 0;
+}
+.info {
+  margin-top: 40%; /* 调整margin-top以确保info容器浮动于代表作之上 */
+  width: 100vw;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 1; /* 确保info容器在代表作之上 */
+  position: relative; /* 确保相对于文档定位 */
+  background-color: rgba(254, 254, 254, 1); /* 设置为不透明的白色背景 */
+
+}
+.top-img {
   width: 100%;
-  height: auto;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  height: 40%;
+  object-fit: cover; /* Ensure the image covers the entire container */
 }
 </style>

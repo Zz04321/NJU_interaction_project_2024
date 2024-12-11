@@ -1,7 +1,7 @@
 <template>
   <body>
   <div id="box" style="margin-top: 150px; position: relative;">
-    <h1 style="color:black;">注册服务</h1>
+    <h1 style="color:black;">个人信息登记</h1>
     <div class="block1">
       <img v-bind:src="user.photo" alt="">
       <div class="file-input-wrapper">
@@ -20,7 +20,7 @@
         <li>
           <p>
             <span>个人简介：</span>
-            <el-input v-model="user.description"></el-input>
+            <textarea v-model="user.description" maxlength="200" rows="4" class="description-textarea"></textarea>
           </p>
         </li>
       </ul>
@@ -47,6 +47,12 @@ export default {
       pic: null,
       loading: false
     };
+  },
+  computed: {
+    isPhoneNumberValid() {
+      const phoneRegex = /^[0-9]{11}$/;
+      return phoneRegex.test(this.user.contact);
+    }
   },
   methods: {
     saveImg() {
@@ -88,14 +94,21 @@ export default {
         this.user.photo = reader.result.toString();
       };
     },
-
     submit() {
       if (!this.user.description) {
         notify(this, "请填写个人简介", "warning");
         return;
       }
+      if (this.user.description.length > 100) {
+        notify(this, "个人简介不能超过100个字", "warning");
+        return;
+      }
       if (!this.user.contact) {
         notify(this, "请填写联系方式", "warning");
+        return;
+      }
+      if (!this.isPhoneNumberValid) {
+        notify(this, "请填写有效的电话号码", "warning");
         return;
       }
       if (!this.user.photo) {
@@ -108,7 +121,7 @@ export default {
             notify(this, "注册成功!", "success");
             this.$router.push("/");
           } else {
-            notify(this,  "已注册过，不能重复注册", "error");
+            notify(this, "已注册过，不能重复注册", "error");
           }
         })
         .catch(() => {
@@ -196,7 +209,7 @@ body {
   display: block;
   width: 200px;
   height: 200px;
-  border-radius: 50%;
+  border-radius: 31%;
   background-color: white;
   border: 3px solid  #bedcf6; /* 增加淡蓝边框 */
 }
@@ -247,5 +260,21 @@ button{
 
 .logout-btn:hover {
   transform: scale(1.1);
+}
+
+.description-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  resize: vertical; /* 允许垂直方向调整大小 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s;
+}
+
+.description-textarea:focus {
+  border-color: #2196F3; /* 聚焦时边框颜色 */
+  outline: none;
 }
 </style>
