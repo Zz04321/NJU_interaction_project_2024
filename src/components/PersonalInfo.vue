@@ -15,6 +15,7 @@
           <p>{{ photographer.description }}</p>
         </div>
         <div class="followers-following">
+          <span>点赞数 {{ fans.length }}</span>
           <span>粉丝 {{ fans.length }}</span>
           <span @click="showFollowList">关注 {{ collects.length }}</span>
         </div>
@@ -27,7 +28,8 @@
           </Waterfall>
         </div>
       </div>
-      <button class="upload-button" @click="showUploadModal">上传图片</button>
+<!--      <button class="upload-button" @click="showUploadModal">上传图片</button>-->
+<!--      <button class="like-button" @click="likePhoto">点赞</button>-->
     </div>
     <CommunityUploadModal :isVisible="isUploadModalVisible" @close="isUploadModalVisible = false" @uploaded="handleUploadSuccess" />
     <ImageModal :isVisible="isImageModalVisible" :imageSrc="selectedImage" @close="isImageModalVisible = false" />
@@ -37,7 +39,7 @@
 
 <script>
 import { Waterfall, WaterfallItem } from "vue2-waterfall";
-import { getAllPhotos, getFans, getAllCollects } from "../api/service";
+import { getAllPhotos, getFans, getAllCollects, favour } from "../api/service";
 import CommunityUploadModal from "./CommunityUploadModal.vue";
 import ImageModal from "./ImageModal.vue";
 import FollowListModal from './FollowListModal.vue';
@@ -107,6 +109,16 @@ export default {
     },
     showFollowList() {
       this.isFollowListVisible = true;
+    },
+    likePhoto() {
+      const email = this.photographer.email;
+      favour(email)
+        .then(response => {
+          alert('You liked this photo!');
+        })
+        .catch(error => {
+          console.error('Error liking the photo:', error);
+        });
     }
   }
 };
@@ -291,5 +303,58 @@ body {
 
 .separator::after {
   right: 0;
+}
+
+.like-button {
+  background-color: #ff4081; /* Pink color */
+  color: #fff; /* White text */
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px; /* Add some margin on top */
+  transition: background-color 0.3s ease;
+}
+
+.like-button:hover {
+  background-color: #e91e63; /* Darker pink on hover */
+}
+.upload-button, .like-button {
+  position: absolute;
+  top: 10px;
+  background-color: #4CAF50; /* Green */
+  border-radius: 20px; /* More rounded corners */
+  color: #fff; /* White text */
+  cursor: pointer;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.upload-button:hover, .like-button:hover {
+  background-color: #45a049; /* Darker Green */
+  color: #fff; /* Ensure text color remains white */
+}
+
+.upload-button {
+  right: 10px;
+}
+
+.like-button {
+  right: 130px; /* Adjust this value to place the button to the left of the upload button */
+}
+
+.upload-button:hover {
+  background-color: #45a049; /* Darker Green */
+  color: #fff; /* Ensure text color remains white */
+}
+
+
+.like-button:hover {
+  background-color: #e91e63; /* Darker pink on hover */
 }
 </style>
