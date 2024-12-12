@@ -4,9 +4,6 @@
       <div class="profile_nav">
         <div class="tab_wrapper applyIntoVCG">
           <router-link to="/" class="button home">返回首页</router-link>
-<!--          <ul class="px_tabs">-->
-<!--            <li><router-link to="/my-concern">我的关注</router-link></li>-->
-<!--          </ul>-->
           <router-link v-if="!isJoined" to="/service/register" class="button application">加入社区</router-link>
           <el-button v-else class="upload-button" @click="openModal">上传图片</el-button>
           <NewUploadModal v-if="isJoined" :isVisible="isModalVisible" @close="closeModal" @uploaded="refresh" />
@@ -16,10 +13,10 @@
         <div class="recommend_users">
           <div class="user_item" v-for="photographer in photographers" :key="photographer.email">
             <div class="top">
-              <router-link :to="{ path: '/personal-info', query: { photographer: JSON.stringify(photographer) } }">
+              <router-link :to="{ name: 'PersonalInfo', params: {photographer} }">
                 <div class="representative_work" :style="{ backgroundImage: 'url(' + photographer.photo + ')' }"></div>
               </router-link>
-              <router-link :to="{ path: '/personal-info', query: { photographer: JSON.stringify(photographer) } }">
+              <router-link :to="{ name: 'PersonalInfo', params: {photographer} }">
                 <div class="avatar_wrapper">
                   <a class="avatar" :style="{ backgroundImage: 'url(' + photographer.headImg + ')' }"></a>
                 </div>
@@ -33,9 +30,12 @@
               </span>
               <div class="button-container">
                 <a href="javascript:void(0)" class="button mini_follow follow"
-                   :class="{ disabled: photographer.followed }" @click="followPhotographer(photographer.email)"
-                   :disabled="photographer.followed">
-                  {{ photographer.followed ? '已关注' : '关注' }}
+                   :class="{ disabled: photographer.followed, followed: photographer.followed }"
+                   @click="photographer.followed ? confirmUnfollow(photographer.email) : followPhotographer(photographer.email)"
+                   :disabled="photographer.followed"
+                   @mouseenter="handleMouseEnter(photographer.email)"
+                   @mouseleave="handleMouseLeave">
+                  {{ photographer.followed ? (hoveredPhotographer === photographer.email ? '取消关注' : '已关注') : '关注' }}
                 </a>
               </div>
             </div>
@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import {getAll, collect, hasCollect, hasJoined} from '../api/service';
+import {getAll, collect, hasCollect, hasJoined, cancelCollect} from '../api/service';
 import {getUserInfo, notify} from "../api/user";
 import NewUploadModal from "../components/CommunityUploadModal.vue";
 
@@ -61,7 +61,8 @@ export default {
       showUserDescription: '',
       userDescription: '',
       isJoined: false,
-      isModalVisible: false
+      isModalVisible: false,
+      hoveredPhotographer: null
     };
   },
   mounted() {
@@ -70,6 +71,12 @@ export default {
     this.checkJoinStatus();
   },
   methods: {
+    handleMouseEnter(email) {
+      this.hoveredPhotographer = email;
+    },
+    handleMouseLeave() {
+      this.hoveredPhotographer = null;
+    },
     async fetchPhotographers() {
       try {
         const response = await getAll();
@@ -140,6 +147,16 @@ export default {
         console.error('Error following photographer:', error);
       }
     },
+    async confirmUnfollow(email) {
+      if (confirm('确定要取消关注吗？')) {
+        try {
+          await cancelCollect(email);
+          this.updateFollowStatus(email, false);
+        } catch (error) {
+          console.error('Error unfollowing photographer:', error);
+        }
+      }
+    },
     updateFollowStatus(email, status) {
       const photographer = this.photographers.find(p => p.email === email);
       if (photographer) {
@@ -180,12 +197,6 @@ export default {
   justify-content: space-between;
 }
 
-.px_tabs {
-  display: flex;
-  list-style: none;
-  padding: 0;
-  margin: 0 auto;
-}
 
 .px_tabs li {
   margin-right: 20px;
@@ -400,5 +411,18 @@ export default {
 .upload-button:hover {
   background-color: #45a049; /* Darker Green */
   color: #fff; /* Ensure text color remains white */
+}
+.user_item .button.mini_follow.followed {
+  background-color: #4CAF50; /* Green background */
+  color: #fff; /* White text */
+  border: none; /* Remove border */
+  opacity: 1; /* Ensure text is not faded */
+}
+
+.user_item .button.mini_follow.followed:hover {
+  background-color: #f44336; /* Red background */
+  color: #fff; /* White text */
+  border: none; /* Remove border */
+  content: "取消关注"; /* Change text to "取消关注" */
 }
 </style>

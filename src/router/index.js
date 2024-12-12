@@ -99,11 +99,14 @@ export default new Router({
       component: ServicePage,
     },
     {
-      path: '/personal-info',
+
+      path: '/personal-info/:photographer',
+      name: 'PersonalInfo',
       component: PersonalInfo,
+      props: true,
       meta: {
         needLogin: true
-      }
+      },
     }
   ]
 })
