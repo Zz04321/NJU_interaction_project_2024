@@ -2,12 +2,14 @@
   <div class="image-container" @mouseover="handleMouseOver" @mouseleave="handleMouseLeave">
     <img :src="url" :alt="title" class="image" @load="handleImageLoad" />
     <div class="image-info" v-if="showInfo">
-      <img class="el-avatar" :src="headImg" alt="头像" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px">
-      <p class="image-author">{{ uname }}</p>
-      <div class="right-buttons">
-        <el-button type="primary" icon="el-icon-star-off" ></el-button>
-        <el-button type="primary" icon="el-icon-folder-add" ></el-button>
-        <el-button type="primary" icon="el-icon-share"></el-button>
+      <div class="left-items">
+        <img class="el-avatar" :src="headImg" alt="头像" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px">
+        <p class="image-author">{{ uname }}</p>
+      </div>
+      <div class="right-items">
+        <i class="el-icon-star-off" style="font-size: 20px"></i>
+        <i class="el-icon-download" style="font-size: 20px"></i>
+        <i class="el-icon-share" style="font-size: 20px"></i>
       </div>
     </div>
   </div>
@@ -88,7 +90,7 @@ export default {
 .image-info {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  justify-content: space-between;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -102,25 +104,20 @@ export default {
   transition: opacity 0.3s ease-in-out;
 }
 
-.right-buttons {
-  position: absolute;
-  right: 0;
-  margin: 0;
-  padding: 0;
+.left-items {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 20%;
 }
 
-.el-button {
-  background: transparent;
-  border-color: transparent;
-}
-
-.el-button:hover {
-  background: transparent;
-  border-color: transparent;
-}
-
-.el-icon {
-  color: white;
+.right-items {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 30%;
 }
 
 .image-container:hover .image-info {

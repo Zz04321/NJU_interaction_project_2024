@@ -32,13 +32,14 @@
             :key="index"
             type="text"
             :class="{ active: activeTab === index }"
+            style="margin: 20px"
             @click="selectTab(index)"
           >
             {{ tab }}
           </el-button>
         </el-button-group>
       </div>
-      <div class="right-buttons">
+      <div class="right-items">
         <el-button
           :icon="layOutIconClass"
           size="big"
@@ -334,7 +335,7 @@ export default {
   outline: none;
 }
 
-.right-buttons {
+.right-items {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -342,7 +343,7 @@ export default {
   margin-right: 40px;
 }
 
-.right-buttons .el-button {
+.right-items .el-button {
   font-size: 25px;
 }
 
