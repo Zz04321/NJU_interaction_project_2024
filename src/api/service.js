@@ -21,8 +21,8 @@ export function getAll() {
   return axios.post(url);
 }
 
-export function getAllCollects() {
-  const url = `${API_BASE_URL}/service/getCollection`;
+export function getAllCollects(email) {
+  const url = `${API_BASE_URL}/service/getCollection/${email}`;
   return axios.post(url, {},{headers: {
       'Authorization': `${global.getToken()}`
     }});
@@ -52,4 +52,55 @@ export function cancelCollect(email) {
       'Authorization': `${global.getToken()}`,
       'Content-Type': 'application/json',
     }});
+}
+
+// Check if a photo is favoured
+export function hasFavoured(photo) {
+  const url = `${API_BASE_URL}/service/hasfavoured/${photo}`;
+  return axios.post(url, {}, {
+    headers: {
+      'Authorization': `${global.getToken()}`
+    }
+  });
+}
+
+// Upload photos
+export function uploadPhotos(photos) {
+  const url = `${API_BASE_URL}/service/upload`;
+  return axios.post(url, photos, {
+    headers: {
+      'Authorization': `${global.getToken()}`,
+      'Content-Type': 'application/json',
+    }
+  });
+}
+
+// Get all photos by email
+export function getAllPhotos(email) {
+  const url = `${API_BASE_URL}/service/getAllPhotos/${email}`;
+  return axios.post(url, {}, {
+    headers: {
+      'Authorization': `${global.getToken()}`
+    }
+  });
+}
+
+// Get all fans
+export function getFans(email) {
+  const url = `${API_BASE_URL}/service/getFans/${email}`;
+  return axios.post(url, {}, {
+    headers: {
+      'Authorization': `${global.getToken()}`
+    }
+  });
+}
+
+// Check if joined
+export function hasJoined() {
+  const url = `${API_BASE_URL}/service/hasJoined`;
+  return axios.post(url, {}, {
+    headers: {
+      'Authorization': `${global.getToken()}`
+    }
+  });
 }
