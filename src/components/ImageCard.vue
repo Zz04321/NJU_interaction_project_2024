@@ -2,10 +2,13 @@
   <div class="image-container" @mouseover="handleMouseOver" @mouseleave="handleMouseLeave">
     <img :src="url" :alt="title" class="image" @load="handleImageLoad" />
     <div class="image-info" v-if="showInfo">
-      <img class="el-avatar" :src="headImg" alt="头像" style="width: 30px; height: 30px; border-radius: 50%;">
-      <p class="image-title">{{ title }}</p>
-      <p class="image-author">作者: {{ uname }}</p>
-      <p class="image-description">{{ description }}</p>
+      <img class="el-avatar" :src="headImg" alt="头像" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px">
+      <p class="image-author">{{ uname }}</p>
+      <div class="right-buttons">
+        <el-button type="primary" icon="el-icon-star-off" ></el-button>
+        <el-button type="primary" icon="el-icon-folder-add" ></el-button>
+        <el-button type="primary" icon="el-icon-share"></el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -85,6 +88,7 @@ export default {
 .image-info {
   display: flex;
   flex-direction: row;
+  align-items: center;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -96,6 +100,27 @@ export default {
   text-align: left;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
+}
+
+.right-buttons {
+  position: absolute;
+  right: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.el-button {
+  background: transparent;
+  border-color: transparent;
+}
+
+.el-button:hover {
+  background: transparent;
+  border-color: transparent;
+}
+
+.el-icon {
+  color: white;
 }
 
 .image-container:hover .image-info {

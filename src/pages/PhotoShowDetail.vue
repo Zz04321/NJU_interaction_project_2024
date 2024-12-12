@@ -6,8 +6,26 @@
     </div>
     <!-- 中间导航栏 -->
     <div class="middle-bar">
-
-      <div class="tab-buttons">
+      <div class="left-buttons">
+        <el-dropdown trigger="click">
+          <span class="el-dropdown-link">
+            Daily dose<i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="daily-dose">
+                <i class="el-icon-sun dropdown-icon"></i>
+                <span class="dropdown-text">Daily dose</span>
+              </el-dropdown-item>
+              <el-dropdown-item command="photos-only">
+                <i class="el-icon-picture dropdown-icon"></i>
+                <span class="dropdown-text">Photos only</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
+      <div class="mid-buttons">
         <el-button-group>
           <el-button
             v-for="(tab, index) in tabs"
@@ -20,21 +38,20 @@
           </el-button>
         </el-button-group>
       </div>
-
-      <div class="photo-buttons">
-        <div class="right-buttons">
-          <el-button
-            class="middle-bar-button"
-            @click="toggleDenseMode"
-          >
-            {{ denseMode ? "Sparse" : "Dense" }}
-          </el-button>
-
-          <el-button class="middle-bar-button" @click="openModal">Upload</el-button>
-          <UploadModal :isVisible="isModalVisible"
-                       @close="closeModal"
-                       @uploaded="refresh"/>
-        </div>
+      <div class="right-buttons">
+        <el-button
+          :icon="layOutIconClass"
+          size="big"
+          @click="toggleDenseMode">
+        </el-button>
+        <el-button
+          icon="el-icon-upload"
+          size="big"
+          @click="openModal">
+        </el-button>
+        <UploadModal :isVisible="isModalVisible"
+                     @close="closeModal"
+                     @uploaded="refresh"/>
       </div>
     </div>
     <!-- 内容区 -->
@@ -75,6 +92,7 @@ import {fetchPhotos, uploadPhoto, fetchPhotosByEmail, fetchPhotosByTheme} from "
 
 
 export default {
+
   components: {
     Waterfall,
     WaterfallItem,
@@ -83,6 +101,7 @@ export default {
     UploadModal,
     ImageDetailModal
   },
+
   data() {
     return {
       list: [],
@@ -99,9 +118,16 @@ export default {
       maxContainerWidth: 300, // 单个卡片的最大宽度
       minContainerWidth: 250, // 单个卡片的最小宽度
       denseMode: true, // 是否为紧凑模式
-      tabs: ['Following', 'For You', 'Explore'], // 按钮名称
+      tabs: ["热门", "排名上升", "新作", "编辑推荐","影集","专栏"], // 按钮名称
       activeTab: 0, // 当前选中的 tab 索引
     };
+  },
+
+  // 计算属性，根据当前列数计算容器宽度
+  computed: {
+    layOutIconClass() {
+      return this.denseMode ? 'el-icon-menu' : 'el-icon-s-grid';
+    },
   },
 
   mounted() {
@@ -229,11 +255,11 @@ export default {
 
 .middle-bar {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background-color: #f8f8f8;
-  height: 15%;
+  background-color: white;
+  height: 10%;
   padding: 0 20px;
   position: relative;
   margin-top: 95px;
@@ -245,15 +271,12 @@ export default {
   flex: 1;
   overflow-y: auto;
   flex-direction: column;
-  background-color: #f8f8f8;
+  background-color: whitesmoke;
   justify-content: center;
   align-items: center; /* 垂直方向居中 */
   width: 100%;
-  //padding: 10px 20px 10px 10px;
-  //box-sizing: border-box;
   position: relative;
-  padding-top: 85px;
-  //padding-left: 35px;
+  padding-top: 15px;
 }
 
 .middle-bar-button {
@@ -280,43 +303,35 @@ export default {
   background-color: #e6e6e6;
 }
 
-.tab-buttons {
+.mid-buttons {
   display: flex;
   justify-content: center;
-  margin-top: 10px;
-  width: 100%;
+  width: 60%;
 }
 
-.tab-buttons .el-button-group {
+.mid-buttons .el-button-group {
   display: flex;
   gap: 10px;
 }
 
-.tab-buttons .el-button {
+.mid-buttons .el-button {
   color: #bfbfbf;
   font-weight: normal;
   font-size: 16px;
 }
 
-.tab-buttons .el-button:hover {
+.mid-buttons .el-button:hover {
   color: #333;
 }
 
-.tab-buttons .el-button.active {
+.mid-buttons .el-button.active {
   color: #333;
   font-weight: bold;
   border-bottom: 2px solid #409eff; /* 下划线 */
 }
 
-.tab-buttons .el-button:focus {
+.mid-buttons .el-button:focus {
   outline: none;
-}
-
-.photo-buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  width: 100%;
 }
 
 .right-buttons {
@@ -324,16 +339,26 @@ export default {
   align-items: center;
   justify-content: space-between;
   width: 10%;
-  min-width: 200px;
+  margin-right: 40px;
 }
 
+.right-buttons .el-button {
+  font-size: 25px;
+}
+
+.left-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 10%;
+  min-width: 200px;
+  margin-left: 30px;
+}
 
 .waterfall {
   display: flex;
   flex-direction: column;
   width: 100%;
-  //margin-left: 80px;
-  //margin-right: 60px;
   padding-left: 50px;
 }
 
