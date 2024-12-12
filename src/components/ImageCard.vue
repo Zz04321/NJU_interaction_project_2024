@@ -2,6 +2,7 @@
   <div class="image-container" @mouseover="handleMouseOver" @mouseleave="handleMouseLeave">
     <img :src="url" :alt="title" class="image" @load="handleImageLoad" />
     <div class="image-info" v-if="showInfo">
+      <img class="el-avatar" :src="headImg" alt="头像" style="width: 30px; height: 30px; border-radius: 50%;">
       <p class="image-title">{{ title }}</p>
       <p class="image-author">作者: {{ uname }}</p>
       <p class="image-description">{{ description }}</p>
@@ -10,6 +11,8 @@
 </template>
 
 <script>
+import {getInfoByEmail} from "../api/user";
+
 export default {
   props: {
     url: {
@@ -31,12 +34,19 @@ export default {
     userEmail: {
       type: String,
       required: true
-    }
+    },
   },
   data() {
     return {
-      showInfo: false
+      showInfo: false,
+      headImg: "",
     };
+  },
+  mounted() {
+    getInfoByEmail(this.userEmail).then((res)=>{
+      this.headImg = res.data.data.headImg;
+      console.log(this.headImg);
+    })
   },
   methods: {
     handleMouseOver() {
@@ -73,6 +83,8 @@ export default {
 }
 
 .image-info {
+  display: flex;
+  flex-direction: row;
   position: absolute;
   bottom: 0;
   left: 0;

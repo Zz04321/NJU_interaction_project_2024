@@ -50,7 +50,7 @@
                   :title="item.title"
                   :theme="item.theme"
                   :uname="item.uname"
-                  :user-email="item.userEmail"
+                  :userEmail="item.userEmail"
                   @imageLoaded="updateAspectRatio(index, $event)"
                 ></ImageCard>
             </WaterfallItem>
@@ -96,7 +96,7 @@ export default {
       selectedImage: null, // 当前选中的图片信息
       isImageModalVisible: false,
       columnCount: 5, // 当前列数
-      maxContainerWidth: 400, // 单个卡片的最大宽度
+      maxContainerWidth: 300, // 单个卡片的最大宽度
       minContainerWidth: 250, // 单个卡片的最小宽度
       denseMode: true, // 是否为紧凑模式
       tabs: ['Following', 'For You', 'Explore'], // 按钮名称
@@ -126,7 +126,7 @@ export default {
     },
 
     toggleDenseMode() {
-      this.maxContainerWidth = this.denseMode ? 500 : 400;
+      this.maxContainerWidth = this.denseMode ? 400 : 300;
       this.denseMode = !this.denseMode;
       this.updateContainerWidth();
     },
@@ -233,7 +233,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   background-color: #f8f8f8;
-  height: 10%;
+  height: 15%;
   padding: 0 20px;
   position: relative;
   margin-top: 95px;
