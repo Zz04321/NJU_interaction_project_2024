@@ -38,6 +38,15 @@ export function collect(email) {
   });
 }
 
+export function favour(email) {
+  const url = `${API_BASE_URL}/service/favor/${email}`;
+  return axios.post(url, {}, {
+    headers: {
+      'Authorization': `${global.getToken()}`,
+      'Content-Type': 'application/json',
+    }
+  });
+}
 export function hasCollect(email) {
   const url = `${API_BASE_URL}/service/hasCollected/${email}`;
   return axios.post(url, {}, { headers: {

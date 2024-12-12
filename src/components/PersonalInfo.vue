@@ -15,9 +15,11 @@
           <p>{{ photographer.description }}</p>
         </div>
         <div class="followers-following">
+          <span>点赞数 {{ fans.length }}</span>
           <span>粉丝 {{ fans.length }}</span>
           <span @click="showFollowList">关注 {{ collects.length }}</span>
         </div>
+        <div class="separator">作品</div>
         <div class="photos">
           <Waterfall>
             <WaterfallItem v-for="(photo, index) in photos" :key="index" class="waterfall-item" :style="{ height: calculateHeight(index) + 'px', width: containerWidth + 'px' }">
@@ -26,20 +28,22 @@
           </Waterfall>
         </div>
       </div>
-      <button class="upload-button" @click="showUploadModal">上传图片</button>
+<!--      <button class="upload-button" @click="showUploadModal">上传图片</button>-->
+<!--      <button class="like-button" @click="likePhoto">点赞</button>-->
     </div>
     <CommunityUploadModal :isVisible="isUploadModalVisible" @close="isUploadModalVisible = false" @uploaded="handleUploadSuccess" />
     <ImageModal :isVisible="isImageModalVisible" :imageSrc="selectedImage" @close="isImageModalVisible = false" />
-    <FollowListModal :isVisible="isFollowListVisible" :email=photographer.email @close="isFollowListVisible = false" />
+    <FollowListModal :isVisible="isFollowListVisible" :email="photographer.email" @close="isFollowListVisible = false" />
   </div>
 </template>
 
 <script>
 import { Waterfall, WaterfallItem } from "vue2-waterfall";
-import { getAllPhotos, getFans, getAllCollects } from "../api/service";
+import { getAllPhotos, getFans, getAllCollects, favour } from "../api/service";
 import CommunityUploadModal from "./CommunityUploadModal.vue";
 import ImageModal from "./ImageModal.vue";
 import FollowListModal from './FollowListModal.vue';
+
 export default {
   components: {
     Waterfall,
@@ -48,21 +52,27 @@ export default {
     FollowListModal,
     ImageModal
   },
+  props: {
+    photographer: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
-      photographer: JSON.parse(this.$route.query.photographer),
       photos: [],
-      aspectRatios: [], // 用于存储图片的宽高比
-      containerWidth: 335, // 固定的图片容器宽度
-      fans: [], // 用于存储粉丝数组
-      collects: [], // 用于存储关注的人数组
-      isUploadModalVisible: false, // 控制上传模态框的显示
-      isImageModalVisible: false, // 控制图片放大模态框的显示
-      isFollowListVisible: false, // 控制关注列表模态框的显示
-      selectedImage: '' // 存储被点击的图片URL
+      aspectRatios: [],
+      containerWidth: 335,
+      fans: [],
+      collects: [],
+      isUploadModalVisible: false,
+      isImageModalVisible: false,
+      isFollowListVisible: false,
+      selectedImage: ''
     };
   },
   async mounted() {
+    console.log(this.photographer);
     try {
       const photosResponse = await getAllPhotos(this.photographer.email);
       this.photos = photosResponse.data.data;
@@ -76,13 +86,13 @@ export default {
     } catch (error) {
       console.error("Failed to fetch data", error);
     }
-    window.scrollTo(0, 300);
+    window.scrollTo(10, 300);
   },
   methods: {
     updateAspectRatio(index, event) {
       const img = event.target;
       const aspectRatio = img.naturalHeight / img.naturalWidth;
-      this.$set(this.aspectRatios, index, aspectRatio); // 动态更新宽高比
+      this.$set(this.aspectRatios, index, aspectRatio);
     },
     calculateHeight(index) {
       return this.containerWidth * this.aspectRatios[index];
@@ -91,7 +101,6 @@ export default {
       this.isUploadModalVisible = true;
     },
     handleUploadSuccess() {
-      // Handle the upload success (e.g., refresh the photos)
       this.isUploadModalVisible = false;
     },
     enlargeImage(photo) {
@@ -100,6 +109,16 @@ export default {
     },
     showFollowList() {
       this.isFollowListVisible = true;
+    },
+    likePhoto() {
+      const email = this.photographer.email;
+      favour(email)
+        .then(response => {
+          alert('You liked this photo!');
+        })
+        .catch(error => {
+          console.error('Error liking the photo:', error);
+        });
     }
   }
 };
@@ -196,8 +215,13 @@ body {
   color: #777; /* Lighter color */
   font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif; /* Rounded font */
   font-size: 16px; /* Adjust font size if needed */
+  cursor: pointer; /* Add cursor pointer to indicate it's clickable */
+  transition: color 0.3s ease; /* Smooth transition for color change */
 }
 
+.followers-following span:hover {
+  color: #333; /* Darker color on hover */
+}
 .info {
   margin-top: 40%; /* Adjust margin-top to ensure the info container floats above the representative work */
   width: 100vw;
@@ -253,5 +277,84 @@ body {
 .upload-button:hover {
   background-color: #45a049; /* Darker Green */
   color: #fff; /* Ensure text color remains white */
+}
+.separator {
+  text-align: center;
+  font-size: 24px; /* Reduced font size */
+  margin: 20px 0;
+  color: #444; /* Slightly darker color */
+  font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif; /* Harmonize with overall font */
+  position: relative;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 45%; /* Adjust width to extend lines */
+  height: 1px;
+  background-color: #ccc;
+}
+
+.separator::before {
+  left: 0;
+}
+
+.separator::after {
+  right: 0;
+}
+
+.like-button {
+  background-color: #ff4081; /* Pink color */
+  color: #fff; /* White text */
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px; /* Add some margin on top */
+  transition: background-color 0.3s ease;
+}
+
+.like-button:hover {
+  background-color: #e91e63; /* Darker pink on hover */
+}
+.upload-button, .like-button {
+  position: absolute;
+  top: 10px;
+  background-color: #4CAF50; /* Green */
+  border-radius: 20px; /* More rounded corners */
+  color: #fff; /* White text */
+  cursor: pointer;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.upload-button:hover, .like-button:hover {
+  background-color: #45a049; /* Darker Green */
+  color: #fff; /* Ensure text color remains white */
+}
+
+.upload-button {
+  right: 10px;
+}
+
+.like-button {
+  right: 130px; /* Adjust this value to place the button to the left of the upload button */
+}
+
+.upload-button:hover {
+  background-color: #45a049; /* Darker Green */
+  color: #fff; /* Ensure text color remains white */
+}
+
+
+.like-button:hover {
+  background-color: #e91e63; /* Darker pink on hover */
 }
 </style>
