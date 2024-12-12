@@ -1,8 +1,8 @@
 <template>
   <el-dialog
     :visible.sync="isVisible"
-    width="70%"
     :close-on-click-modal="false"
+    width="80%"
     class="image-detail-dialog"
     @close="closeModal"
   >
@@ -55,22 +55,9 @@ export default {
 </script>
 
 <style scoped>
-.el-dialog__body {
-  display: flex; /* 使用 Flexbox 布局 */
-  flex-direction: column; /* 垂直方向布局 */
-  align-items: center; /* 水平方向居中对齐 */
-  justify-content: center; /* 垂直方向居中对齐 */
-  padding: 0; /* 去掉可能的默认内边距 */
-  margin: 0 auto; /* 内容居中 */
-  width: 100%; /* 适配宽度 */
-  height: 100%;
-  box-sizing: border-box; /* 确保 padding 不影响宽度计算 */
-}
-
-.el-dialog {
-  height: 80%;
-  padding: 10px;
-  margin: 10px
+el-dialog .el-dialog__body {
+  padding: 0;
+  margin: 0;
 }
 
 /* 统一遮罩层样式 */
@@ -117,13 +104,10 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80%;
-  max-width: 90%; /* 图片宽度最大为容器宽度的 90% */
+  width: 100%;
   max-height: 500px; /* 限制图片最大高度 */
-  margin: 10px;
   border-radius: 5px;
   object-fit: contain; /* 确保图片等比例缩放，且不会裁剪内容 */
-
 }
 
 /* 图片信息区域 */

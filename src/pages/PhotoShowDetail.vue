@@ -32,7 +32,7 @@
             :key="index"
             type="text"
             :class="{ active: activeTab === index }"
-            style="margin: 20px"
+            style="margin: 5px"
             @click="selectTab(index)"
           >
             {{ tab }}
@@ -42,12 +42,10 @@
       <div class="right-items">
         <el-button
           :icon="layOutIconClass"
-          size="big"
           @click="toggleDenseMode">
         </el-button>
         <el-button
           icon="el-icon-upload"
-          size="big"
           @click="openModal">
         </el-button>
         <UploadModal :isVisible="isModalVisible"

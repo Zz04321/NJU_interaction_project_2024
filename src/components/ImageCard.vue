@@ -95,7 +95,7 @@ export default {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.6); /* 半透明背景 */
+  background: rgba(0, 0, 0, 0.3); /* 半透明背景 */
   color: white;
   padding: 10px;
   box-sizing: border-box;
