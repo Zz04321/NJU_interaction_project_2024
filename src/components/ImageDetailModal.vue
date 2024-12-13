@@ -10,11 +10,14 @@
       <div class="image-container">
         <img :src="image.url" alt="image" class="image-display" />
       </div>
-      <div class="image-info">
-        <UserInfoCard :user-email="image.userEmail"></UserInfoCard>
-        <h3>{{ image.title }}</h3>
-        <p>{{ image.description }}</p>
-        <p><b>作者:</b> {{ image.uname }}</p>
+      <div class="right-cards">
+        <div class="user-info">
+          <UserInfoCard :user-email="image.userEmail"></UserInfoCard>
+        </div>
+        <div class="image-info">
+          <h3>{{ image.title }}</h3>
+          <p>{{ image.description }}</p>
+        </div>
       </div>
     </div>
     <div slot="footer" class="dialog-footer">
@@ -78,7 +81,6 @@ el-dialog .el-dialog__body {
 
 /* 对话框的主体容器 */
 .dialog-content {
-  background: whitesmoke;
   border-radius: 5px;
   max-width: 100%;
   height: 55vh;
@@ -95,7 +97,7 @@ el-dialog .el-dialog__body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 70%;
+  width: 80%;
   height: 100%;
 }
 
@@ -105,14 +107,14 @@ el-dialog .el-dialog__body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-height: 500px; /* 限制图片最大高度 */
+  max-height: 100%; /* 限制图片最大高度 */
   border-radius: 5px;
   object-fit: contain; /* 确保图片等比例缩放，且不会裁剪内容 */
 }
 
 /* 图片信息区域 */
 .image-info {
-  width: 30%;
+  width: 20%;
   text-align: left;
   background-color: #f9f9f9;
   border-radius: 5px;
@@ -136,6 +138,26 @@ el-dialog .el-dialog__body {
   margin: 5px 0;
   font-size: 14px;
   color: #999;
+}
+
+.right-cards {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 20%;
+  height: 100%;
+}
+
+.user-info {
+  width: 100%;
+  margin-bottom: 20px;
+  height: 25%;
+}
+
+.image-info {
+  width: 100%;
+  height: 25%;
 }
 
 /* 按钮区域 */

@@ -1,12 +1,19 @@
 <template>
   <div class="card">
-    <div class="user-info">
+    <div class="head">
       <img class="avatar" :src="user.avatar" alt="User Avatar" />
-      <h3 class="name">{{ user.name }}</h3>
-      <el-button
-        v-if="!isSelf"
-        class="follow-btn"
-        @click="isFollowing !== true ? follow: unfollow">{{ isFollowing ? 'Following' : 'Follow' }}</el-button>
+      <div class="after-avatar">
+        <h3 class="name">{{ user.name }}</h3>
+<!--        <el-button-->
+<!--          v-if="!isSelf"-->
+<!--          class="follow-btn"-->
+<!--          @click="isFollowing !== true ? follow: unfollow">{{ isFollowing ? 'Following' : 'Follow' }}</el-button>-->
+      </div>
+    </div>
+    <div class="actions">
+      <i class="el-icon-star-off"></i>
+      <img src="../assets/icons/UilHeart.svg" alt="Camera" style="width: 25px; height: 25px" />
+      <i class="el-icon-share"></i>
     </div>
   </div>
 </template>
@@ -76,37 +83,49 @@ export default {
 
 <style scoped>
 .card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin: 20px;
   max-width: 300px;
   max-height: 500px;
   font-family: Arial, sans-serif;
 }
 
-.user-info {
-  text-align: center;
-  margin-bottom: 20px;
+.head {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  margin: 10px;
 }
 
 .avatar {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  margin-bottom: 10px;
+  margin-right: 10px;
+}
+
+.after-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.actions i {
+  font-size: 25px;
+  cursor: pointer;
 }
 
 .name {
   font-size: 18px;
   font-weight: bold;
   margin: 5px 0;
-}
-
-.location {
-  font-size: 14px;
-  color: #888;
 }
 
 .follow-btn {
