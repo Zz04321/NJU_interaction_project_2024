@@ -2,14 +2,22 @@
   <div class="image-container" @mouseover="handleMouseOver" @mouseleave="handleMouseLeave">
     <img :src="url" :alt="title" class="image" @load="handleImageLoad" />
     <div class="image-info" v-if="showInfo">
-      <p class="image-title">{{ title }}</p>
-      <p class="image-author">作者: {{ uname }}</p>
-      <p class="image-description">{{ description }}</p>
+      <div class="left-items">
+        <img class="el-avatar" :src="headImg" alt="头像" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px">
+        <p class="image-author">{{ uname }}</p>
+      </div>
+      <div class="right-items">
+        <img src="../assets/icons/IconoirHeart.svg" alt="Camera" style="width: 20px; height: 20px;" />
+        <i class="el-icon-star-off" style="font-size: 20px"></i>
+        <i class="el-icon-share" style="font-size: 20px"></i>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import {getInfoByEmail} from "../api/user";
+
 export default {
   props: {
     url: {
@@ -31,12 +39,19 @@ export default {
     userEmail: {
       type: String,
       required: true
-    }
+    },
   },
   data() {
     return {
-      showInfo: false
+      showInfo: false,
+      headImg: "",
     };
+  },
+  mounted() {
+    getInfoByEmail(this.userEmail).then((res)=>{
+      this.headImg = res.data.data.headImg;
+      console.log(this.headImg);
+    })
   },
   methods: {
     handleMouseOver() {
@@ -55,7 +70,6 @@ export default {
 <style scoped>
 .image-container {
   position: relative;
-  //display: inline-block;
   overflow: hidden;
   border-radius: 5px;
 }
@@ -73,17 +87,36 @@ export default {
 }
 
 .image-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.6); /* 半透明背景 */
+  background: rgba(0, 0, 0, 0.3); /* 半透明背景 */
   color: white;
   padding: 10px;
   box-sizing: border-box;
   text-align: left;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
+}
+
+.left-items {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  //width: 20%;
+}
+
+.right-items {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 30%;
 }
 
 .image-container:hover .image-info {

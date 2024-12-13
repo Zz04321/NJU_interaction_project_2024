@@ -1,22 +1,32 @@
 <template>
   <div class="card">
-    <div class="user-info">
-      <img class="avatar" :src="user.avatar" alt="User Avatar" />
-      <h3 class="name">{{ user.name }}</h3>
-      <el-button
-        v-if="!isSelf"
-        class="follow-btn"
-        @click="isFollowing !== true ? follow: unfollow">{{ isFollowing ? 'Following' : 'Follow' }}</el-button>
+    <div class="head">
+      <img class="avatar" :src="user.avatar" alt="User Avatar" @click="viewDetail" />
+      <div class="after-avatar">
+        <h3 class="name">{{ user.name }}</h3>
+        <el-button
+          v-if="!isSelf"
+          class="follow-btn"
+          @click="isFollowing !== true ? follow: unfollow">{{ isFollowing ? 'Following' : 'Follow' }}</el-button>
+      </div>
+    </div>
+    <div class="actions">
+      <img src="../assets/icons/IconoirHeart-grey.svg" alt="love" style="width: 25px; height: 25px" />
+      <i class="el-icon-star-off"></i>
+      <i class="el-icon-share"></i>
     </div>
   </div>
 </template>
 
 <script>
-import {getInfoByEmail} from "../api/user";
+import {getInfoByEmail} from "../api/service";
 import {hasCollect, collect, cancelCollect} from "../api/service";
 import {notify} from "../api/user";
+import router from "../router";
+import ImageCard from "./ImageCard.vue";
 
 export default {
+  components: {ImageCard},
   props: {
     userEmail: {
       type: String,
@@ -27,33 +37,66 @@ export default {
     return {
       user: {
         name: "default",
-        avatar: "https://via.placeholder.com/100", // 替换为真实图片地址
+        avatar: "https://via.placeholder.com/100",
+        contact: "",
+        email: "",
+        description: "",
+        photo:""
       },
       isFollowing: false,
       isSelf: false
     };
   },
-  mounted() {
-    getInfoByEmail(this.userEmail).then((res)=>{
-      this.user.name=res.data.data.uname;
-      this.user.avatar=res.data.data.headImg;
-    }).catch((error)=>{
-      notify(this, "获取作者信息失败", "error")
-    })
-
-    this.isSelf = (this.userEmail === localStorage.getItem("email"));
-    console.log(this.isSelf)
-    if (this.email === localStorage.getItem("email")) {
-      this.isFollowing = true;
-    } else {
-      hasCollect(this.userEmail).then((res)=>{
-        this.isFollowing=res.data.code === 1;
-      }).catch((error)=>{
-        notify(this, "获取关注信息失败", "error")
-      })
+  watch: {
+    userEmail: {
+      immediate: false, // 不在初始化时调用（因为 mounted 已经调用了）
+      handler() {
+        this.refresh(); // 当 userEmail 变化时重新获取数据
+      }
     }
   },
+  mounted() {
+    this.refresh()
+  },
   methods: {
+    refresh() {
+      getInfoByEmail(this.userEmail).then((res)=>{
+        this.user.name=res.data.data.uname;
+        this.user.avatar=res.data.data.headImg;
+        this.user.contact=res.data.data.contact;
+        this.user.email=res.data.data.email;
+        this.user.description=res.data.data.description;
+        this.user.photo=res.data.data.photo;
+      }).catch((error)=>{
+        notify(this, "获取作者信息失败", "error")
+      })
+
+      this.isSelf = (this.userEmail === localStorage.getItem("email"));
+      console.log(this.isSelf)
+      if (this.email === localStorage.getItem("email")) {
+        this.isFollowing = true;
+      } else {
+        hasCollect(this.userEmail).then((res)=>{
+          this.isFollowing=res.data.code === 1;
+        }).catch((error)=>{
+          notify(this, "获取关注信息失败", "error")
+        })
+      }
+    },
+
+    viewDetail() {
+      this.$router.push({
+        name: 'PersonalInfo',
+        params: { photographer: {
+            email: this.user.email,
+            uname: this.user.name,
+            headImg: this.user.avatar,
+            contact: this.user.contact,
+            description: this.user.description,
+            photo: this.user.photo
+          }},
+      });
+    },
     follow() {
       collect(this.userEmail).then((res)=>{
         this.isFollowing=res.data.code === 1;
@@ -76,37 +119,55 @@ export default {
 
 <style scoped>
 .card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin: 20px;
   max-width: 300px;
   max-height: 500px;
   font-family: Arial, sans-serif;
 }
 
-.user-info {
-  text-align: center;
-  margin-bottom: 20px;
+.head {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  margin: 10px;
 }
 
 .avatar {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  margin-bottom: 10px;
+  margin-right: 10px;
 }
 
+.after-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  margin: 10px;
+}
+
+.actions i {
+  font-size: 25px;
+  cursor: pointer;
+  margin-right: 20px;
+}
+
+.actions img {
+  margin-right: 20px;
+}
 .name {
   font-size: 18px;
   font-weight: bold;
   margin: 5px 0;
-}
-
-.location {
-  font-size: 14px;
-  color: #888;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .follow-btn {

@@ -1,8 +1,8 @@
 <template>
   <el-dialog
     :visible.sync="isVisible"
-    width="70%"
     :close-on-click-modal="false"
+    width="80%"
     class="image-detail-dialog"
     @close="closeModal"
   >
@@ -10,17 +10,20 @@
       <div class="image-container">
         <img :src="image.url" alt="image" class="image-display" />
       </div>
-      <div class="image-info">
-        <UserInfoCard :user-email="image.userEmail"></UserInfoCard>
-        <h3>{{ image.title }}</h3>
-        <p>{{ image.description }}</p>
-        <p><b>作者:</b> {{ image.uname }}</p>
+      <div class="right-cards">
+        <div class="user-info">
+          <UserInfoCard :user-email="image.userEmail"></UserInfoCard>
+        </div>
+        <div class="image-info">
+          <h3>{{ image.title }}</h3>
+          <p>{{ image.description }}</p>
+        </div>
       </div>
     </div>
-    <div slot="footer" class="dialog-footer">
-      <el-button @click="closeModal" type="primary">关闭</el-button>
-      <el-button @click="downloadImage" type="primary">下载</el-button>
-    </div>
+<!--    <div slot="footer" class="dialog-footer">-->
+<!--      <el-button @click="closeModal">关闭</el-button>-->
+<!--      <el-button @click="downloadImage">下载</el-button>-->
+<!--    </div>-->
   </el-dialog>
 </template>
 
@@ -54,25 +57,26 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .el-dialog__body {
-  display: flex; /* 使用 Flexbox 布局 */
-  flex-direction: column; /* 垂直方向布局 */
-  align-items: center; /* 水平方向居中对齐 */
-  justify-content: center; /* 垂直方向居中对齐 */
-  padding: 0; /* 去掉可能的默认内边距 */
-  margin: 0 auto; /* 内容居中 */
-  width: 100%; /* 适配宽度 */
-  height: 100%;
-  box-sizing: border-box; /* 确保 padding 不影响宽度计算 */
+  padding: 0;
+  margin: 0;
 }
 
-.el-dialog {
-  height: 80%;
-  padding: 10px;
-  margin: 10px
+.el-dialog__header {
+  height: 25px;
+  padding: 0 !important;
+  margin: 0;
 }
 
+.el-dialog__footer {
+  height: 50px;
+  padding: 0 !important;
+  margin: 0;
+}
+</style>
+
+<style scoped>
 /* 统一遮罩层样式 */
 .image-detail-dialog {
   font-family: Arial, sans-serif;
@@ -91,10 +95,9 @@ export default {
 
 /* 对话框的主体容器 */
 .dialog-content {
-  background: whitesmoke;
   border-radius: 5px;
   max-width: 100%;
-  height: 55vh;
+  height: 550px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -108,8 +111,10 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 70%;
+  width: 75%;
   height: 100%;
+  border: 2px solid whitesmoke;
+  padding-right: 10px;
 }
 
 /* 图片样式，放大展示细节 */
@@ -117,21 +122,19 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80%;
-  max-width: 90%; /* 图片宽度最大为容器宽度的 90% */
-  max-height: 500px; /* 限制图片最大高度 */
-  margin: 10px;
-  border-radius: 5px;
+  width: 100%;
+  max-height: 100%; /* 限制图片最大高度 */
   object-fit: contain; /* 确保图片等比例缩放，且不会裁剪内容 */
-
 }
 
 /* 图片信息区域 */
 .image-info {
-  width: 30%;
   text-align: left;
   background-color: #f9f9f9;
   border-radius: 5px;
+  width: 100%;
+  height: 80%;
+  padding: 10px;
 }
 
 .image-info h3 {
@@ -154,6 +157,23 @@ export default {
   color: #999;
 }
 
+.right-cards {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 25%;
+  height: 100%;
+  border-top: 2px solid whitesmoke;
+  border-right: 2px solid whitesmoke;
+}
+
+.user-info {
+  width: 100%;
+  margin-bottom: 20px;
+  height: 20%;
+}
+
 /* 按钮区域 */
 .dialog-footer {
   display: flex;
@@ -161,7 +181,7 @@ export default {
   width: 100%;
 }
 
-.dialog-footer button {
+.dialog-footer .el-button {
   border: 2px solid #ddd;
   border-radius: 20px;
   color: #333;
@@ -171,16 +191,16 @@ export default {
   font-family: Arial, sans-serif;
   font-weight: bold;
   text-align: center;
-  width: 120px;
-  margin: 10px;
+  width: 60px;
+  height: 20px;
 }
 
-.dialog-footer button:hover {
+.dialog-footer .el-button:hover {
   background-color: #f2f2f2;
   border-color: #bbb;
 }
 
-.dialog-footer button:active {
+.dialog-footer .el-button:active {
   background-color: #e6e6e6;
 }
 </style>

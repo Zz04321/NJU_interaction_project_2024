@@ -21,6 +21,11 @@ export function getAll() {
   return axios.post(url);
 }
 
+export function getInfoByEmail(email) {
+  const url = `${API_BASE_URL}/service/getInfoByEmail/${email}`;
+  return axios.post(url);
+}
+
 export function getAllCollects(email) {
   const url = `${API_BASE_URL}/service/getCollection/${email}`;
   return axios.post(url, {},{headers: {

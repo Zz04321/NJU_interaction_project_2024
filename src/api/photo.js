@@ -4,7 +4,7 @@ import global from './global.vue';
 const API_BASE_URL = global.url;
 
 // 上传照片api
-export function uploadPhoto(photoUrl, description, theme) {
+export function uploadPhoto(photoUrl, description, theme, title) {
   const url = `${API_BASE_URL}/photo/add`;
 
   return axios.post(url, {
