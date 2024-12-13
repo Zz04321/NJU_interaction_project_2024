@@ -7,8 +7,8 @@
         <p class="image-author">{{ uname }}</p>
       </div>
       <div class="right-items">
+        <img src="../assets/icons/IconoirHeart.svg" alt="Camera" style="width: 20px; height: 20px;" />
         <i class="el-icon-star-off" style="font-size: 20px"></i>
-        <i class="el-icon-download" style="font-size: 20px"></i>
         <i class="el-icon-share" style="font-size: 20px"></i>
       </div>
     </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="head">
-      <img class="avatar" :src="user.avatar" alt="User Avatar" />
+      <img class="avatar" :src="user.avatar" alt="User Avatar" @click="viewDetail" />
       <div class="after-avatar">
         <h3 class="name">{{ user.name }}</h3>
 <!--        <el-button-->
@@ -19,9 +19,10 @@
 </template>
 
 <script>
-import {getInfoByEmail} from "../api/user";
+import {getInfoByEmail} from "../api/service";
 import {hasCollect, collect, cancelCollect} from "../api/service";
 import {notify} from "../api/user";
+import router from "../router";
 
 export default {
   props: {
@@ -61,6 +62,14 @@ export default {
     }
   },
   methods: {
+    viewDetail() {
+      let photographer = {
+        email: this.userEmail,
+        name: this.user.name,
+        avatar: this.user.avatar
+      };
+      router.push({name: "PersonalInfo", params: {email: this.userEmail}});
+    },
     follow() {
       collect(this.userEmail).then((res)=>{
         this.isFollowing=res.data.code === 1;

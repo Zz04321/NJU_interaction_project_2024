@@ -99,6 +99,8 @@ el-dialog .el-dialog__body {
   justify-content: center;
   width: 80%;
   height: 100%;
+  border-right: 2px solid whitesmoke;
+  padding-right: 10px;
 }
 
 /* 图片样式，放大展示细节 */
@@ -108,16 +110,18 @@ el-dialog .el-dialog__body {
   justify-content: center;
   width: 100%;
   max-height: 100%; /* 限制图片最大高度 */
-  border-radius: 5px;
   object-fit: contain; /* 确保图片等比例缩放，且不会裁剪内容 */
 }
 
 /* 图片信息区域 */
 .image-info {
-  width: 20%;
   text-align: left;
   background-color: #f9f9f9;
   border-radius: 5px;
+  width: 100%;
+  height: 70%;
+  padding-left: 20px;
+  padding-top: 10px;
 }
 
 .image-info h3 {
@@ -152,12 +156,7 @@ el-dialog .el-dialog__body {
 .user-info {
   width: 100%;
   margin-bottom: 20px;
-  height: 25%;
-}
-
-.image-info {
-  width: 100%;
-  height: 25%;
+  height: 30%;
 }
 
 /* 按钮区域 */
