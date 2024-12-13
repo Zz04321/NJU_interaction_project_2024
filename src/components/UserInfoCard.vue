@@ -45,31 +45,43 @@ export default {
       isSelf: false
     };
   },
-  mounted() {
-    getInfoByEmail(this.userEmail).then((res)=>{
-      this.user.name=res.data.data.uname;
-      this.user.avatar=res.data.data.headImg;
-      this.user.contact=res.data.data.contact;
-      this.user.email=res.data.data.email;
-      this.user.description=res.data.data.description;
-      this.user.photo=res.data.data.photo;
-    }).catch((error)=>{
-      notify(this, "获取作者信息失败", "error")
-    })
-
-    this.isSelf = (this.userEmail === localStorage.getItem("email"));
-    console.log(this.isSelf)
-    if (this.email === localStorage.getItem("email")) {
-      this.isFollowing = true;
-    } else {
-      hasCollect(this.userEmail).then((res)=>{
-        this.isFollowing=res.data.code === 1;
-      }).catch((error)=>{
-        notify(this, "获取关注信息失败", "error")
-      })
+  watch: {
+    userEmail: {
+      immediate: false, // 不在初始化时调用（因为 mounted 已经调用了）
+      handler() {
+        this.refresh(); // 当 userEmail 变化时重新获取数据
+      }
     }
   },
+  mounted() {
+    this.refresh()
+  },
   methods: {
+    refresh() {
+      getInfoByEmail(this.userEmail).then((res)=>{
+        this.user.name=res.data.data.uname;
+        this.user.avatar=res.data.data.headImg;
+        this.user.contact=res.data.data.contact;
+        this.user.email=res.data.data.email;
+        this.user.description=res.data.data.description;
+        this.user.photo=res.data.data.photo;
+      }).catch((error)=>{
+        notify(this, "获取作者信息失败", "error")
+      })
+
+      this.isSelf = (this.userEmail === localStorage.getItem("email"));
+      console.log(this.isSelf)
+      if (this.email === localStorage.getItem("email")) {
+        this.isFollowing = true;
+      } else {
+        hasCollect(this.userEmail).then((res)=>{
+          this.isFollowing=res.data.code === 1;
+        }).catch((error)=>{
+          notify(this, "获取关注信息失败", "error")
+        })
+      }
+    },
+
     viewDetail() {
       this.$router.push({
         name: 'PersonalInfo',
