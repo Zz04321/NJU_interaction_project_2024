@@ -119,7 +119,8 @@ export default {
     async checkJoinStatus() {
       try {
         const response = await hasJoined();
-        if (response.data.code === 1) {
+        console.log(response);
+        if (response.data.message === "已加入") {
           this.isJoined = true;
         } else {
           this.isJoined = false;

@@ -15,7 +15,7 @@
           <p>{{ photographer.description }}</p>
         </div>
         <div class="followers-following">
-          <span>点赞数 {{ fans.length }}</span>
+          <span>点赞数 {{ likes }}</span> <!-- Display the number of likes -->
           <span>粉丝 {{ fans.length }}</span>
           <span @click="showFollowList">关注 {{ collects.length }}</span>
         </div>
@@ -28,8 +28,8 @@
           </Waterfall>
         </div>
       </div>
-<!--      <button class="upload-button" @click="showUploadModal">上传图片</button>-->
-<!--      <button class="like-button" @click="likePhoto">点赞</button>-->
+      <button class="upload-button" @click="showUploadModal">上传图片</button>
+      <button class="like-button" @click="likePhoto">点赞</button>
     </div>
     <CommunityUploadModal :isVisible="isUploadModalVisible" @close="isUploadModalVisible = false" @uploaded="handleUploadSuccess" />
     <ImageModal :isVisible="isImageModalVisible" :imageSrc="selectedImage" @close="isImageModalVisible = false" />
@@ -39,7 +39,7 @@
 
 <script>
 import { Waterfall, WaterfallItem } from "vue2-waterfall";
-import { getAllPhotos, getFans, getAllCollects, favour } from "../api/service";
+import { getAllPhotos, getFans, getAllCollects, favour, getFavors } from "../api/service";
 import CommunityUploadModal from "./CommunityUploadModal.vue";
 import ImageModal from "./ImageModal.vue";
 import FollowListModal from './FollowListModal.vue';
@@ -68,7 +68,8 @@ export default {
       isUploadModalVisible: false,
       isImageModalVisible: false,
       isFollowListVisible: false,
-      selectedImage: ''
+      selectedImage: '',
+      likes: 0 // Add a data property for likes
     };
   },
   async mounted() {
@@ -83,6 +84,9 @@ export default {
 
       const collectsResponse = await getAllCollects(this.photographer.email);
       this.collects = collectsResponse.data.data;
+
+      const favorsResponse = await getFavors(this.photographer.email); // Fetch the number of likes
+      this.likes = favorsResponse.data.data.number; // Store the number of likes
     } catch (error) {
       console.error("Failed to fetch data", error);
     }
@@ -115,6 +119,7 @@ export default {
       favour(email)
         .then(response => {
           alert('You liked this photo!');
+          this.likes += 1; // Increment the number of likes
         })
         .catch(error => {
           console.error('Error liking the photo:', error);
