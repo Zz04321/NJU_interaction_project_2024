@@ -119,6 +119,7 @@ export default {
       denseMode: true, // 是否为紧凑模式
       tabs: ["热门", "排名上升", "新作", "编辑推荐","影集","专栏"], // 按钮名称
       activeTab: 0, // 当前选中的 tab 索引
+      key: 'default'
     };
   },
 
@@ -142,7 +143,7 @@ export default {
   methods: {
     initPhotos() {
       console.log("initPhotos")
-      fetchPhotos(0, 30).then((res)=>{
+      fetchPhotos(0, 30, this.key).then((res)=>{
         this.list.push(...res.data.data)
         this.aspectRatios = new Array(this.list.length).fill(1);
       })
@@ -167,8 +168,23 @@ export default {
     },
 
     selectTab(index) {
-      this.activeTab = index; // 切换选中的 tab
-      console.log(`Selected tab: ${this.tabs[index]}`); // 可根据需要触发其他逻辑
+      this.activeTab = index;
+      // 切换选中的 tab
+      console.log(`Selected tab: ${this.tabs[index]}`);
+      if (this.activeTab === 0) {
+        this.key = "default"
+      } else if (this.activeTab === 1) {
+        this.key = "ranking"
+      } else if (this.activeTab === 2) {
+        this.key = "new"
+      } else if (this.activeTab === 3) {
+        this.key = "recommend"
+      } else if (this.activeTab === 4) {
+        this.key = "default"
+      } else if (this.activeTab === 5) {
+        this.key = "default"
+      }
+      this.refresh()// 可根据需要触发其他逻辑
     },
 
     onResize() {
@@ -177,9 +193,10 @@ export default {
 
     fetchAllPhotos() {
       // 真实从后端获取图片
+
       console.log("fetchPhotos")
       console.log(this.page, this.limit)
-      fetchPhotos(this.page, this.limit).then((res) => {
+      fetchPhotos(this.page, this.limit, this.key).then((res) => {
         console.log(res.data)
         this.list.push(...res.data.data)
         const newRatios = new Array(res.data.data.length).fill(1);

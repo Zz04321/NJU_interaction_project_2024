@@ -18,12 +18,13 @@ export function uploadPhoto(photoUrl, description, theme, title) {
   })
 }
 
-export function fetchPhotos(page, limit) {
+export function fetchPhotos(page, limit, key) {
   const url = `${API_BASE_URL}/photo/fetchPhotos`;
   return axios.post(url, {}, {
     params: {
       page: page,
-      limit: limit
+      limit: limit,
+      key: key,
     },
   });
 }
