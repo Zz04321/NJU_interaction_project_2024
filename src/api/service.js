@@ -69,8 +69,8 @@ export function cancelCollect(email) {
 }
 
 // Check if a photo is favoured
-export function hasFavoured(photo) {
-  const url = `${API_BASE_URL}/service/hasfavoured/${photo}`;
+export function hasFavoured(email) {
+  const url = `${API_BASE_URL}/service/hasFavored/${email}`;
   return axios.post(url, {}, {
     headers: {
       'Authorization': `${global.getToken()}`
@@ -126,3 +126,11 @@ export function getFavors(email) {
     }
   });
 }
+export function cancelFavor(email) {
+  const url = `${API_BASE_URL}/service/cancelFavor/${email}`;
+  return axios.post(url, {}, {headers: {
+      'Authorization': `${global.getToken()}`,
+      'Content-Type': 'application/json',
+    }});
+}
+

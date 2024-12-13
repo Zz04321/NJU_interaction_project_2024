@@ -15,18 +15,17 @@
               <router-link :to="{ name: 'PersonalInfo', params: { photographer: user } }">
                 <span class="username">{{ user.uname }}</span>
               </router-link>
-              <span class="fans-count">粉丝数: {{ fansCount }}</span>
+              <span class="fans-count">粉丝数: {{ user.fansCount }}</span>
             </div>
-            <button
+            <FollowButton
               v-if="user.email !== currentUserEmail"
-              :class="{'follow-button': !user.isFollowed, 'followed-button': user.isFollowed, 'unfollow-button': user.isFollowed && user.hovering}"
-              @click="toggleFollow(user)"
-              @mouseover="user.hovering = true"
-              @mouseleave="user.hovering = false"
-              :disabled="user.isProcessing"
-            >
-              {{ user.isFollowed ? (user.hovering ? '取消关注' : '已关注') : '关注' }}
-            </button>
+              :isFollowed="user.isFollowed"
+              :userEmail="user.email"
+              :currentUserEmail="currentUserEmail"
+              @follow="followUser"
+              @cancel-follow="cancelFollowUser"
+              @update:isFollowed="user.isFollowed = $event"
+            />
           </li>
         </ul>
         <p v-if="message" class="error-message">{{ message }}</p>
@@ -36,10 +35,14 @@
 </template>
 
 <script>
+import FollowButton from './FollowButton.vue';
 import { getAllCollects, getFans, collect, cancelCollect, hasCollect } from '../api/service';
 import { getUserInfo } from '../api/user';
 
 export default {
+  components: {
+    FollowButton
+  },
   props: {
     isVisible: {
       type: Boolean,
@@ -68,11 +71,6 @@ export default {
   created() {
     this.fetchCurrentUser();
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.$emit('update:isVisible', true);
-    });
-  },
   methods: {
     async fetchCurrentUser() {
       try {
@@ -94,8 +92,6 @@ export default {
           for (const user of this.followList) {
             const followResponse = await hasCollect(user.email);
             this.$set(user, 'isFollowed', followResponse.data.message === "已收藏");
-            this.$set(user, 'hovering', false);
-            this.$set(user, 'isProcessing', false);
           }
         } else {
           this.message = response.data.msg;
@@ -111,38 +107,11 @@ export default {
         this.message = 'Failed to fetch follow list';
       }
     },
-    async toggleFollow(user) {
-      if (user.isFollowed) {
-        const confirmed = confirm('确认取消关注?');
-        if (!confirmed) {
-          return;
-        }
-      }
-
-      user.isProcessing = true;
-      const originalState = user.isFollowed;
-
-      try {
-        if (originalState) {
-          const response = await cancelCollect(user.email);
-          if (response.data.code === 1) {
-            this.$set(user, 'isFollowed', false); // Update state based on API response
-          } else {
-            this.message = response.data.msg;
-          }
-        } else {
-          const response = await collect(user.email);
-          if (response.data.code === 1) {
-            this.$set(user, 'isFollowed', true); // Update state based on API response
-          } else {
-            this.message = response.data.msg;
-          }
-        }
-      } catch (error) {
-        this.message = '操作失败';
-      } finally {
-        user.isProcessing = false;
-      }
+    async followUser(email) {
+      return await collect(email);
+    },
+    async cancelFollowUser(email) {
+      return await cancelCollect(email);
     },
     close() {
       this.$emit('close');
