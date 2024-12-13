@@ -100,7 +100,7 @@ export default new Router({
     },
     {
 
-      path: '/personal-info/:photographer',
+      path: '/personal-info',
       name: 'PersonalInfo',
       component: PersonalInfo,
       props: true,

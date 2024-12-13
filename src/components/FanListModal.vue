@@ -2,7 +2,7 @@
   <div class="overlay" v-if="isVisible" @click.self="close">
     <div class="modal-content">
       <div class="header">
-        <h2>关注</h2>
+        <h2>粉丝</h2>
         <button class="header-button" @click="close">×</button>
       </div>
       <div class="content">
@@ -36,7 +36,7 @@
 
 <script>
 import FollowButton from './FollowButton.vue';
-import { getAllCollects, getFans, collect, cancelCollect, hasCollect } from '../api/service';
+import { getFans, collect, cancelCollect, hasCollect } from '../api/service';
 import { getUserInfo } from '../api/user';
 
 export default {
@@ -90,7 +90,8 @@ export default {
     },
     async fetchFollowList() {
       try {
-        const response = await getAllCollects(this.email);
+        const response = await getFans(this.email);
+        console.log(response);
         if (response.data.code === 1) {
           this.followList = response.data.data;
           for (const user of this.followList) {
@@ -102,8 +103,6 @@ export default {
         } else {
           this.message = response.data.msg;
         }
-
-
       } catch (error) {
         this.message = 'Failed to fetch follow list';
       }

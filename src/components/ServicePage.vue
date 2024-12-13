@@ -4,10 +4,23 @@
       <div class="profile_nav">
         <div class="tab_wrapper applyIntoVCG">
           <router-link to="/" class="button home">返回首页</router-link>
-          <img src="@/../static/assets/images/templatemo_logo.jpg" alt="Logo" class="logo">
+          <div class="mid-buttons">
+            <el-button-group>
+              <el-button
+                v-for="(tab, index) in tabs"
+                :key="index"
+                type="text"
+                :class="{ active: activeTab === index }"
+                style="margin: 5px"
+                @click="selectTab(index)"
+              >
+                {{ tab }}
+              </el-button>
+            </el-button-group>
+          </div>
           <router-link v-if="!isJoined" to="/service/register" class="button application">加入社区</router-link>
           <el-button v-else class="upload-button" @click="openModal">上传图片</el-button>
-          <NewUploadModal v-if="isJoined" :isVisible="isModalVisible" @close="closeModal" @uploaded="refresh" />
+          <NewUploadModal v-if="isJoined" :isVisible="isModalVisible" @close="closeModal" @uploaded="refresh"/>
         </div>
       </div>
       <div class="recommend_users_container">
@@ -19,21 +32,24 @@
               </router-link>
               <router-link :to="{ name: 'PersonalInfo', params: {photographer} }">
                 <div class="avatar_wrapper">
-                  <img :src="photographer.headImg" class="avatar" />
+                  <img :src="photographer.headImg" class="avatar"/>
                 </div>
               </router-link>
             </div>
             <div class="bottom">
               <a class="name">{{ photographer.uname ? photographer.uname : 'default' }}</a>
               <div class="info-container">
-                <span class="label">图片: {{ photographer.photoCount }}</span>
-                <span class="label">粉丝: {{ photographer.fanCount }}</span>
+                <span class="label">图片 {{ photographer.photoCount }}</span>
+                <span class="label">粉丝 {{ photographer.fanCount }}</span>
               </div>
               <div class="button-container">
                 <FollowButton
-                  :isFollowing="photographer.followed"
-                  @follow="followPhotographer(photographer.email)"
-                  @unfollow="confirmUnfollow(photographer.email)"
+                  :isFollowed="photographer.followed"
+                  :userEmail="photographer.email"
+                  :currentUserEmail="currentUserEmail"
+                  @follow="followPhotographer"
+                  @cancel-follow="confirmUnfollow"
+                  @update:isFollowed="photographer.followed = $event"
                 />
               </div>
             </div>
@@ -49,9 +65,11 @@ import {getAll, collect, hasCollect, hasJoined, cancelCollect, getAllPhotos, get
 import {getUserInfo, notify} from "../api/user";
 import NewUploadModal from "../components/CommunityUploadModal.vue";
 import FollowButton from "./FollowButton.vue";
+import UploadModal from "./UploadModal.vue";
 
 export default {
   components: {
+    UploadModal,
     FollowButton,
     NewUploadModal
   },
@@ -63,7 +81,9 @@ export default {
       userDescription: '',
       isJoined: false,
       isModalVisible: false,
-      hoveredPhotographer: null
+      hoveredPhotographer: null,
+      tabs: ["全部摄影师", "随机跳转","热门摄影师"], // 按钮名称
+      activeTab: 0, // 当前选中的 tab 索引
     };
   },
   mounted() {
@@ -72,11 +92,20 @@ export default {
     this.checkJoinStatus();
   },
   methods: {
-    handleMouseEnter(email) {
-      this.hoveredPhotographer = email;
-    },
-    handleMouseLeave() {
-      this.hoveredPhotographer = null;
+    selectTab(index) {
+      this.activeTab = index; // 切换选中的 tab
+      if (index === 2) {
+        this.photographers.sort((a, b) => b.fanCount - a.fanCount);
+      }else if (index === 0) {
+        for (let i = this.photographers.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [this.photographers[i], this.photographers[j]] = [this.photographers[j], this.photographers[i]];
+        }
+      }else if (index === 1) {
+        const randomIndex = Math.floor(Math.random() * this.photographers.length);
+        const selectedPhotographer = this.photographers[randomIndex];
+        this.$router.push({ name: 'PersonalInfo', params: { photographer: selectedPhotographer } });
+      }
     },
     async fetchPhotographers() {
       try {
@@ -124,7 +153,7 @@ export default {
           if (response.data.code === 1) {
             this.$set(photographer, 'followed', response.data.message === "已收藏");
           } else {
-            console.error('Error checking follow status:', response.data.msg);
+            this.$set(photographer, 'followed', false);
           }
         } catch (error) {
           console.error('Error checking follow status:', error);
@@ -202,11 +231,12 @@ export default {
 }
 
 .profile_nav {
-  background-color: #f0f0f0;
-  padding: 20px;
+  background-color: white;
+  padding: 10px; /* Reduce padding */
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 7vh; /* Set a fixed height if needed */
 }
 
 .tab_wrapper {
@@ -292,9 +322,10 @@ export default {
 }
 
 .label {
-  font-size: 14px; /* Decrease font size */
-  color: #333; /* Darker color for better visibility */
-  margin: 0 5px; /* Reduce the margin to bring them closer */
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 5px;
+  font-weight: 350; /* Make the text thinner */
 }
 
 .button.home {
@@ -316,7 +347,11 @@ export default {
 }
 
 .recommend_users_container {
+  background-color: whitesmoke;
   padding: 20px;
+  width: 100%;
+  height: 93vh; /* Full viewport height */
+  box-sizing: border-box; /* Include padding in the element's total width and height */
 }
 
 .recommend_users {
@@ -327,8 +362,8 @@ export default {
 
 .user_item {
   background-color: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
+  border: none; /* Remove the border */
+  border-radius: 0;
   overflow: hidden;
   text-align: center;
   box-sizing: border-box;
@@ -359,7 +394,9 @@ export default {
   font-size: 18px;
   display: block;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin: 15px 0 10px; /* Increase the top margin to add more space between the avatar and the username */
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .user_item .description {
@@ -437,6 +474,7 @@ export default {
   background-color: #45a049; /* Darker Green */
   color: #fff; /* Ensure text color remains white */
 }
+
 .user_item .button.mini_follow.followed {
   background-color: #4CAF50; /* Green background */
   color: #fff; /* White text */
@@ -450,8 +488,40 @@ export default {
   border: none; /* Remove border */
   content: "取消关注"; /* Change text to "取消关注" */
 }
+
 .button-container {
   display: flex;
   justify-content: center;
 }
+.mid-buttons {
+  display: flex;
+  justify-content: center;
+  width: 60%;
+}
+
+.mid-buttons .el-button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.mid-buttons .el-button {
+  color: #bfbfbf;
+  font-weight: normal;
+  font-size: 16px;
+}
+
+.mid-buttons .el-button:hover {
+  color: #333;
+}
+
+.mid-buttons .el-button.active {
+  color: #333;
+  font-weight: bold;
+  border-bottom: 2px solid #409eff; /* 下划线 */
+}
+
+.mid-buttons .el-button:focus {
+  outline: none;
+}
+
 </style>

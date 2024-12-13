@@ -15,8 +15,8 @@
           <p>{{ photographer.description }}</p>
         </div>
         <div class="followers-following">
-          <span>点赞数 {{ likes }}</span> <!-- Display the number of likes -->
-          <span>粉丝 {{ fans.length }}</span>
+          <span>点赞数 {{ likes}}</span> <!-- Display the number of likes -->
+          <span @click="showFanList">粉丝 {{ fans.length }}</span>
           <span @click="showFollowList">关注 {{ collects.length }}</span>
         </div>
         <div class="separator">作品</div>
@@ -37,6 +37,7 @@
     <CommunityUploadModal :isVisible="isUploadModalVisible" @close="isUploadModalVisible = false" @uploaded="handleUploadSuccess" />
     <ImageModal :isVisible="isImageModalVisible" :imageSrc="selectedImage" @close="isImageModalVisible = false" />
     <FollowListModal :isVisible="isFollowListVisible" :email="photographer.email" @close="isFollowListVisible = false" />
+    <FanListModal :isVisible="isFanListVisible" :email="photographer.email" @close="isFanListVisible = false" />
   </div>
 </template>
 
@@ -47,9 +48,11 @@ import { getUserInfo } from "../api/user";
 import CommunityUploadModal from "./CommunityUploadModal.vue";
 import ImageModal from "./ImageModal.vue";
 import FollowListModal from './FollowListModal.vue';
+import FanListModal from "./FanListModal.vue";
 
 export default {
   components: {
+    FanListModal,
     Waterfall,
     WaterfallItem,
     CommunityUploadModal,
@@ -72,6 +75,7 @@ export default {
       isUploadModalVisible: false,
       isImageModalVisible: false,
       isFollowListVisible: false,
+      isFanListVisible: false,
       selectedImage: '',
       likes: 0,
       isLiked: false, // Add a data property for like status
@@ -128,6 +132,9 @@ export default {
     },
     showFollowList() {
       this.isFollowListVisible = true;
+    },
+    showFanList() {
+      this.isFanListVisible = true;
     },
     async likePhoto() {
       const email = this.photographer.email;
