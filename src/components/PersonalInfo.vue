@@ -28,8 +28,11 @@
           </Waterfall>
         </div>
       </div>
-      <button class="upload-button" @click="showUploadModal">上传图片</button>
-      <button class="like-button" @click="likePhoto">点赞</button>
+      <button v-if="isCurrentUser" class="upload-button" @click="showUploadModal">上传图片</button>
+      <button v-else class="follow-button" @click="followUser">{{ isFollowed ? '已关注' : '关注' }}</button>
+      <button :class="['like-button', { liked: isLiked }]" @click="likePhoto" @mouseover="hoverLikeButton" @mouseleave="leaveLikeButton">
+        {{ isLiked ? (isHovered ? '取消点赞' : '已点赞') : '点赞' }}
+      </button>
     </div>
     <CommunityUploadModal :isVisible="isUploadModalVisible" @close="isUploadModalVisible = false" @uploaded="handleUploadSuccess" />
     <ImageModal :isVisible="isImageModalVisible" :imageSrc="selectedImage" @close="isImageModalVisible = false" />
@@ -39,7 +42,8 @@
 
 <script>
 import { Waterfall, WaterfallItem } from "vue2-waterfall";
-import { getAllPhotos, getFans, getAllCollects, favour, getFavors } from "../api/service";
+import { getAllPhotos, getFans, getAllCollects, favour, getFavors, hasFavoured, cancelFavor } from "../api/service";
+import { getUserInfo } from "../api/user";
 import CommunityUploadModal from "./CommunityUploadModal.vue";
 import ImageModal from "./ImageModal.vue";
 import FollowListModal from './FollowListModal.vue';
@@ -69,12 +73,20 @@ export default {
       isImageModalVisible: false,
       isFollowListVisible: false,
       selectedImage: '',
-      likes: 0 // Add a data property for likes
+      likes: 0,
+      isLiked: false, // Add a data property for like status
+      isHovered: false, // Add a data property for hover status
+      isCurrentUser: false, // Add a data property to check if the current user is the photographer
+      isFollowed: false // Add a data property for follow status
     };
   },
   async mounted() {
     console.log(this.photographer);
     try {
+      const userInfoResponse = await getUserInfo();
+      const currentUserEmail = userInfoResponse.data.data[0].email;
+      this.isCurrentUser = currentUserEmail === this.photographer.email;
+
       const photosResponse = await getAllPhotos(this.photographer.email);
       this.photos = photosResponse.data.data;
       this.aspectRatios = new Array(this.photos.length).fill(1);
@@ -85,8 +97,11 @@ export default {
       const collectsResponse = await getAllCollects(this.photographer.email);
       this.collects = collectsResponse.data.data;
 
-      const favorsResponse = await getFavors(this.photographer.email); // Fetch the number of likes
-      this.likes = favorsResponse.data.data.number; // Store the number of likes
+      const favorsResponse = await getFavors(this.photographer.email);
+      this.likes = favorsResponse.data.data.number;
+
+      const favouredResponse = await hasFavoured(this.photographer.email); // Fetch the like status
+      this.isLiked = favouredResponse.data.message === "已点赞"; // Store the like status
     } catch (error) {
       console.error("Failed to fetch data", error);
     }
@@ -114,16 +129,29 @@ export default {
     showFollowList() {
       this.isFollowListVisible = true;
     },
-    likePhoto() {
+    async likePhoto() {
       const email = this.photographer.email;
-      favour(email)
-        .then(response => {
-          alert('You liked this photo!');
-          this.likes += 1; // Increment the number of likes
-        })
-        .catch(error => {
-          console.error('Error liking the photo:', error);
-        });
+      try {
+        if (this.isLiked) {
+          await cancelFavor(email); // Call cancelFavor API
+          this.likes -= 1; // Decrease the number of likes
+        } else {
+          await favour(email); // Call favour API
+          this.likes += 1; // Increase the number of likes
+        }
+        this.isLiked = !this.isLiked; // Toggle the like status
+      } catch (error) {
+        console.error('Error liking/unliking the photo:', error);
+      }
+    },
+    hoverLikeButton() {
+      this.isHovered = true; // Set hover status to true
+    },
+    leaveLikeButton() {
+      this.isHovered = false; // Set hover status to false
+    },
+    followUser() {
+      // Implement follow user logic here
     }
   }
 };
@@ -263,26 +291,6 @@ body {
   border-radius: 10px; /* 保持圆角 */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 保持阴影 */
 }
-.upload-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #4CAF50; /* Green */
-  border-radius: 20px; /* More rounded corners */
-  color: #fff; /* White text */
-  cursor: pointer;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-}
-
-.upload-button:hover {
-  background-color: #45a049; /* Darker Green */
-  color: #fff; /* Ensure text color remains white */
-}
 .separator {
   text-align: center;
   font-size: 24px; /* Reduced font size */
@@ -310,56 +318,84 @@ body {
   right: 0;
 }
 
-.like-button {
-  background-color: #ff4081; /* Pink color */
-  color: #fff; /* White text */
-  border: none;
-  border-radius: 20px;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 10px; /* Add some margin on top */
-  transition: background-color 0.3s ease;
-}
-
-.like-button:hover {
-  background-color: #e91e63; /* Darker pink on hover */
-}
 .upload-button, .like-button {
   position: absolute;
   top: 10px;
-  background-color: #4CAF50; /* Green */
+  border: none; /* Remove border */
   border-radius: 20px; /* More rounded corners */
   color: #fff; /* White text */
   cursor: pointer;
-  padding: 10px 20px;
+  padding: 8px 25px; /* Adjust padding for a flatter look */
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
+  transition: background 0.3s ease, transform 0.3s ease; /* Smooth transition for background and transform */
 }
-
-.upload-button:hover, .like-button:hover {
-  background-color: #45a049; /* Darker Green */
-  color: #fff; /* Ensure text color remains white */
+.follow-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none; /* Remove border */
+  border-radius: 20px; /* More rounded corners */
+  color: #fff; /* White text */
+  cursor: pointer;
+  padding: 8px 25px; /* Adjust padding for a flatter look */
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
+  transition: background 0.3s ease, transform 0.3s ease; /* Smooth transition for background and transform */
 }
 
 .upload-button {
+  background: linear-gradient(135deg, #4CAF50, #45a049); /* Green gradient background */
   right: 10px;
 }
 
-.like-button {
-  right: 130px; /* Adjust this value to place the button to the left of the upload button */
+.upload-button:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50); /* Reverse gradient on hover */
+  transform: scale(1.05); /* Slightly enlarge on hover */
 }
 
-.upload-button:hover {
-  background-color: #45a049; /* Darker Green */
+.like-button {
+  background: transparent;
+  border: 2px solid #9E9E9E; /* Gray border for the default state */
+  border-radius: 20px;
+  color: #9E9E9E; /* Gray text color for the default state */
+  right: 160px;
+  cursor: pointer;
+  padding: 8px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease, transform 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.like-button.liked {
+  background: #FF5722;
+  color: #fff; /* White text color for the liked state */
+  border-color: #FFC0CB; /* Pink border for the liked state */
+}
+
+.like-button.liked:hover {
+  border-color: #f44336; /* Red border for the cancel like state */
   color: #fff; /* Ensure text color remains white */
 }
 
-
 .like-button:hover {
-  background-color: #e91e63; /* Darker pink on hover */
+  transform: scale(1.05);
+}
+.follow-button {
+  background: linear-gradient(135deg, #2196F3, #1976D2); /* Blue gradient background */
+}
+
+.follow-button:hover {
+  background: linear-gradient(135deg, #1976D2, #2196F3); /* Reverse gradient on hover */
+  transform: scale(1.05); /* Slightly enlarge on hover */
 }
 </style>
