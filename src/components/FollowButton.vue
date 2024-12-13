@@ -13,6 +13,7 @@
 
 <script>
 import {cancelCollect, collect} from "../api/service";
+import {notify} from "../api/user";
 
 export default {
   props: {
@@ -54,15 +55,19 @@ export default {
   },
   methods: {
     async handleClick() {
+      console.log(this.userEmail, this.currentUserEmail);
+      if (this.userEmail === this.currentUserEmail) {
+        notify(this, "不能关注自己 !", "error");
+        return;
+      }
+
       if (this.isFollowed) {
         const confirmed = confirm('确认取消关注?');
         if (!confirmed) {
           return;
         }
       }
-      console.log(this.userEmail);
-      console.log(this.currentUserEmail);
-      console.log(this.isFollowed);
+
       this.isProcessing = true;
       try {
         if (this.isFollowed) {
@@ -100,8 +105,6 @@ export default {
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s ease, color 0.3s ease;
-  margin-left: auto;
-  margin-right: 5px;
 }
 
 .follow-button:hover {
@@ -117,8 +120,6 @@ export default {
   border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
-  margin-left: auto;
-  margin-right: 5px;
 }
 
 .unfollow-button {
@@ -129,7 +130,6 @@ export default {
   border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
-  margin-left: auto;
-  margin-right: 5px;
+
 }
 </style>

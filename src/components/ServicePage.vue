@@ -29,14 +29,14 @@
                 {{ showUserDescription === photographer.description ? photographer.description : '个人简介' }}
               </span>
               <div class="button-container">
-                <a href="javascript:void(0)" class="button mini_follow follow"
-                   :class="{ disabled: photographer.followed, followed: photographer.followed }"
-                   @click="photographer.followed ? confirmUnfollow(photographer.email) : followPhotographer(photographer.email)"
-                   :disabled="photographer.followed"
-                   @mouseenter="handleMouseEnter(photographer.email)"
-                   @mouseleave="handleMouseLeave">
-                  {{ photographer.followed ? (hoveredPhotographer === photographer.email ? '取消关注' : '已关注') : '关注' }}
-                </a>
+                <FollowButton
+                  :isFollowed="photographer.followed"
+                  :userEmail="photographer.email"
+                  :currentUserEmail="currentUserEmail"
+                  @follow="followPhotographer"
+                  @cancel-follow="confirmUnfollow"
+                  @update:isFollowed="photographer.followed = $event"
+                />
               </div>
             </div>
           </div>
@@ -50,13 +50,16 @@
 import {getAll, collect, hasCollect, hasJoined, cancelCollect} from '../api/service';
 import {getUserInfo, notify} from "../api/user";
 import NewUploadModal from "../components/CommunityUploadModal.vue";
+import FollowButton from "./FollowButton.vue";
 
 export default {
   components: {
+    FollowButton,
     NewUploadModal
   },
   data() {
     return {
+      currentUserEmail: '',
       photographers: [],
       showUserDescription: '',
       userDescription: '',
@@ -93,8 +96,11 @@ export default {
     async fetchUserDescription() {
       try {
         const userInfo = await getUserInfo();
+        console.log(userInfo);
         if (userInfo.data.code === 1) {
-          this.userDescription = userInfo.data.data.description;
+          this.userDescription = userInfo.data.data[0].description;
+          this.currentUserEmail = userInfo.data.data[0].email;
+          console.log(this.currentUserEmail);
         } else {
           console.error('Error fetching user description:', userInfo.data.msg);
         }
@@ -426,4 +432,10 @@ export default {
   border: none; /* Remove border */
   content: "取消关注"; /* Change text to "取消关注" */
 }
+.button-container {
+  display: flex;
+  justify-content: center;
+}
+
+
 </style>
