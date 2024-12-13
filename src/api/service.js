@@ -113,3 +113,11 @@ export function hasJoined() {
     }
   });
 }
+export function getFavors(email) {
+  const url = `${API_BASE_URL}/service/getFavors/${email}`;
+  return axios.post(url, {}, {
+    headers: {
+      'Authorization': `${global.getToken()}`
+    }
+  });
+}
