@@ -20,10 +20,10 @@
         </div>
       </div>
     </div>
-    <div slot="footer" class="dialog-footer">
-      <el-button @click="closeModal" type="primary">关闭</el-button>
-      <el-button @click="downloadImage" type="primary">下载</el-button>
-    </div>
+<!--    <div slot="footer" class="dialog-footer">-->
+<!--      <el-button @click="closeModal">关闭</el-button>-->
+<!--      <el-button @click="downloadImage">下载</el-button>-->
+<!--    </div>-->
   </el-dialog>
 </template>
 
@@ -57,12 +57,26 @@ export default {
 };
 </script>
 
-<style scoped>
-el-dialog .el-dialog__body {
+<style>
+.el-dialog__body {
   padding: 0;
   margin: 0;
 }
 
+.el-dialog__header {
+  height: 25px;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.el-dialog__footer {
+  height: 50px;
+  padding: 0 !important;
+  margin: 0;
+}
+</style>
+
+<style scoped>
 /* 统一遮罩层样式 */
 .image-detail-dialog {
   font-family: Arial, sans-serif;
@@ -83,7 +97,7 @@ el-dialog .el-dialog__body {
 .dialog-content {
   border-radius: 5px;
   max-width: 100%;
-  height: 55vh;
+  height: 550px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -97,9 +111,9 @@ el-dialog .el-dialog__body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 80%;
+  width: 75%;
   height: 100%;
-  border-right: 2px solid whitesmoke;
+  border: 2px solid whitesmoke;
   padding-right: 10px;
 }
 
@@ -119,9 +133,8 @@ el-dialog .el-dialog__body {
   background-color: #f9f9f9;
   border-radius: 5px;
   width: 100%;
-  height: 70%;
-  padding-left: 20px;
-  padding-top: 10px;
+  height: 80%;
+  padding: 10px;
 }
 
 .image-info h3 {
@@ -149,14 +162,16 @@ el-dialog .el-dialog__body {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  width: 20%;
+  width: 25%;
   height: 100%;
+  border-top: 2px solid whitesmoke;
+  border-right: 2px solid whitesmoke;
 }
 
 .user-info {
   width: 100%;
   margin-bottom: 20px;
-  height: 30%;
+  height: 20%;
 }
 
 /* 按钮区域 */
@@ -166,7 +181,7 @@ el-dialog .el-dialog__body {
   width: 100%;
 }
 
-.dialog-footer button {
+.dialog-footer .el-button {
   border: 2px solid #ddd;
   border-radius: 20px;
   color: #333;
@@ -176,16 +191,16 @@ el-dialog .el-dialog__body {
   font-family: Arial, sans-serif;
   font-weight: bold;
   text-align: center;
-  width: 120px;
-  margin: 10px;
+  width: 60px;
+  height: 20px;
 }
 
-.dialog-footer button:hover {
+.dialog-footer .el-button:hover {
   background-color: #f2f2f2;
   border-color: #bbb;
 }
 
-.dialog-footer button:active {
+.dialog-footer .el-button:active {
   background-color: #e6e6e6;
 }
 </style>

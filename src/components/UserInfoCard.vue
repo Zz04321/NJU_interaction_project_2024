@@ -23,8 +23,10 @@ import {getInfoByEmail} from "../api/service";
 import {hasCollect, collect, cancelCollect} from "../api/service";
 import {notify} from "../api/user";
 import router from "../router";
+import ImageCard from "./ImageCard.vue";
 
 export default {
+  components: {ImageCard},
   props: {
     userEmail: {
       type: String,
@@ -131,8 +133,8 @@ export default {
 }
 
 .avatar {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   margin-right: 10px;
 }
@@ -147,15 +149,19 @@ export default {
 .actions {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
-  margin-top: 20px;
+  justify-content: start;
+  margin: 10px;
 }
 
 .actions i {
   font-size: 25px;
   cursor: pointer;
+  margin-right: 20px;
 }
 
+.actions img {
+  margin-right: 20px;
+}
 .name {
   font-size: 18px;
   font-weight: bold;
