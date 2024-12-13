@@ -4,6 +4,7 @@
       <div class="profile_nav">
         <div class="tab_wrapper applyIntoVCG">
           <router-link to="/" class="button home">返回首页</router-link>
+          <img src="@/../static/assets/images/templatemo_logo.jpg" alt="Logo" class="logo">
           <router-link v-if="!isJoined" to="/service/register" class="button application">加入社区</router-link>
           <el-button v-else class="upload-button" @click="openModal">上传图片</el-button>
           <NewUploadModal v-if="isJoined" :isVisible="isModalVisible" @close="closeModal" @uploaded="refresh" />
@@ -18,24 +19,21 @@
               </router-link>
               <router-link :to="{ name: 'PersonalInfo', params: {photographer} }">
                 <div class="avatar_wrapper">
-                  <a class="avatar" :style="{ backgroundImage: 'url(' + photographer.headImg + ')' }"></a>
+                  <img :src="photographer.headImg" class="avatar" />
                 </div>
               </router-link>
             </div>
             <div class="bottom">
               <a class="name">{{ photographer.uname ? photographer.uname : 'default' }}</a>
-              <span class="contact" @mouseover="showUserDescription = photographer.description"
-                    @mouseleave="showUserDescription = ''">
-                {{ showUserDescription === photographer.description ? photographer.description : '个人简介' }}
-              </span>
+              <div class="info-container">
+                <span class="label">图片: {{ photographer.photoCount }}</span>
+                <span class="label">粉丝: {{ photographer.fanCount }}</span>
+              </div>
               <div class="button-container">
                 <FollowButton
-                  :isFollowed="photographer.followed"
-                  :userEmail="photographer.email"
-                  :currentUserEmail="currentUserEmail"
-                  @follow="followPhotographer"
-                  @cancel-follow="confirmUnfollow"
-                  @update:isFollowed="photographer.followed = $event"
+                  :isFollowing="photographer.followed"
+                  @follow="followPhotographer(photographer.email)"
+                  @unfollow="confirmUnfollow(photographer.email)"
                 />
               </div>
             </div>
@@ -47,7 +45,7 @@
 </template>
 
 <script>
-import {getAll, collect, hasCollect, hasJoined, cancelCollect} from '../api/service';
+import {getAll, collect, hasCollect, hasJoined, cancelCollect, getAllPhotos, getFans} from '../api/service';
 import {getUserInfo, notify} from "../api/user";
 import NewUploadModal from "../components/CommunityUploadModal.vue";
 import FollowButton from "./FollowButton.vue";
@@ -86,6 +84,7 @@ export default {
         if (response.data.code === 1) {
           this.photographers = response.data.data;
           await this.checkFollowStatus();
+          await this.fetchAdditionalInfo();
         } else {
           console.error('Error fetching photographers:', response.data.msg);
         }
@@ -93,14 +92,24 @@ export default {
         console.error('Error fetching photographers:', error);
       }
     },
+    async fetchAdditionalInfo() {
+      for (let photographer of this.photographers) {
+        try {
+          const photosResponse = await getAllPhotos(photographer.email);
+          const fansResponse = await getFans(photographer.email);
+          this.$set(photographer, 'photoCount', photosResponse.data.data.length);
+          this.$set(photographer, 'fanCount', fansResponse.data.data.length);
+        } catch (error) {
+          console.error('Error fetching additional info:', error);
+        }
+      }
+    },
     async fetchUserDescription() {
       try {
         const userInfo = await getUserInfo();
-        console.log(userInfo);
         if (userInfo.data.code === 1) {
           this.userDescription = userInfo.data.data[0].description;
           this.currentUserEmail = userInfo.data.data[0].email;
-          console.log(this.currentUserEmail);
         } else {
           console.error('Error fetching user description:', userInfo.data.msg);
         }
@@ -115,7 +124,7 @@ export default {
           if (response.data.code === 1) {
             this.$set(photographer, 'followed', response.data.message === "已收藏");
           } else {
-            this.$set(photographer, 'followed', false);
+            console.error('Error checking follow status:', response.data.msg);
           }
         } catch (error) {
           console.error('Error checking follow status:', error);
@@ -125,7 +134,6 @@ export default {
     async checkJoinStatus() {
       try {
         const response = await hasJoined();
-        console.log(response);
         if (response.data.message === "已加入") {
           this.isJoined = true;
         } else {
@@ -196,14 +204,22 @@ export default {
 .profile_nav {
   background-color: #f0f0f0;
   padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .tab_wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
 }
 
+.logo {
+  height: 50px;
+  margin: 0 auto;
+}
 
 .px_tabs li {
   margin-right: 20px;
@@ -269,14 +285,16 @@ export default {
   padding-top: 20px; /* Increase the distance between the username and the image */
 }
 
-.contact {
-  display: inline-block;
-  position: relative;
-  cursor: pointer;
+.info-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.contact:hover {
-  color: #2196F3; /* Change color on hover */
+.label {
+  font-size: 14px; /* Decrease font size */
+  color: #333; /* Darker color for better visibility */
+  margin: 0 5px; /* Reduce the margin to bring them closer */
 }
 
 .button.home {
@@ -436,6 +454,4 @@ export default {
   display: flex;
   justify-content: center;
 }
-
-
 </style>
