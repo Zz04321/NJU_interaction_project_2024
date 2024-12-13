@@ -35,7 +35,11 @@ export default {
     return {
       user: {
         name: "default",
-        avatar: "https://via.placeholder.com/100", // 替换为真实图片地址
+        avatar: "https://via.placeholder.com/100",
+        contact: "",
+        email: "",
+        description: "",
+        photo:""
       },
       isFollowing: false,
       isSelf: false
@@ -45,6 +49,10 @@ export default {
     getInfoByEmail(this.userEmail).then((res)=>{
       this.user.name=res.data.data.uname;
       this.user.avatar=res.data.data.headImg;
+      this.user.contact=res.data.data.contact;
+      this.user.email=res.data.data.email;
+      this.user.description=res.data.data.description;
+      this.user.photo=res.data.data.photo;
     }).catch((error)=>{
       notify(this, "获取作者信息失败", "error")
     })
@@ -63,12 +71,17 @@ export default {
   },
   methods: {
     viewDetail() {
-      let photographer = {
-        email: this.userEmail,
-        name: this.user.name,
-        avatar: this.user.avatar
-      };
-      router.push({name: "PersonalInfo", params: {email: this.userEmail}});
+      this.$router.push({
+        name: 'PersonalInfo',
+        params: { photographer: {
+            email: this.user.email,
+            uname: this.user.name,
+            headImg: this.user.avatar,
+            contact: this.user.contact,
+            description: this.user.description,
+            photo: this.user.photo
+          }},
+      });
     },
     follow() {
       collect(this.userEmail).then((res)=>{
