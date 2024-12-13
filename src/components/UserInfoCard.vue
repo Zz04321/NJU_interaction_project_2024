@@ -4,15 +4,15 @@
       <img class="avatar" :src="user.avatar" alt="User Avatar" @click="viewDetail" />
       <div class="after-avatar">
         <h3 class="name">{{ user.name }}</h3>
-<!--        <el-button-->
-<!--          v-if="!isSelf"-->
-<!--          class="follow-btn"-->
-<!--          @click="isFollowing !== true ? follow: unfollow">{{ isFollowing ? 'Following' : 'Follow' }}</el-button>-->
+        <el-button
+          v-if="!isSelf"
+          class="follow-btn"
+          @click="isFollowing !== true ? follow: unfollow">{{ isFollowing ? 'Following' : 'Follow' }}</el-button>
       </div>
     </div>
     <div class="actions">
+      <img src="../assets/icons/IconoirHeart-grey.svg" alt="love" style="width: 25px; height: 25px" />
       <i class="el-icon-star-off"></i>
-      <img src="../assets/icons/UilHeart.svg" alt="Camera" style="width: 25px; height: 25px" />
       <i class="el-icon-share"></i>
     </div>
   </div>
@@ -148,6 +148,8 @@ export default {
   font-size: 18px;
   font-weight: bold;
   margin: 5px 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .follow-btn {

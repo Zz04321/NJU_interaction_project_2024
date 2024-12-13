@@ -70,7 +70,6 @@ export default {
 <style scoped>
 .image-container {
   position: relative;
-  //display: inline-block;
   overflow: hidden;
   border-radius: 5px;
 }
@@ -109,7 +108,7 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 20%;
+  //width: 20%;
 }
 
 .right-items {

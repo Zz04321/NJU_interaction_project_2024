@@ -1,9 +1,9 @@
 <template>
   <div class="main-container">
     <!-- 顶部导航栏 -->
-    <div class="top-bar">
-      <NewTop></NewTop>
-    </div>
+<!--    <div class="top-bar">-->
+<!--      <NewTop></NewTop>-->
+<!--    </div>-->
     <!-- 中间导航栏 -->
     <div class="middle-bar">
       <div class="left-buttons">
@@ -261,7 +261,7 @@ export default {
   height: 10%;
   padding: 0 20px;
   position: relative;
-  margin-top: 95px;
+  //margin-top: 95px;
 }
 
 /* 内容区 */

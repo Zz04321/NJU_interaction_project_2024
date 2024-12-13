@@ -109,7 +109,7 @@ export default {
   computed: {
     // 动态校验表单是否有效
     isFormValid() {
-      return this.title.trim() !== "" && this.description.trim() !== "" && this.file !== null;
+      return this.title.trim() !== "" && this.file !== null;
     },
   },
   methods: {
