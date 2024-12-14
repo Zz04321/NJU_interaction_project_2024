@@ -1,6 +1,5 @@
 import axios from 'axios'
 import global from './global.vue';
-
 const API_BASE_URL = global.url;
 
 // 上传照片api
@@ -52,8 +51,35 @@ export function fetchPhotosByTheme(theme, page, limit) {
 }
 
 export function favoritePhoto(photoUrl) {
-  const url = `${API_BASE_URL}/photo/favor/` + photoUrl;
+  const url = `${API_BASE_URL}/photo/favor`;
   return axios.post(url, {}, {
+    params: {
+      url: photoUrl
+    },
+    headers:{
+      'Authorization': `${global.getToken()}`
+    }
+  });
+}
+
+export function hasFavoritedPhoto(photoUrl) {
+  const url = `${API_BASE_URL}/photo/hasFavor`;
+  return axios.post(url, {}, {
+    params: {
+      url: photoUrl
+    },
+    headers:{
+      'Authorization': `${global.getToken()}`
+    }
+  });
+}
+
+export function cancelFavoritePhoto(photoUrl) {
+  const url = `${API_BASE_URL}/photo/cancelFavor`;
+  return axios.post(url, {}, {
+    params: {
+      url: photoUrl
+    },
     headers:{
       'Authorization': `${global.getToken()}`
     }

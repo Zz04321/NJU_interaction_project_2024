@@ -18,10 +18,17 @@
           <svg xmlns="http://www.w3.org/2000/svg"
                width="25px"
                height="25px"
-               viewBox="0 0 24 24">
-            <path fill="none" stroke="#666666" stroke-linejoin="round" stroke-width="1.5" d="M22 8.862a5.95 5.95 0 0 1-1.654 4.13c-2.441 2.531-4.809 5.17-7.34 7.608c-.581.55-1.502.53-2.057-.045l-7.295-7.562c-2.205-2.286-2.205-5.976 0-8.261a5.58 5.58 0 0 1 8.08 0l.266.274l.265-.274A5.6 5.6 0 0 1 16.305 3c1.52 0 2.973.624 4.04 1.732A5.95 5.95 0 0 1 22 8.862Z"/>
+               viewBox="0 0 24 24"
+               @click="toggleFavor"
+               :class="isFavored ? `favoring-css` : `not-favoring-css`">
+            <path
+              fill="none"
+              stroke="#666666"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M22 8.862a5.95 5.95 0 0 1-1.654 4.13c-2.441 2.531-4.809 5.17-7.34 7.608c-.581.55-1.502.53-2.057-.045l-7.295-7.562c-2.205-2.286-2.205-5.976 0-8.261a5.58 5.58 0 0 1 8.08 0l.266.274l.265-.274A5.6 5.6 0 0 1 16.305 3c1.52 0 2.973.624 4.04 1.732A5.95 5.95 0 0 1 22 8.862Z"
+              />
           </svg>
-<!--          <img src="../assets/icons/IconoirHeart-grey.svg" alt="love"  style="width: 25px; height: 25px" @click="favor" />-->
           <i class="el-icon-star-off"></i>
           <i class="el-icon-share"></i>
         </div>
@@ -40,6 +47,8 @@
 
 <script>
 import UserInfoCard from "./UserInfoCard.vue";
+import { favoritePhoto, hasFavoritedPhoto, cancelFavoritePhoto } from "../api/photo";
+import {notify} from "../api/user";
 export default {
   components: {
     UserInfoCard,
@@ -54,7 +63,61 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      isFavored: false,
+    };
+  },
+
+  /* isFavored每次image改变时都会重新计算，所以需要使用watch */
+  watch: {
+    image: {
+      handler() {
+        hasFavoritedPhoto(this.image.url).then((res) => {
+          this.isFavored = res.data.data;
+        });
+      },
+      immediate: true,
+    },
+  },
+  mounted() {
+    hasFavoritedPhoto(this.image.url).then((res) => {
+      console.log("hasFavoritedPhoto?");
+      console.log(res);
+      this.isFavored = res.data.data;
+    });
+  },
   methods: {
+    toggleFavor() {
+      if (this.isFavored) {
+        this.cancelFavor();
+      } else {
+        this.favor();
+      }
+    },
+    favor() {
+      console.log("favor");
+      console.log(this.isFavored);
+      favoritePhoto(this.image.url).then((res) => {
+       if (res.data.code === 1) {
+          this.isFavored = true;
+          notify(this, "点赞成功", "success");
+       } else {
+
+       }
+      });
+    },
+    cancelFavor() {
+      console.log("cancelFavor");
+      cancelFavoritePhoto(this.image.url).then((res) => {
+        if (res.data.code === 1) {
+          this.isFavored = false;
+          notify(this, "取消点赞成功", "success");
+        } else {
+
+        }
+      });
+    },
     closeModal() {
       this.$emit("close");
     },
@@ -230,8 +293,6 @@ export default {
   margin-right: 20px;
 }
 
-
-
 /* 鼠标移动到上面的时候图片(例如星星内部)内部变成灰色 */
 .actions i:hover {
   color: #999;
@@ -242,8 +303,22 @@ export default {
   margin-right: 20px;
 }
 
-.actions svg:hover path {
+.favoring-css path {
+  stroke: red;
+  fill: red;
+}
+
+.favoring-css:hover path {
+  stroke: red;
+  fill: red;
+}
+
+.not-favoring-css:hover path {
   stroke: #999;
+}
+
+.not-favoring-css path {
+  stroke: #666666;
 }
 
 </style>

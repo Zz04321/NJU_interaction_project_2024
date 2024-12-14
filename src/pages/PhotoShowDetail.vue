@@ -7,23 +7,27 @@
     <!-- 中间导航栏 -->
     <div class="middle-bar">
       <div class="left-buttons">
-        <el-dropdown trigger="click">
-          <span class="el-dropdown-link">
-            Daily dose<i class="el-icon-arrow-down el-icon--right"></i>
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="daily-dose">
-                <i class="el-icon-sun dropdown-icon"></i>
-                <span class="dropdown-text">Daily dose</span>
-              </el-dropdown-item>
-              <el-dropdown-item command="photos-only">
-                <i class="el-icon-picture dropdown-icon"></i>
-                <span class="dropdown-text">Photos only</span>
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
+<!--        <el-dropdown trigger="click">-->
+<!--          <span class="el-dropdown-link">-->
+<!--            Daily dose<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
+<!--          </span>-->
+<!--          <template #dropdown>-->
+<!--            <el-dropdown-menu>-->
+<!--              <el-dropdown-item command="daily-dose">-->
+<!--                <i class="el-icon-sun dropdown-icon"></i>-->
+<!--                <span class="dropdown-text">Daily dose</span>-->
+<!--              </el-dropdown-item>-->
+<!--              <el-dropdown-item command="photos-only">-->
+<!--                <i class="el-icon-picture dropdown-icon"></i>-->
+<!--                <span class="dropdown-text">Photos only</span>-->
+<!--              </el-dropdown-item>-->
+<!--            </el-dropdown-menu>-->
+<!--          </template>-->
+<!--        </el-dropdown>-->
+        <el-button
+          icon="el-icon-back"
+          @click="returnPrevious">
+        </el-button>
       </div>
       <div class="mid-buttons">
         <el-button-group>
@@ -151,6 +155,10 @@ export default {
       this.updateContainerWidth();
     },
 
+    returnPrevious() {
+      this.$router.back()
+    },
+
     toggleDenseMode() {
       this.maxContainerWidth = this.denseMode ? 400 : 300;
       this.denseMode = !this.denseMode;
@@ -254,7 +262,6 @@ export default {
       this.$set(this.aspectRatios, index, aspectRatio); // 动态更新宽高比
     },
     calculateHeight(index) {
-      console.log(this.containerWidth * this.aspectRatios[index])
       return this.containerWidth * this.aspectRatios[index];
     },
   },
@@ -367,8 +374,11 @@ export default {
   align-items: center;
   justify-content: space-between;
   width: 10%;
-  min-width: 200px;
-  margin-left: 30px;
+  margin-left: 40px;
+}
+
+.left-buttons .el-button {
+  font-size: 25px;
 }
 
 .waterfall {
