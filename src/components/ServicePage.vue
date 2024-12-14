@@ -3,7 +3,9 @@
     <main class="main-content">
       <div class="profile_nav">
         <div class="tab_wrapper applyIntoVCG">
-          <router-link to="/" class="button home">返回首页</router-link>
+          <router-link to="/" class="button home logo-link">
+            <img src="static/assets/images/templatemo_logo.jpg" alt="Logo" class="logo-image"/>
+          </router-link>
           <div class="mid-buttons">
             <el-button-group>
               <el-button
@@ -18,8 +20,11 @@
               </el-button>
             </el-button-group>
           </div>
-          <router-link v-if="!isJoined" to="/service/register" class="button application">加入社区</router-link>
-          <el-button v-else class="upload-button" @click="openModal">上传图片</el-button>
+          <div v-if="isJoined" class="user-profile" @click="goToProfile">
+            <img :src="userAvatar" class="avatar"/>
+            <span class="username">{{ userName }}</span>
+          </div>
+          <router-link v-else to="/service/register" class="button application">加入社区</router-link>
           <NewUploadModal v-if="isJoined" :isVisible="isModalVisible" @close="closeModal" @uploaded="refresh"/>
         </div>
       </div>
@@ -76,13 +81,15 @@ export default {
   data() {
     return {
       currentUserEmail: '',
+      userAvatar: '', // Add userAvatar
+      userName: '', // Add userName
       photographers: [],
       showUserDescription: '',
       userDescription: '',
       isJoined: false,
       isModalVisible: false,
       hoveredPhotographer: null,
-      tabs: ["全部摄影师", "随机跳转","热门摄影师"], // 按钮名称
+      tabs: ["全部摄影师", "随机跳转", "热门摄影师"], // 按钮名称
       activeTab: 0, // 当前选中的 tab 索引
     };
   },
@@ -96,15 +103,15 @@ export default {
       this.activeTab = index; // 切换选中的 tab
       if (index === 2) {
         this.photographers.sort((a, b) => b.fanCount - a.fanCount);
-      }else if (index === 0) {
+      } else if (index === 0) {
         for (let i = this.photographers.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [this.photographers[i], this.photographers[j]] = [this.photographers[j], this.photographers[i]];
         }
-      }else if (index === 1) {
+      } else if (index === 1) {
         const randomIndex = Math.floor(Math.random() * this.photographers.length);
         const selectedPhotographer = this.photographers[randomIndex];
-        this.$router.push({ name: 'PersonalInfo', params: { photographer: selectedPhotographer } });
+        this.$router.push({name: 'PersonalInfo', params: {photographer: selectedPhotographer}});
       }
     },
     async fetchPhotographers() {
@@ -139,6 +146,8 @@ export default {
         if (userInfo.data.code === 1) {
           this.userDescription = userInfo.data.data[0].description;
           this.currentUserEmail = userInfo.data.data[0].email;
+          this.userAvatar = userInfo.data.data[0].headImg; // Set userAvatar
+          this.userName = userInfo.data.data[0].uname; // Set userName
         } else {
           console.error('Error fetching user description:', userInfo.data.msg);
         }
@@ -207,6 +216,21 @@ export default {
         this.$set(photographer, 'followed', status);
       }
     },
+    async goToProfile() {
+      try {
+        const userInfo = await getUserInfo();
+        const curEmail= userInfo.data.data[0].email;
+        for (const photographer of this.photographers) {
+          if (curEmail === photographer.email) {
+            this.$router.push({name: 'PersonalInfo', params: {photographer}});
+            return;
+          }
+
+        }
+      }catch (error) {
+        console.error('Error fetching user description:', error);
+      }
+    },
     openModal() {
       this.isModalVisible = true;
     },
@@ -232,7 +256,7 @@ export default {
 
 .profile_nav {
   background-color: white;
-  padding: 10px; /* Reduce padding */
+  padding: 0; /* Remove padding */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -246,9 +270,22 @@ export default {
   width: 100%;
 }
 
-.logo {
-  height: 50px;
-  margin: 0 auto;
+
+.logo-link {
+  height: 100%; /* Ensure the link fills the height of the top bar */
+  width: 11%;
+}
+
+.logo-image {
+  width: 30%; /* Ensure the image fills the width of the link */
+  height: 100%; /* Ensure the image fills the height of the link */
+  object-fit: cover; /* Ensure the image covers the entire link area */
+  border: none; /* Remove any border */
+  transition: transform 0.3s ease; /* Smooth transition for the hover effect */
+}
+
+.logo-image:hover {
+  transform: scale(1.05); /* Slightly enlarge the image on hover */
 }
 
 .px_tabs li {
@@ -271,13 +308,6 @@ export default {
   transform: scale(1.05); /* Slightly enlarge on hover */
 }
 
-.button {
-  padding: 10px 20px;
-  border-radius: 5px;
-  text-decoration: none;
-  color: #fff;
-  transition: background-color 0.3s ease;
-}
 
 .user_item .button.mini_follow {
   display: inline-block;
@@ -328,23 +358,6 @@ export default {
   font-weight: 350; /* Make the text thinner */
 }
 
-.button.home {
-  background-color: #2196F3; /* Blue */
-  border-radius: 20px; /* More rounded corners */
-}
-
-.button.home:hover {
-  background-color: #0b7dda; /* Darker Blue */
-}
-
-.button.application {
-  background-color: #4CAF50; /* Green */
-  border-radius: 20px; /* More rounded corners */
-}
-
-.button.application:hover {
-  background-color: #45a049; /* Darker Green */
-}
 
 .recommend_users_container {
   background-color: whitesmoke;
@@ -493,6 +506,7 @@ export default {
   display: flex;
   justify-content: center;
 }
+
 .mid-buttons {
   display: flex;
   justify-content: center;
@@ -524,4 +538,32 @@ export default {
   outline: none;
 }
 
+.user-profile {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.user-profile:hover .avatar {
+  transform: scale(1.1); /* Slightly enlarge the avatar on hover */
+  transition: transform 0.3s ease; /* Smooth transition */
+}
+
+.user-profile:hover .username {
+  color: #409eff; /* Change the text color on hover */
+  transition: color 0.3s ease; /* Smooth transition */
+}
+
+.user-profile .avatar {
+  width: 35px; /* Adjust the width */
+  height: 35px; /* Adjust the height */
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.user-profile .username {
+  font-size: 16px; /* Adjust the font size */
+  font-weight: 350; /* Adjust the font weight to make it thinner */
+  color: #333;
+}
 </style>

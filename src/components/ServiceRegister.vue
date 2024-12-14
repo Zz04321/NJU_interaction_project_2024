@@ -119,7 +119,7 @@ export default {
         .then((res) => {
           if (res.data && res.data.code === 1) {
             notify(this, "注册成功!", "success");
-            this.$router.push("/");
+            this.$router.push("/ServicePage");
           } else {
             notify(this, "已注册过，不能重复注册", "error");
           }
