@@ -10,7 +10,7 @@
                 </div>
                 <div class="col-sm-8 hidden-xs">
                     <ul class="nav nav-justified">
-                        <li><a href="#templatemo_banner_slide" @click="toHome">服务对接</a></li>
+                        <li><a href="#templatemo_banner_slide" @click="toHome">社区</a></li>
                         <li><a href="#templatemo_about" @click="toAboutNews">图片展</a></li>
                         <li><a href="#templatemo_events" @click="toEvents">活动</a></li>
                         <!-- <li><a href="#templatemo_timeline" @click="toTimeLine">Timeline</a></li>

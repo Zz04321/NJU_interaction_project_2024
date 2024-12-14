@@ -11,7 +11,7 @@
           @click="goToServicePage"
           style="font-size: 18px; padding: 12px 24px; background: linear-gradient(90deg, #1a3b6b, #2a5590); border: none; border-radius: 8px; color: #ffffff;"
         >
-          寻找摄影服务
+          进入社区
         </el-button>
       </div>
 

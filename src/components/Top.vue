@@ -10,7 +10,7 @@
                 </div>
                 <div class="col-sm-8 hidden-xs">
                     <ul class="nav nav-justified">
-                        <li><a href="#templatemo_banner_slide">服务对接</a></li>
+                        <li><a href="#templatemo_banner_slide">社区</a></li>
                         <li><a href="#templatemo_about">图片展</a></li>
                         <li><a href="#templatemo_events">活动</a></li>
 <!--                         <li><a href="#templatemo_timeline">Timeline</a></li> -->
