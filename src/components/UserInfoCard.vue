@@ -4,19 +4,11 @@
       <img class="avatar" :src="user.avatar" alt="User Avatar" @click="viewDetail" />
       <div class="after-avatar">
         <h3 class="name" @click="viewDetail">{{ user.name }}</h3>
-        <el-button
+        <button
           v-if="!isSelf"
-          class="follow-btn"
-          @click="isFollowing !== true ? unfollow: follow">
-            <span v-if="isFollowing" class="btn-text">
-              <span class="normal">Following</span>
-              <span class="hover">Unfollow</span>
-            </span>
-            <span v-else class="btn-text">
-              <span class="normal">Follow</span>
-              <span class="hover">Follow Now</span>
-            </span>
-        </el-button>
+          :class="isFollowing ? `following-btn` :  `not-following-btn`  "
+          @click="toggleFollow">
+        </button>
       </div>
     </div>
     <div class="actions">
@@ -68,6 +60,13 @@ export default {
     this.refresh()
   },
   methods: {
+    toggleFollow() {
+      if (this.isFollowing) {
+        this.unfollow();
+      } else {
+        this.follow();
+      }
+    },
     refresh() {
       getInfoByEmail(this.userEmail).then((res)=>{
         this.user.name=res.data.data.uname;
@@ -86,7 +85,7 @@ export default {
         this.isFollowing = true;
       } else {
         hasCollect(this.userEmail).then((res)=>{
-          this.isFollowing=res.data.code === 1;
+          this.isFollowing= (res.data.code === 1);
         }).catch((error)=>{
           notify(this, "获取关注信息失败", "error")
         })
@@ -107,6 +106,7 @@ export default {
       });
     },
     follow() {
+      console.log("follow")
       collect(this.userEmail).then((res)=>{
         this.isFollowing=res.data.code === 1;
         notify(this, "关注成功", "success")
@@ -159,8 +159,8 @@ export default {
 .after-avatar {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: start;
+  justify-content: space-between;
 }
 
 .actions {
@@ -189,18 +189,66 @@ export default {
   cursor: pointer;
 }
 
-.follow-btn {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
+.following-btn {
+  display: flex;
+  background-color: #28a745;
+  color: #fff;
+  border: 1px solid #28a745;
+  width: 70px;
+  height: 20px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
 }
 
-.follow-btn:hover {
-  background: #0056b3;
+.following-btn::before {
+  font-size: 12px;
+  content: "√ 已关注"; /* 默认文字 */
+  position: absolute;
+  transition: opacity 0.3s ease; /* 渐隐效果 */
+}
+
+.following-btn:hover::before {
+  opacity: 0; /* 鼠标悬停时隐藏原文字 */
+}
+
+.following-btn::after {
+  font-size: 12px;
+  content: "取消关注"; /* 悬停时文字 */
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.3s ease; /* 渐显效果 */
+}
+
+.following-btn:hover::after {
+  opacity: 1; /* 鼠标悬停时显示 */
+}
+
+.following-btn:hover {
+  background-color: #dc3545; /* 悬停时背景变为红色 */
+  border-color: #dc3545;
+}
+
+/* 未关注按钮一个蓝色边框白色内容“+关注” */
+.not-following-btn {
+  display: flex;
+  background-color: #fff;
+  color: #007bff;
+  border: 1px solid #007bff;
+  width: 70px;
+  height: 20px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+}
+
+.not-following-btn::before {
+  font-size: 12px;
+  content: "+ 关注"; /* 默认文字 */
+  position: absolute;
+  transition: opacity 0.3s ease; /* 渐隐效果 */
 }
 
 .camera-info p {
