@@ -3,11 +3,20 @@
     <div class="head">
       <img class="avatar" :src="user.avatar" alt="User Avatar" @click="viewDetail" />
       <div class="after-avatar">
-        <h3 class="name">{{ user.name }}</h3>
+        <h3 class="name" @click="viewDetail">{{ user.name }}</h3>
         <el-button
           v-if="!isSelf"
           class="follow-btn"
-          @click="isFollowing !== true ? follow: unfollow">{{ isFollowing ? 'Following' : 'Follow' }}</el-button>
+          @click="isFollowing !== true ? unfollow: follow">
+            <span v-if="isFollowing" class="btn-text">
+              <span class="normal">Following</span>
+              <span class="hover">Unfollow</span>
+            </span>
+            <span v-else class="btn-text">
+              <span class="normal">Follow</span>
+              <span class="hover">Follow Now</span>
+            </span>
+        </el-button>
       </div>
     </div>
     <div class="actions">
@@ -22,7 +31,6 @@
 import {getInfoByEmail} from "../api/service";
 import {hasCollect, collect, cancelCollect} from "../api/service";
 import {notify} from "../api/user";
-import router from "../router";
 import ImageCard from "./ImageCard.vue";
 
 export default {
@@ -43,6 +51,7 @@ export default {
         description: "",
         photo:""
       },
+      isHovered: false,
       isFollowing: false,
       isSelf: false
     };
@@ -132,11 +141,19 @@ export default {
   margin: 10px;
 }
 
+/* 头像 */
 .avatar {
   width: 60px;
   height: 60px;
   border-radius: 50%;
   margin-right: 10px;
+  cursor: pointer;
+}
+
+/* 鼠标停留有白色雾虚化效果 */
+.avatar:hover {
+  filter: brightness(1.3);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .after-avatar {
@@ -162,12 +179,14 @@ export default {
 .actions img {
   margin-right: 20px;
 }
+
 .name {
   font-size: 18px;
   font-weight: bold;
   margin: 5px 0;
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .follow-btn {
