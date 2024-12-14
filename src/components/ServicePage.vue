@@ -566,4 +566,20 @@ export default {
   font-weight: 350; /* Adjust the font weight to make it thinner */
   color: #333;
 }
+.button.application {
+  background-color: #4CAF50; /* Green background */
+  color: #fff; /* White text */
+  padding: 10px 20px; /* Add padding */
+  border-radius: 20px; /* Rounded corners */
+  text-decoration: none; /* Remove underline */
+  font-size: 16px; /* Adjust font size */
+  font-weight: 500; /* Slightly thinner text */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+  display: inline-block; /* Ensure it behaves like a button */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
+}
+
+.button.application:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
 </style>

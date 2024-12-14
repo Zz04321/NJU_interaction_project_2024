@@ -6,15 +6,11 @@
         <button class="header-button" @click="cancel">×</button>
       </div>
       <div class="content">
-        <el-upload
-          class="upload-demo"
-          drag
-          multiple
-          :auto-upload="false"
-          :on-change="syncFiles">
-          <img class="upload-icon el-icon-upload" src="../assets/icons/cloud_upload.svg" alt="upload-img">
-          <div class="el-upload__tip" slot="tip">仅限jpg/png文件，且不超过500kb</div>
-        </el-upload>
+        <div class="upload-demo" @dragover.prevent @drop.prevent="handleDrop">
+          <input type="file" ref="fileInput" multiple @change="handleFileChange" style="display: none;" />
+          <img class="upload-icon" src="../assets/icons/cloud_upload.svg" alt="upload-img" @click="triggerFileInput" />
+          <div class="el-upload__tip">仅限jpg/png文件，且不超过500kb</div>
+        </div>
 
         <div class="uploaded-images">
           <div v-for="(file, index) in files" :key="index" class="image-container">
@@ -72,17 +68,31 @@ export default {
         }
         alert("上传成功！");
         this.$emit("uploaded");
-        this.$emit("close"); // Add this line to close the modal after successful upload
+        this.$emit("close");
       } catch (error) {
         console.error("上传失败", error);
         alert("上传失败，请重试。");
       }
     },
-    syncFiles(file, fileList) {
-      this.files = fileList.map(f => ({
-        raw: f.raw,
-        url: URL.createObjectURL(f.raw)
-      }));
+    handleFileChange(event) {
+      const files = Array.from(event.target.files);
+      this.syncFiles(files);
+    },
+    handleDrop(event) {
+      const files = Array.from(event.dataTransfer.files);
+      this.syncFiles(files);
+    },
+    syncFiles(newFiles) {
+      this.files = [
+        ...this.files,
+        ...newFiles.map(file => ({
+          raw: file,
+          url: URL.createObjectURL(file)
+        }))
+      ];
+    },
+    triggerFileInput() {
+      this.$refs.fileInput.click();
     },
   },
 };
@@ -150,19 +160,21 @@ h2 {
   width: 50px;
   height: 50px;
   margin-bottom: 15px;
+  cursor: pointer;
 }
 
 .uploaded-images {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 15px; /* 增加间隙 */
   margin-top: 20px;
   justify-content: center;
+  height:50vh;
 }
 
 .image-container {
-  width: 100px;
-  height: 100px;
+  width: 120px; /* 增加宽度 */
+  height: 120px; /* 增加高度 */
   overflow: hidden;
   border: 1px solid #e0e0e0;
   border-radius: 5px;
@@ -170,7 +182,7 @@ h2 {
 }
 
 .image-container:hover {
-  transform: scale(1.05);
+  transform: scale(1.1); /* 增加放大效果 */
 }
 
 .uploaded-image {
@@ -178,7 +190,6 @@ h2 {
   height: 100%;
   object-fit: cover;
 }
-
 .actions {
   display: flex;
   justify-content: space-between;
@@ -209,5 +220,13 @@ h2 {
 
 button:active {
   background-color: #e6e6e6;
+}
+
+.upload-demo {
+  width: 100%;
+  border: 2px dashed #e0e0e0;
+  padding: 20px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 </style>
