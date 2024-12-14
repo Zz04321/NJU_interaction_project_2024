@@ -1,6 +1,5 @@
 import axios from 'axios'
 import global from './global.vue';
-
 const API_BASE_URL = global.url;
 
 // 上传照片api
@@ -11,6 +10,7 @@ export function uploadPhoto(photoUrl, description, theme, title) {
     url: photoUrl,
     description: description,
     theme: theme,
+    title: title
   }, {
     headers:{
       'Authorization': `${global.getToken()}`
@@ -48,5 +48,53 @@ export function fetchPhotosByTheme(theme, page, limit) {
       page: page,
       limit: limit
     },
+  });
+}
+
+export function favoritePhoto(photoUrl) {
+  const url = `${API_BASE_URL}/photo/favor`;
+  return axios.post(url, {}, {
+    params: {
+      url: photoUrl
+    },
+    headers:{
+      'Authorization': `${global.getToken()}`
+    }
+  });
+}
+
+export function hasFavoritedPhoto(photoUrl) {
+  const url = `${API_BASE_URL}/photo/hasFavor`;
+  return axios.post(url, {}, {
+    params: {
+      url: photoUrl
+    },
+    headers:{
+      'Authorization': `${global.getToken()}`
+    }
+  });
+}
+
+export function cancelFavoritePhoto(photoUrl) {
+  const url = `${API_BASE_URL}/photo/cancelFavor`;
+  return axios.post(url, {}, {
+    params: {
+      url: photoUrl
+    },
+    headers:{
+      'Authorization': `${global.getToken()}`
+    }
+  });
+}
+
+export function getFavoredNumber(photoUrl) {
+  const url = `${API_BASE_URL}/photo/getFavoredNum`;
+  return axios.post(url, {}, {
+    params: {
+      url: photoUrl
+    },
+    headers:{
+      'Authorization': `${global.getToken()}`
+    }
   });
 }

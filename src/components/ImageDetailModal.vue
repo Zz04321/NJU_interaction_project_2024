@@ -14,6 +14,25 @@
         <div class="user-info">
           <UserInfoCard :user-email="image.userEmail"></UserInfoCard>
         </div>
+        <div class="actions">
+          <svg xmlns="http://www.w3.org/2000/svg"
+               width="25px"
+               height="25px"
+               viewBox="0 0 24 24"
+               @click="toggleFavor"
+               :class="isFavored ? `favoring-css` : `not-favoring-css`">
+            <path
+              fill="none"
+              stroke="#666666"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M22 8.862a5.95 5.95 0 0 1-1.654 4.13c-2.441 2.531-4.809 5.17-7.34 7.608c-.581.55-1.502.53-2.057-.045l-7.295-7.562c-2.205-2.286-2.205-5.976 0-8.261a5.58 5.58 0 0 1 8.08 0l.266.274l.265-.274A5.6 5.6 0 0 1 16.305 3c1.52 0 2.973.624 4.04 1.732A5.95 5.95 0 0 1 22 8.862Z"
+              />
+          </svg>
+          <span>{{ favorNums }}</span>
+          <i class="el-icon-star-off"></i>
+          <i class="el-icon-share"></i>
+        </div>
         <div class="image-info">
           <h3>{{ image.title }}</h3>
           <p>{{ image.description }}</p>
@@ -29,6 +48,8 @@
 
 <script>
 import UserInfoCard from "./UserInfoCard.vue";
+import { favoritePhoto, hasFavoritedPhoto, cancelFavoritePhoto, getFavoredNumber } from "../api/photo";
+import {notify} from "../api/user";
 export default {
   components: {
     UserInfoCard,
@@ -43,7 +64,67 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      isFavored: false,
+      favorNums: 0,
+    };
+  },
+
+  /* isFavored每次image改变时都会重新计算，所以需要使用watch */
+  watch: {
+    image: {
+      handler() {
+        hasFavoritedPhoto(this.image.url).then((res) => {
+          this.isFavored = res.data.data;
+        });
+        getFavoredNumber(this.image.url).then((res) => {
+          this.favorNums = res.data.data
+        });
+      },
+      immediate: true,
+    },
+  },
+  mounted() {
+    hasFavoritedPhoto(this.image.url).then((res) => {
+      this.isFavored = res.data.data;
+    });
+    getFavoredNumber(this.image.url).then((res) => {
+      this.favorNums = res.data.data
+    });
+  },
   methods: {
+    toggleFavor() {
+      if (this.isFavored) {
+        this.cancelFavor();
+      } else {
+        this.favor();
+      }
+    },
+    favor() {
+      console.log("favor");
+      console.log(this.isFavored);
+      favoritePhoto(this.image.url).then((res) => {
+       if (res.data.code === 1) {
+          this.favorNums += 1;
+          console.log(this.favorNums);
+          this.isFavored = true;
+       } else {
+
+       }
+      });
+    },
+    cancelFavor() {
+      console.log("cancelFavor");
+      cancelFavoritePhoto(this.image.url).then((res) => {
+        if (res.data.code === 1) {
+          this.favorNums -= 1;
+          this.isFavored = false;
+        } else {
+
+        }
+      });
+    },
     closeModal() {
       this.$emit("close");
     },
@@ -170,8 +251,9 @@ export default {
 
 .user-info {
   width: 100%;
-  margin-bottom: 20px;
-  height: 20%;
+  //margin: 5px;
+  height: 15%;
+  border-bottom: 2px solid whitesmoke
 }
 
 /* 按钮区域 */
@@ -203,5 +285,56 @@ export default {
 .dialog-footer .el-button:active {
   background-color: #e6e6e6;
 }
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  padding: 15px;
+  width: 100%;
+}
+
+.actions i {
+  font-size: 25px;
+  cursor: pointer;
+  margin-right: 30px;
+}
+
+/* 鼠标移动到上面的时候图片(例如星星内部)内部变成灰色 */
+.actions i:hover {
+  color: #999;
+}
+
+.actions span {
+  font-size: 16px;
+  color: #666;
+  margin-right: 5px;
+  width: 30px;
+}
+
+.actions svg {
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.favoring-css path {
+  stroke: red;
+  fill: red;
+}
+
+.favoring-css:hover path {
+  stroke: red;
+  fill: red;
+}
+
+.not-favoring-css:hover path {
+  stroke: #999;
+}
+
+.not-favoring-css path {
+  stroke: #666666;
+}
+
 </style>
 

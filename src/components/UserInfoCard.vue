@@ -3,17 +3,13 @@
     <div class="head">
       <img class="avatar" :src="user.avatar" alt="User Avatar" @click="viewDetail" />
       <div class="after-avatar">
-        <h3 class="name">{{ user.name }}</h3>
-        <el-button
+        <h3 class="name" @click="viewDetail">{{ user.name }}</h3>
+        <button
           v-if="!isSelf"
-          class="follow-btn"
-          @click="isFollowing !== true ? follow: unfollow">{{ isFollowing ? 'Following' : 'Follow' }}</el-button>
+          :class="isFollowing ? `following-btn` :  `not-following-btn`  "
+          @click="toggleFollow">
+        </button>
       </div>
-    </div>
-    <div class="actions">
-      <img src="../assets/icons/IconoirHeart-grey.svg" alt="love" style="width: 25px; height: 25px" />
-      <i class="el-icon-star-off"></i>
-      <i class="el-icon-share"></i>
     </div>
   </div>
 </template>
@@ -22,7 +18,7 @@
 import {getInfoByEmail} from "../api/service";
 import {hasCollect, collect, cancelCollect} from "../api/service";
 import {notify} from "../api/user";
-import router from "../router";
+import {favoritePhoto} from "../api/photo";
 import ImageCard from "./ImageCard.vue";
 
 export default {
@@ -43,6 +39,7 @@ export default {
         description: "",
         photo:""
       },
+      isHovered: false,
       isFollowing: false,
       isSelf: false
     };
@@ -59,6 +56,17 @@ export default {
     this.refresh()
   },
   methods: {
+    favor(url) {
+      // console.log("favor")
+
+    },
+    toggleFollow() {
+      if (this.isFollowing) {
+        this.unfollow();
+      } else {
+        this.follow();
+      }
+    },
     refresh() {
       getInfoByEmail(this.userEmail).then((res)=>{
         this.user.name=res.data.data.uname;
@@ -77,7 +85,7 @@ export default {
         this.isFollowing = true;
       } else {
         hasCollect(this.userEmail).then((res)=>{
-          this.isFollowing=res.data.code === 1;
+          this.isFollowing= (res.data.code === 1);
         }).catch((error)=>{
           notify(this, "获取关注信息失败", "error")
         })
@@ -98,6 +106,7 @@ export default {
       });
     },
     follow() {
+      console.log("follow")
       collect(this.userEmail).then((res)=>{
         this.isFollowing=res.data.code === 1;
         notify(this, "关注成功", "success")
@@ -121,6 +130,7 @@ export default {
 .card {
   max-width: 300px;
   max-height: 500px;
+  height: 100%;
   font-family: Arial, sans-serif;
 }
 
@@ -132,56 +142,102 @@ export default {
   margin: 10px;
 }
 
+/* 头像 */
 .avatar {
   width: 60px;
-  height: 60px;
+  height: 100%;
   border-radius: 50%;
   margin-right: 10px;
+  cursor: pointer;
+}
+
+/* 鼠标停留有白色雾虚化效果 */
+.avatar:hover {
+  height: 100%;
+  filter: brightness(1.3);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .after-avatar {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: start;
+  justify-content: space-between;
 }
 
-.actions {
-  display: flex;
-  flex-direction: row;
-  justify-content: start;
-  margin: 10px;
-}
 
-.actions i {
-  font-size: 25px;
-  cursor: pointer;
-  margin-right: 20px;
-}
 
-.actions img {
-  margin-right: 20px;
-}
 .name {
   font-size: 18px;
   font-weight: bold;
   margin: 5px 0;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.follow-btn {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
   cursor: pointer;
-  font-size: 14px;
 }
 
-.follow-btn:hover {
-  background: #0056b3;
+.following-btn {
+  margin-top: 3px;
+  display: flex;
+  background-color: #28a745;
+  color: #fff;
+  border: 1px solid #28a745;
+  width: 70px;
+  height: 26px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+}
+
+.following-btn::before {
+  font-size: 12px;
+  content: "√ 已关注"; /* 默认文字 */
+  position: absolute;
+  transition: opacity 0.3s ease; /* 渐隐效果 */
+}
+
+.following-btn:hover::before {
+  opacity: 0; /* 鼠标悬停时隐藏原文字 */
+}
+
+.following-btn::after {
+  font-size: 12px;
+  content: "取消关注"; /* 悬停时文字 */
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.3s ease; /* 渐显效果 */
+}
+
+.following-btn:hover::after {
+  opacity: 1; /* 鼠标悬停时显示 */
+}
+
+.following-btn:hover {
+  background-color: #dc3545; /* 悬停时背景变为红色 */
+  border-color: #dc3545;
+}
+
+/* 未关注按钮一个蓝色边框白色内容“+关注” */
+.not-following-btn {
+  display: flex;
+  background-color: #fff;
+  color: #007bff;
+  border: 1px solid #007bff;
+  width: 70px;
+  height: 20px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+}
+
+.not-following-btn::before {
+  font-size: 12px;
+  content: "+ 关注"; /* 默认文字 */
+  position: absolute;
+  transition: opacity 0.3s ease; /* 渐隐效果 */
 }
 
 .camera-info p {

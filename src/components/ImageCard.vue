@@ -7,7 +7,19 @@
         <p class="image-author">{{ uname }}</p>
       </div>
       <div class="right-items">
-        <img src="../assets/icons/IconoirHeart.svg" alt="Camera" style="width: 20px; height: 20px;" />
+        <svg xmlns="http://www.w3.org/2000/svg"
+             width="20px"
+             height="20px"
+             viewBox="0 0 24 24"
+             :class="isFavored ? `favoring-css` : `not-favoring-css`">
+          <path
+            fill="none"
+            stroke="#666666"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M22 8.862a5.95 5.95 0 0 1-1.654 4.13c-2.441 2.531-4.809 5.17-7.34 7.608c-.581.55-1.502.53-2.057-.045l-7.295-7.562c-2.205-2.286-2.205-5.976 0-8.261a5.58 5.58 0 0 1 8.08 0l.266.274l.265-.274A5.6 5.6 0 0 1 16.305 3c1.52 0 2.973.624 4.04 1.732A5.95 5.95 0 0 1 22 8.862Z"
+          />
+        </svg>
         <i class="el-icon-star-off" style="font-size: 20px"></i>
         <i class="el-icon-share" style="font-size: 20px"></i>
       </div>
@@ -17,6 +29,7 @@
 
 <script>
 import {getInfoByEmail} from "../api/user";
+import {favoritePhoto, hasFavoritedPhoto, cancelFavoritePhoto, getFavoredNumber} from "../api/photo";
 
 export default {
   props: {
@@ -45,6 +58,7 @@ export default {
     return {
       showInfo: false,
       headImg: "",
+      isFavored: false,
     };
   },
   mounted() {
@@ -52,13 +66,22 @@ export default {
       this.headImg = res.data.data.headImg;
       console.log(this.headImg);
     })
+    hasFavoritedPhoto(this.url).then((res) => {
+      this.isFavored = res.data.data;
+    });
   },
   methods: {
     handleMouseOver() {
       this.showInfo = true;
+      hasFavoritedPhoto(this.url).then((res) => {
+        this.isFavored = res.data.data;
+      });
     },
     handleMouseLeave() {
       this.showInfo = false;
+      hasFavoritedPhoto(this.url).then((res) => {
+        this.isFavored = res.data.data;
+      });
     },
     handleImageLoad(event) {
       this.$emit('imageLoaded', event);
@@ -135,5 +158,19 @@ export default {
 
 .image-description {
   max-width: 90%;
+}
+
+.favoring-css path {
+  stroke: red;
+  fill: red;
+}
+
+.favoring-css:hover path {
+  stroke: red;
+  fill: red;
+}
+
+.not-favoring-css path {
+  stroke: white;
 }
 </style>
