@@ -32,8 +32,9 @@
         <p id="footer">Copyright &copy; 2024 南京大学
           </br>
           Developer:
-          <a style="text-decoration:none" href="https://github.com/ricar0">@ricar0</a>
-          <a style="text-decoration:none" href="https://github.com/KEPADEDAIDAI">@KEPADEDAIDAI</a>
+          <a style="text-decoration:none" href="https://github.com/Zz04321">@Zzheng</a>
+          <a style="text-decoration:none" href="https://github.com/ETOWang">@ETOWang</a>
+          <a style="text-decoration:none" href="https://github.com/">@eqsun</a>
         </p>
 
       </div>

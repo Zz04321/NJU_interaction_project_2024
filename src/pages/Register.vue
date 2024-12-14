@@ -13,12 +13,6 @@
             <div class="text">
                 <el-input type="password" v-model="reupass" placeholder="再次输入密码" show-password></el-input>
             </div>
-          <div class="text">
-            <el-select v-model="role" placeholder="请选择身份">
-              <el-option label="摄影师" :value="'PHOTOGRAPHER'"></el-option>
-              <el-option label="普通用户" :value="'NORMAL'"></el-option>
-            </el-select>
-          </div>
             <div>
               <el-button @click="handleRegister" class="submit">注册</el-button>
                 <p>已有账号?返回<router-link to="/Login">登录</router-link></p>
@@ -78,7 +72,7 @@ export default {
             email: '',
             upass:'',
             reupass:'',
-            role: '',
+            role: 'NORMAL',
     	}
   	},
   methods: {
