@@ -14,6 +14,17 @@
         <div class="user-info">
           <UserInfoCard :user-email="image.userEmail"></UserInfoCard>
         </div>
+        <div class="actions">
+          <svg xmlns="http://www.w3.org/2000/svg"
+               width="25px"
+               height="25px"
+               viewBox="0 0 24 24">
+            <path fill="none" stroke="#666666" stroke-linejoin="round" stroke-width="1.5" d="M22 8.862a5.95 5.95 0 0 1-1.654 4.13c-2.441 2.531-4.809 5.17-7.34 7.608c-.581.55-1.502.53-2.057-.045l-7.295-7.562c-2.205-2.286-2.205-5.976 0-8.261a5.58 5.58 0 0 1 8.08 0l.266.274l.265-.274A5.6 5.6 0 0 1 16.305 3c1.52 0 2.973.624 4.04 1.732A5.95 5.95 0 0 1 22 8.862Z"/>
+          </svg>
+<!--          <img src="../assets/icons/IconoirHeart-grey.svg" alt="love"  style="width: 25px; height: 25px" @click="favor" />-->
+          <i class="el-icon-star-off"></i>
+          <i class="el-icon-share"></i>
+        </div>
         <div class="image-info">
           <h3>{{ image.title }}</h3>
           <p>{{ image.description }}</p>
@@ -170,8 +181,9 @@ export default {
 
 .user-info {
   width: 100%;
-  margin-bottom: 20px;
-  height: 20%;
+  //margin: 5px;
+  height: 15%;
+  border-bottom: 2px solid whitesmoke
 }
 
 /* 按钮区域 */
@@ -203,5 +215,36 @@ export default {
 .dialog-footer .el-button:active {
   background-color: #e6e6e6;
 }
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  padding: 15px;
+  width: 100%;
+}
+
+.actions i {
+  font-size: 25px;
+  cursor: pointer;
+  margin-right: 20px;
+}
+
+
+
+/* 鼠标移动到上面的时候图片(例如星星内部)内部变成灰色 */
+.actions i:hover {
+  color: #999;
+}
+
+.actions svg {
+  cursor: pointer;
+  margin-right: 20px;
+}
+
+.actions svg:hover path {
+  stroke: #999;
+}
+
 </style>
 

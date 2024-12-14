@@ -50,3 +50,12 @@ export function fetchPhotosByTheme(theme, page, limit) {
     },
   });
 }
+
+export function favoritePhoto(photoUrl) {
+  const url = `${API_BASE_URL}/photo/favor/` + photoUrl;
+  return axios.post(url, {}, {
+    headers:{
+      'Authorization': `${global.getToken()}`
+    }
+  });
+}

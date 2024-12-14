@@ -11,11 +11,6 @@
         </button>
       </div>
     </div>
-    <div class="actions">
-      <img src="../assets/icons/IconoirHeart-grey.svg" alt="love" style="width: 25px; height: 25px" />
-      <i class="el-icon-star-off"></i>
-      <i class="el-icon-share"></i>
-    </div>
   </div>
 </template>
 
@@ -23,6 +18,7 @@
 import {getInfoByEmail} from "../api/service";
 import {hasCollect, collect, cancelCollect} from "../api/service";
 import {notify} from "../api/user";
+import {favoritePhoto} from "../api/photo";
 import ImageCard from "./ImageCard.vue";
 
 export default {
@@ -60,6 +56,10 @@ export default {
     this.refresh()
   },
   methods: {
+    favor(url) {
+      // console.log("favor")
+
+    },
     toggleFollow() {
       if (this.isFollowing) {
         this.unfollow();
@@ -130,6 +130,7 @@ export default {
 .card {
   max-width: 300px;
   max-height: 500px;
+  height: 100%;
   font-family: Arial, sans-serif;
 }
 
@@ -144,7 +145,7 @@ export default {
 /* 头像 */
 .avatar {
   width: 60px;
-  height: 60px;
+  height: 100%;
   border-radius: 50%;
   margin-right: 10px;
   cursor: pointer;
@@ -152,6 +153,7 @@ export default {
 
 /* 鼠标停留有白色雾虚化效果 */
 .avatar:hover {
+  height: 100%;
   filter: brightness(1.3);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -164,22 +166,7 @@ export default {
   justify-content: space-between;
 }
 
-.actions {
-  display: flex;
-  flex-direction: row;
-  justify-content: start;
-  margin: 10px;
-}
 
-.actions i {
-  font-size: 25px;
-  cursor: pointer;
-  margin-right: 20px;
-}
-
-.actions img {
-  margin-right: 20px;
-}
 
 .name {
   font-size: 18px;
