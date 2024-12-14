@@ -3,9 +3,12 @@
     <main class="main-content">
       <div class="profile_nav">
         <div class="tab_wrapper applyIntoVCG">
-          <router-link to="/" class="button home logo-link">
-            <img src="static/assets/images/templatemo_logo.jpg" alt="Logo" class="logo-image"/>
-          </router-link>
+          <div class="left-buttons">
+            <el-button
+              icon="el-icon-back"
+              @click="returnPrevious">
+            </el-button>
+          </div>
           <div class="mid-buttons">
             <el-button-group>
               <el-button
@@ -89,7 +92,7 @@ export default {
       isJoined: false,
       isModalVisible: false,
       hoveredPhotographer: null,
-      tabs: ["全部摄影师", "随机跳转", "热门摄影师"], // 按钮名称
+      tabs: ["全部摄影师", "热门摄影师"], // 按钮名称
       activeTab: 0, // 当前选中的 tab 索引
     };
   },
@@ -99,19 +102,18 @@ export default {
     this.checkJoinStatus();
   },
   methods: {
+    returnPrevious() {
+      this.$router.back()
+    },
     selectTab(index) {
       this.activeTab = index; // 切换选中的 tab
-      if (index === 2) {
+      if (index === 1) {
         this.photographers.sort((a, b) => b.fanCount - a.fanCount);
       } else if (index === 0) {
         for (let i = this.photographers.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [this.photographers[i], this.photographers[j]] = [this.photographers[j], this.photographers[i]];
         }
-      } else if (index === 1) {
-        const randomIndex = Math.floor(Math.random() * this.photographers.length);
-        const selectedPhotographer = this.photographers[randomIndex];
-        this.$router.push({name: 'PersonalInfo', params: {photographer: selectedPhotographer}});
       }
     },
     async fetchPhotographers() {
@@ -581,5 +583,16 @@ export default {
 
 .button.application:hover {
   background-color: #45a049; /* Darker green on hover */
+}
+.left-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 10%;
+  margin-left: 40px;
+}
+
+.left-buttons .el-button {
+  font-size: 25px;
 }
 </style>
