@@ -29,6 +29,7 @@
               d="M22 8.862a5.95 5.95 0 0 1-1.654 4.13c-2.441 2.531-4.809 5.17-7.34 7.608c-.581.55-1.502.53-2.057-.045l-7.295-7.562c-2.205-2.286-2.205-5.976 0-8.261a5.58 5.58 0 0 1 8.08 0l.266.274l.265-.274A5.6 5.6 0 0 1 16.305 3c1.52 0 2.973.624 4.04 1.732A5.95 5.95 0 0 1 22 8.862Z"
               />
           </svg>
+          <span>{{ favorNums }}</span>
           <i class="el-icon-star-off"></i>
           <i class="el-icon-share"></i>
         </div>
@@ -47,7 +48,7 @@
 
 <script>
 import UserInfoCard from "./UserInfoCard.vue";
-import { favoritePhoto, hasFavoritedPhoto, cancelFavoritePhoto } from "../api/photo";
+import { favoritePhoto, hasFavoritedPhoto, cancelFavoritePhoto, getFavoredNumber } from "../api/photo";
 import {notify} from "../api/user";
 export default {
   components: {
@@ -66,6 +67,7 @@ export default {
   data() {
     return {
       isFavored: false,
+      favorNums: 0,
     };
   },
 
@@ -76,15 +78,19 @@ export default {
         hasFavoritedPhoto(this.image.url).then((res) => {
           this.isFavored = res.data.data;
         });
+        getFavoredNumber(this.image.url).then((res) => {
+          this.favorNums = res.data.data
+        });
       },
       immediate: true,
     },
   },
   mounted() {
     hasFavoritedPhoto(this.image.url).then((res) => {
-      console.log("hasFavoritedPhoto?");
-      console.log(res);
       this.isFavored = res.data.data;
+    });
+    getFavoredNumber(this.image.url).then((res) => {
+      this.favorNums = res.data.data
     });
   },
   methods: {
@@ -100,8 +106,9 @@ export default {
       console.log(this.isFavored);
       favoritePhoto(this.image.url).then((res) => {
        if (res.data.code === 1) {
+          this.favorNums += 1;
+          console.log(this.favorNums);
           this.isFavored = true;
-          notify(this, "点赞成功", "success");
        } else {
 
        }
@@ -111,8 +118,8 @@ export default {
       console.log("cancelFavor");
       cancelFavoritePhoto(this.image.url).then((res) => {
         if (res.data.code === 1) {
+          this.favorNums -= 1;
           this.isFavored = false;
-          notify(this, "取消点赞成功", "success");
         } else {
 
         }
@@ -283,6 +290,7 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: start;
+  align-items: center;
   padding: 15px;
   width: 100%;
 }
@@ -290,7 +298,7 @@ export default {
 .actions i {
   font-size: 25px;
   cursor: pointer;
-  margin-right: 20px;
+  margin-right: 30px;
 }
 
 /* 鼠标移动到上面的时候图片(例如星星内部)内部变成灰色 */
@@ -298,9 +306,16 @@ export default {
   color: #999;
 }
 
+.actions span {
+  font-size: 16px;
+  color: #666;
+  margin-right: 5px;
+  width: 30px;
+}
+
 .actions svg {
   cursor: pointer;
-  margin-right: 20px;
+  margin-right: 5px;
 }
 
 .favoring-css path {

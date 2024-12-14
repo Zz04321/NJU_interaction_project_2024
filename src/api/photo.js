@@ -10,6 +10,7 @@ export function uploadPhoto(photoUrl, description, theme, title) {
     url: photoUrl,
     description: description,
     theme: theme,
+    title: title
   }, {
     headers:{
       'Authorization': `${global.getToken()}`
@@ -76,6 +77,18 @@ export function hasFavoritedPhoto(photoUrl) {
 
 export function cancelFavoritePhoto(photoUrl) {
   const url = `${API_BASE_URL}/photo/cancelFavor`;
+  return axios.post(url, {}, {
+    params: {
+      url: photoUrl
+    },
+    headers:{
+      'Authorization': `${global.getToken()}`
+    }
+  });
+}
+
+export function getFavoredNumber(photoUrl) {
+  const url = `${API_BASE_URL}/photo/getFavoredNum`;
   return axios.post(url, {}, {
     params: {
       url: photoUrl
