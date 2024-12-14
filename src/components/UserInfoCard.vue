@@ -157,6 +157,7 @@ export default {
 }
 
 .after-avatar {
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -190,12 +191,13 @@ export default {
 }
 
 .following-btn {
+  margin-top: 3px;
   display: flex;
   background-color: #28a745;
   color: #fff;
   border: 1px solid #28a745;
   width: 70px;
-  height: 20px;
+  height: 26px;
   text-align: center;
   justify-content: center;
   align-items: center;
