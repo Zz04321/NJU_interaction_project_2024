@@ -60,7 +60,7 @@ export default {
         notify(this, "不能关注自己 !", "error");
         return;
       }
-
+      console.log(this.isFollowed);
       if (this.isFollowed) {
         const confirmed = confirm('确认取消关注?');
         if (!confirmed) {

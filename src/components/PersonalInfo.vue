@@ -15,8 +15,8 @@
           <p>{{ photographer.description }}</p>
         </div>
         <div class="followers-following">
-          <span>点赞数 {{ likes }}</span> <!-- Display the number of likes -->
-          <span>粉丝 {{ fans.length }}</span>
+          <span>点赞数 {{ likes}}</span> <!-- Display the number of likes -->
+          <span @click="showFanList">粉丝 {{ fans.length }}</span>
           <span @click="showFollowList">关注 {{ collects.length }}</span>
         </div>
         <div class="separator">作品</div>
@@ -29,7 +29,14 @@
         </div>
       </div>
       <button v-if="isCurrentUser" class="upload-button" @click="showUploadModal">上传图片</button>
-      <button v-else class="follow-button" @click="followUser">{{ isFollowed ? '已关注' : '关注' }}</button>
+      <FollowButton
+        v-else
+        :isFollowed="isFollowed"
+        :userEmail="photographer.email"
+        :currentUserEmail="this.currentUserEmail"
+        @update:isFollowed="isFollowed = $event"
+        class="fixed-follow-button"
+      />
       <button :class="['like-button', { liked: isLiked }]" @click="likePhoto" @mouseover="hoverLikeButton" @mouseleave="leaveLikeButton">
         {{ isLiked ? (isHovered ? '取消点赞' : '已点赞') : '点赞' }}
       </button>
@@ -37,6 +44,8 @@
     <CommunityUploadModal :isVisible="isUploadModalVisible" @close="isUploadModalVisible = false" @uploaded="handleUploadSuccess" />
     <ImageModal :isVisible="isImageModalVisible" :imageSrc="selectedImage" @close="isImageModalVisible = false" />
     <FollowListModal :isVisible="isFollowListVisible" :email="photographer.email" @close="isFollowListVisible = false" />
+    <FanListModal :isVisible="isFanListVisible" :email="photographer.email" @close="isFanListVisible = false" />
+
   </div>
 </template>
 
@@ -47,9 +56,13 @@ import { getUserInfo } from "../api/user";
 import CommunityUploadModal from "./CommunityUploadModal.vue";
 import ImageModal from "./ImageModal.vue";
 import FollowListModal from './FollowListModal.vue';
+import FanListModal from "./FanListModal.vue";
+import FollowButton from "./FollowButton.vue";
 
 export default {
   components: {
+    FollowButton,
+    FanListModal,
     Waterfall,
     WaterfallItem,
     CommunityUploadModal,
@@ -72,20 +85,22 @@ export default {
       isUploadModalVisible: false,
       isImageModalVisible: false,
       isFollowListVisible: false,
+      isFanListVisible: false,
       selectedImage: '',
       likes: 0,
       isLiked: false, // Add a data property for like status
       isHovered: false, // Add a data property for hover status
       isCurrentUser: false, // Add a data property to check if the current user is the photographer
-      isFollowed: false // Add a data property for follow status
+      isFollowed: false, // Add a data property for follow status
+      currentUserEmail: '' // Add currentUserEmail to data
     };
   },
   async mounted() {
     console.log(this.photographer);
     try {
       const userInfoResponse = await getUserInfo();
-      const currentUserEmail = userInfoResponse.data.data[0].email;
-      this.isCurrentUser = currentUserEmail === this.photographer.email;
+      this.currentUserEmail = userInfoResponse.data.data[0].email;
+      this.isCurrentUser = this.currentUserEmail === this.photographer.email;
 
       const photosResponse = await getAllPhotos(this.photographer.email);
       this.photos = photosResponse.data.data;
@@ -93,7 +108,8 @@ export default {
 
       const fansResponse = await getFans(this.photographer.email);
       this.fans = fansResponse.data.data;
-
+      console.log(this.fans);
+      this.isFollowed = this.fans.some(fan => fan.email === this.currentUserEmail);
       const collectsResponse = await getAllCollects(this.photographer.email);
       this.collects = collectsResponse.data.data;
 
@@ -129,6 +145,9 @@ export default {
     showFollowList() {
       this.isFollowListVisible = true;
     },
+    showFanList() {
+      this.isFanListVisible = true;
+    },
     async likePhoto() {
       const email = this.photographer.email;
       try {
@@ -149,9 +168,6 @@ export default {
     },
     leaveLikeButton() {
       this.isHovered = false; // Set hover status to false
-    },
-    followUser() {
-      // Implement follow user logic here
     }
   }
 };
@@ -333,23 +349,14 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
   transition: background 0.3s ease, transform 0.3s ease; /* Smooth transition for background and transform */
 }
-.follow-button {
+.fixed-follow-button {
   position: absolute;
   top: 10px;
   right: 10px;
-  border: none; /* Remove border */
-  border-radius: 20px; /* More rounded corners */
-  color: #fff; /* White text */
-  cursor: pointer;
-  padding: 8px 25px; /* Adjust padding for a flatter look */
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
-  transition: background 0.3s ease, transform 0.3s ease; /* Smooth transition for background and transform */
+  padding: 10px 30px; /* Increase padding */
+  font-size: 16px; /* Increase font size */
+  border-radius: 20px; /* Adjust border radius if needed */
 }
-
 .upload-button {
   background: linear-gradient(135deg, #4CAF50, #45a049); /* Green gradient background */
   right: 10px;
@@ -390,12 +397,5 @@ body {
 .like-button:hover {
   transform: scale(1.05);
 }
-.follow-button {
-  background: linear-gradient(135deg, #2196F3, #1976D2); /* Blue gradient background */
-}
 
-.follow-button:hover {
-  background: linear-gradient(135deg, #1976D2, #2196F3); /* Reverse gradient on hover */
-  transform: scale(1.05); /* Slightly enlarge on hover */
-}
 </style>

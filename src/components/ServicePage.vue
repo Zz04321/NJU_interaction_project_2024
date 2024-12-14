@@ -3,10 +3,29 @@
     <main class="main-content">
       <div class="profile_nav">
         <div class="tab_wrapper applyIntoVCG">
-          <router-link to="/" class="button home">返回首页</router-link>
-          <router-link v-if="!isJoined" to="/service/register" class="button application">加入社区</router-link>
-          <el-button v-else class="upload-button" @click="openModal">上传图片</el-button>
-          <NewUploadModal v-if="isJoined" :isVisible="isModalVisible" @close="closeModal" @uploaded="refresh" />
+          <router-link to="/" class="button home logo-link">
+            <img src="static/assets/images/templatemo_logo.jpg" alt="Logo" class="logo-image"/>
+          </router-link>
+          <div class="mid-buttons">
+            <el-button-group>
+              <el-button
+                v-for="(tab, index) in tabs"
+                :key="index"
+                type="text"
+                :class="{ active: activeTab === index }"
+                style="margin: 5px"
+                @click="selectTab(index)"
+              >
+                {{ tab }}
+              </el-button>
+            </el-button-group>
+          </div>
+          <div v-if="isJoined" class="user-profile" @click="goToProfile">
+            <img :src="userAvatar" class="avatar"/>
+            <span class="username">{{ userName }}</span>
+          </div>
+          <router-link v-else to="/service/register" class="button application">加入社区</router-link>
+          <NewUploadModal v-if="isJoined" :isVisible="isModalVisible" @close="closeModal" @uploaded="refresh"/>
         </div>
       </div>
       <div class="recommend_users_container">
@@ -18,16 +37,16 @@
               </router-link>
               <router-link :to="{ name: 'PersonalInfo', params: {photographer} }">
                 <div class="avatar_wrapper">
-                  <a class="avatar" :style="{ backgroundImage: 'url(' + photographer.headImg + ')' }"></a>
+                  <img :src="photographer.headImg" class="avatar"/>
                 </div>
               </router-link>
             </div>
             <div class="bottom">
               <a class="name">{{ photographer.uname ? photographer.uname : 'default' }}</a>
-              <span class="contact" @mouseover="showUserDescription = photographer.description"
-                    @mouseleave="showUserDescription = ''">
-                {{ showUserDescription === photographer.description ? photographer.description : '个人简介' }}
-              </span>
+              <div class="info-container">
+                <span class="label">图片 {{ photographer.photoCount }}</span>
+                <span class="label">粉丝 {{ photographer.fanCount }}</span>
+              </div>
               <div class="button-container">
                 <FollowButton
                   :isFollowed="photographer.followed"
@@ -47,25 +66,31 @@
 </template>
 
 <script>
-import {getAll, collect, hasCollect, hasJoined, cancelCollect} from '../api/service';
+import {getAll, collect, hasCollect, hasJoined, cancelCollect, getAllPhotos, getFans} from '../api/service';
 import {getUserInfo, notify} from "../api/user";
 import NewUploadModal from "../components/CommunityUploadModal.vue";
 import FollowButton from "./FollowButton.vue";
+import UploadModal from "./UploadModal.vue";
 
 export default {
   components: {
+    UploadModal,
     FollowButton,
     NewUploadModal
   },
   data() {
     return {
       currentUserEmail: '',
+      userAvatar: '', // Add userAvatar
+      userName: '', // Add userName
       photographers: [],
       showUserDescription: '',
       userDescription: '',
       isJoined: false,
       isModalVisible: false,
-      hoveredPhotographer: null
+      hoveredPhotographer: null,
+      tabs: ["全部摄影师", "随机跳转", "热门摄影师"], // 按钮名称
+      activeTab: 0, // 当前选中的 tab 索引
     };
   },
   mounted() {
@@ -74,11 +99,20 @@ export default {
     this.checkJoinStatus();
   },
   methods: {
-    handleMouseEnter(email) {
-      this.hoveredPhotographer = email;
-    },
-    handleMouseLeave() {
-      this.hoveredPhotographer = null;
+    selectTab(index) {
+      this.activeTab = index; // 切换选中的 tab
+      if (index === 2) {
+        this.photographers.sort((a, b) => b.fanCount - a.fanCount);
+      } else if (index === 0) {
+        for (let i = this.photographers.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [this.photographers[i], this.photographers[j]] = [this.photographers[j], this.photographers[i]];
+        }
+      } else if (index === 1) {
+        const randomIndex = Math.floor(Math.random() * this.photographers.length);
+        const selectedPhotographer = this.photographers[randomIndex];
+        this.$router.push({name: 'PersonalInfo', params: {photographer: selectedPhotographer}});
+      }
     },
     async fetchPhotographers() {
       try {
@@ -86,6 +120,7 @@ export default {
         if (response.data.code === 1) {
           this.photographers = response.data.data;
           await this.checkFollowStatus();
+          await this.fetchAdditionalInfo();
         } else {
           console.error('Error fetching photographers:', response.data.msg);
         }
@@ -93,14 +128,26 @@ export default {
         console.error('Error fetching photographers:', error);
       }
     },
+    async fetchAdditionalInfo() {
+      for (let photographer of this.photographers) {
+        try {
+          const photosResponse = await getAllPhotos(photographer.email);
+          const fansResponse = await getFans(photographer.email);
+          this.$set(photographer, 'photoCount', photosResponse.data.data.length);
+          this.$set(photographer, 'fanCount', fansResponse.data.data.length);
+        } catch (error) {
+          console.error('Error fetching additional info:', error);
+        }
+      }
+    },
     async fetchUserDescription() {
       try {
         const userInfo = await getUserInfo();
-        console.log(userInfo);
         if (userInfo.data.code === 1) {
           this.userDescription = userInfo.data.data[0].description;
           this.currentUserEmail = userInfo.data.data[0].email;
-          console.log(this.currentUserEmail);
+          this.userAvatar = userInfo.data.data[0].headImg; // Set userAvatar
+          this.userName = userInfo.data.data[0].uname; // Set userName
         } else {
           console.error('Error fetching user description:', userInfo.data.msg);
         }
@@ -125,7 +172,6 @@ export default {
     async checkJoinStatus() {
       try {
         const response = await hasJoined();
-        console.log(response);
         if (response.data.message === "已加入") {
           this.isJoined = true;
         } else {
@@ -170,6 +216,21 @@ export default {
         this.$set(photographer, 'followed', status);
       }
     },
+    async goToProfile() {
+      try {
+        const userInfo = await getUserInfo();
+        const curEmail= userInfo.data.data[0].email;
+        for (const photographer of this.photographers) {
+          if (curEmail === photographer.email) {
+            this.$router.push({name: 'PersonalInfo', params: {photographer}});
+            return;
+          }
+
+        }
+      }catch (error) {
+        console.error('Error fetching user description:', error);
+      }
+    },
     openModal() {
       this.isModalVisible = true;
     },
@@ -194,16 +255,38 @@ export default {
 }
 
 .profile_nav {
-  background-color: #f0f0f0;
-  padding: 20px;
+  background-color: white;
+  padding: 0; /* Remove padding */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 7vh; /* Set a fixed height if needed */
 }
 
 .tab_wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
 }
 
+
+.logo-link {
+  height: 100%; /* Ensure the link fills the height of the top bar */
+  width: 11%;
+}
+
+.logo-image {
+  width: 30%; /* Ensure the image fills the width of the link */
+  height: 100%; /* Ensure the image fills the height of the link */
+  object-fit: cover; /* Ensure the image covers the entire link area */
+  border: none; /* Remove any border */
+  transition: transform 0.3s ease; /* Smooth transition for the hover effect */
+}
+
+.logo-image:hover {
+  transform: scale(1.05); /* Slightly enlarge the image on hover */
+}
 
 .px_tabs li {
   margin-right: 20px;
@@ -225,13 +308,6 @@ export default {
   transform: scale(1.05); /* Slightly enlarge on hover */
 }
 
-.button {
-  padding: 10px 20px;
-  border-radius: 5px;
-  text-decoration: none;
-  color: #fff;
-  transition: background-color 0.3s ease;
-}
 
 .user_item .button.mini_follow {
   display: inline-block;
@@ -269,36 +345,26 @@ export default {
   padding-top: 20px; /* Increase the distance between the username and the image */
 }
 
-.contact {
-  display: inline-block;
-  position: relative;
-  cursor: pointer;
+.info-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.contact:hover {
-  color: #2196F3; /* Change color on hover */
+.label {
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 5px;
+  font-weight: 350; /* Make the text thinner */
 }
 
-.button.home {
-  background-color: #2196F3; /* Blue */
-  border-radius: 20px; /* More rounded corners */
-}
-
-.button.home:hover {
-  background-color: #0b7dda; /* Darker Blue */
-}
-
-.button.application {
-  background-color: #4CAF50; /* Green */
-  border-radius: 20px; /* More rounded corners */
-}
-
-.button.application:hover {
-  background-color: #45a049; /* Darker Green */
-}
 
 .recommend_users_container {
+  background-color: whitesmoke;
   padding: 20px;
+  width: 100%;
+  height: 93vh; /* Full viewport height */
+  box-sizing: border-box; /* Include padding in the element's total width and height */
 }
 
 .recommend_users {
@@ -309,8 +375,8 @@ export default {
 
 .user_item {
   background-color: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
+  border: none; /* Remove the border */
+  border-radius: 0;
   overflow: hidden;
   text-align: center;
   box-sizing: border-box;
@@ -341,7 +407,9 @@ export default {
   font-size: 18px;
   display: block;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin: 15px 0 10px; /* Increase the top margin to add more space between the avatar and the username */
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .user_item .description {
@@ -419,6 +487,7 @@ export default {
   background-color: #45a049; /* Darker Green */
   color: #fff; /* Ensure text color remains white */
 }
+
 .user_item .button.mini_follow.followed {
   background-color: #4CAF50; /* Green background */
   color: #fff; /* White text */
@@ -432,10 +501,69 @@ export default {
   border: none; /* Remove border */
   content: "取消关注"; /* Change text to "取消关注" */
 }
+
 .button-container {
   display: flex;
   justify-content: center;
 }
 
+.mid-buttons {
+  display: flex;
+  justify-content: center;
+  width: 60%;
+}
 
+.mid-buttons .el-button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.mid-buttons .el-button {
+  color: #bfbfbf;
+  font-weight: normal;
+  font-size: 16px;
+}
+
+.mid-buttons .el-button:hover {
+  color: #333;
+}
+
+.mid-buttons .el-button.active {
+  color: #333;
+  font-weight: bold;
+  border-bottom: 2px solid #409eff; /* 下划线 */
+}
+
+.mid-buttons .el-button:focus {
+  outline: none;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.user-profile:hover .avatar {
+  transform: scale(1.1); /* Slightly enlarge the avatar on hover */
+  transition: transform 0.3s ease; /* Smooth transition */
+}
+
+.user-profile:hover .username {
+  color: #409eff; /* Change the text color on hover */
+  transition: color 0.3s ease; /* Smooth transition */
+}
+
+.user-profile .avatar {
+  width: 35px; /* Adjust the width */
+  height: 35px; /* Adjust the height */
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.user-profile .username {
+  font-size: 16px; /* Adjust the font size */
+  font-weight: 350; /* Adjust the font weight to make it thinner */
+  color: #333;
+}
 </style>
