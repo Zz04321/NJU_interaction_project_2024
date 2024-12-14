@@ -6,10 +6,11 @@
 
       <!-- 在 About 和 News 之间添加服务对接页跳转按钮 -->
       <div class="button-container" style="text-align: center; margin: 30px 0;">
+        <p>📸 分享你的摄影作品，与大家交流心得</p>
         <el-button
           type="primary"
           @click="goToServicePage"
-          style="font-size: 18px; padding: 12px 24px; background: linear-gradient(90deg, #1a3b6b, #2a5590); border: none; border-radius: 8px; color: #ffffff;"
+          style="font-size: 18px; padding: 12px 24px; background: linear-gradient(90deg, #1a3b6b, #2a5590); border: none; border-radius: 16px; color: #ffffff;"
         >
           进入社区
         </el-button>
@@ -51,3 +52,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.button-container{
+  padding-top: 100px;
+}
+</style>
+

@@ -121,7 +121,7 @@ export default {
       maxContainerWidth: 300, // 单个卡片的最大宽度
       minContainerWidth: 250, // 单个卡片的最小宽度
       denseMode: true, // 是否为紧凑模式
-      tabs: ["热门", "排名上升", "新作", "编辑推荐","影集","专栏"], // 按钮名称
+      tabs: ["热门", "排名上升", "新作", "编辑推荐"], // 按钮名称
       activeTab: 0, // 当前选中的 tab 索引
       key: 'default'
     };
