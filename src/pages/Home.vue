@@ -96,7 +96,7 @@ export default {
 
 /* 按钮悬停效果 */
 .floating-button button:hover {
-  background-color: #f6260b;
+  background-color: #bedcf6;
   color: white;
 }
 
