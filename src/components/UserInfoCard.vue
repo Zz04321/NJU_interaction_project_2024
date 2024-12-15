@@ -18,7 +18,6 @@
 import {getInfoByEmail} from "../api/service";
 import {hasCollect, collect, cancelCollect} from "../api/service";
 import {notify} from "../api/user";
-import {favoritePhoto} from "../api/photo";
 import ImageCard from "./ImageCard.vue";
 
 export default {
@@ -81,15 +80,11 @@ export default {
 
       this.isSelf = (this.userEmail === localStorage.getItem("email"));
       console.log(this.isSelf)
-      if (this.email === localStorage.getItem("email")) {
-        this.isFollowing = true;
-      } else {
-        hasCollect(this.userEmail).then((res)=>{
-          this.isFollowing= (res.data.code === 1);
-        }).catch((error)=>{
-          notify(this, "获取关注信息失败", "error")
-        })
-      }
+      hasCollect(this.userEmail).then((res)=>{
+        this.isFollowing = res.data.data;
+      }).catch((error)=>{
+        this.isFollowing = false;
+      })
     },
 
     viewDetail() {
@@ -108,15 +103,26 @@ export default {
     follow() {
       console.log("follow")
       collect(this.userEmail).then((res)=>{
-        this.isFollowing=res.data.code === 1;
-        notify(this, "关注成功", "success")
+        if (res.data.code === 1) {
+          this.isFollowing = true;
+          notify(this, "关注成功", "success")
+        }
+        else {
+          notify(this, "关注失败", "error")
+        }
       }).catch((error)=>{
         notify(this, "关注失败", "error")
       })
     },
     unfollow() {
       cancelCollect(this.userEmail).then((res)=>{
-        this.isFollowing=res.data.code === 1;
+        if (res.data.code === 1) {
+          this.isFollowing = false;
+          notify(this, "取消关注成功", "success")
+        }
+        else {
+          notify(this, "取消关注失败", "error")
+        }
         notify(this, "取消关注成功", "success")
       }).catch((error)=>{
         notify(this, "取消关注失败", "error")
