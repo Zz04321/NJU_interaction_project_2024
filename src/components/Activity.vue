@@ -1,7 +1,7 @@
 <template>
     <div id="templatemo_events" class="container_wapper">
         <div class="container-fluid">
-            <h1>Events</h1>
+            <h1>活动</h1>
             <div @click="toExhibition1" class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-0">
                 <div class="event_box_wap event_animate_left">
                     <div class="event_box_img">

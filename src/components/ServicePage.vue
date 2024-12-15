@@ -3,9 +3,12 @@
     <main class="main-content">
       <div class="profile_nav">
         <div class="tab_wrapper applyIntoVCG">
-          <router-link to="/" class="button home logo-link">
-            <img src="static/assets/images/templatemo_logo.jpg" alt="Logo" class="logo-image"/>
-          </router-link>
+          <div class="left-buttons">
+            <el-button
+              icon="el-icon-back"
+              @click="returnPrevious">
+            </el-button>
+          </div>
           <div class="mid-buttons">
             <el-button-group>
               <el-button
@@ -89,7 +92,7 @@ export default {
       isJoined: false,
       isModalVisible: false,
       hoveredPhotographer: null,
-      tabs: ["全部摄影师", "随机跳转", "热门摄影师"], // 按钮名称
+      tabs: ["全部摄影师", "热门摄影师"], // 按钮名称
       activeTab: 0, // 当前选中的 tab 索引
     };
   },
@@ -99,19 +102,18 @@ export default {
     this.checkJoinStatus();
   },
   methods: {
+    returnPrevious() {
+      this.$router.back()
+    },
     selectTab(index) {
       this.activeTab = index; // 切换选中的 tab
-      if (index === 2) {
+      if (index === 1) {
         this.photographers.sort((a, b) => b.fanCount - a.fanCount);
       } else if (index === 0) {
         for (let i = this.photographers.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [this.photographers[i], this.photographers[j]] = [this.photographers[j], this.photographers[i]];
         }
-      } else if (index === 1) {
-        const randomIndex = Math.floor(Math.random() * this.photographers.length);
-        const selectedPhotographer = this.photographers[randomIndex];
-        this.$router.push({name: 'PersonalInfo', params: {photographer: selectedPhotographer}});
       }
     },
     async fetchPhotographers() {
@@ -565,5 +567,32 @@ export default {
   font-size: 16px; /* Adjust the font size */
   font-weight: 350; /* Adjust the font weight to make it thinner */
   color: #333;
+}
+.button.application {
+  background-color: #4CAF50; /* Green background */
+  color: #fff; /* White text */
+  padding: 10px 20px; /* Add padding */
+  border-radius: 20px; /* Rounded corners */
+  text-decoration: none; /* Remove underline */
+  font-size: 16px; /* Adjust font size */
+  font-weight: 500; /* Slightly thinner text */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+  display: inline-block; /* Ensure it behaves like a button */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
+}
+
+.button.application:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+.left-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 10%;
+  margin-left: 40px;
+}
+
+.left-buttons .el-button {
+  font-size: 25px;
 }
 </style>

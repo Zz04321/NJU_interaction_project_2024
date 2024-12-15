@@ -32,7 +32,7 @@
 
 <style scoped>
   #logo_img {
-    border-radius: 80%;
+    //border-radius: 50%;
   }
   .fff {
         width: 300px;

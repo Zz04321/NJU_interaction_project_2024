@@ -37,9 +37,11 @@
         @update:isFollowed="isFollowed = $event"
         class="fixed-follow-button"
       />
-      <button :class="['like-button', { liked: isLiked }]" @click="likePhoto" @mouseover="hoverLikeButton" @mouseleave="leaveLikeButton">
-        {{ isLiked ? (isHovered ? '取消点赞' : '已点赞') : '点赞' }}
-      </button>
+      <template>
+        <el-button class="like-button" :icon="isLiked ? 'el-icon-star-on' : 'el-icon-star-off'" @click="toggleLike" @mouseover="hoverLikeButton" @mouseleave="leaveLikeButton">
+          {{ isLiked ? (isHovered ? '取消点赞' : '已点赞') : '点赞' }}
+        </el-button>
+      </template>
     </div>
     <CommunityUploadModal :isVisible="isUploadModalVisible" @close="isUploadModalVisible = false" @uploaded="handleUploadSuccess" />
     <ImageModal :isVisible="isImageModalVisible" :imageSrc="selectedImage" @close="isImageModalVisible = false" />
@@ -148,7 +150,13 @@ export default {
     showFanList() {
       this.isFanListVisible = true;
     },
-    async likePhoto() {
+    hoverLikeButton() {
+      this.isHovered = true; // Set hover status to true
+    },
+    leaveLikeButton() {
+      this.isHovered = false; // Set hover status to false
+    },
+    async toggleLike() {
       const email = this.photographer.email;
       try {
         if (this.isLiked) {
@@ -162,12 +170,6 @@ export default {
       } catch (error) {
         console.error('Error liking/unliking the photo:', error);
       }
-    },
-    hoverLikeButton() {
-      this.isHovered = true; // Set hover status to true
-    },
-    leaveLikeButton() {
-      this.isHovered = false; // Set hover status to false
     }
   }
 };
@@ -225,7 +227,7 @@ body {
 
 .description, .contact {
   padding: 15px;
-  background-color: #fff;
+  background-color: #FEFEFE;
   border-radius: 10px;
 }
 
