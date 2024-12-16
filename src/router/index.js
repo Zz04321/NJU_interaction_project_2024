@@ -14,7 +14,7 @@ import UpdInfo from '../pages/UpdInfo.vue'
 import PhotoShowDetail from "../pages/PhotoShowDetail.vue";
 import ServicePage from "../components/ServicePage.vue";
 import MyConcern from "../components/MyConcern.vue";
-import ServiceRegister from "../components/ServiceRegister.vue";
+import ServiceRegister from "../components/ServiceRegisterModal.vue";
 import PersonalInfo from "../components/PersonalInfo.vue";
 import newPersonInfo from "../components/newPersonInfo.vue";
 import FollowListModal from "../components/FollowListModal.vue";

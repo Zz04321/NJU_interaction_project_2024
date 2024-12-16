@@ -27,8 +27,8 @@
             <img :src="userAvatar" class="avatar"/>
             <span class="username">{{ userName }}</span>
           </div>
-          <router-link v-else to="/service/register" class="button application">加入社区</router-link>
-          <NewUploadModal v-if="isJoined" :isVisible="isModalVisible" @close="closeModal" @uploaded="refresh"/>
+          <el-button v-else @click="openRegisterModal" class="button application">加入社区</el-button>
+          <ServiceRegisterModal :isVisible="isRegisterModalVisible" @close="closeRegisterModal" />
         </div>
       </div>
       <div class="recommend_users_container">
@@ -69,31 +69,34 @@
 </template>
 
 <script>
-import {getAll, collect, hasCollect, hasJoined, cancelCollect, getAllPhotos, getFans} from '../api/service';
-import {getUserInfo, notify} from "../api/user";
+import { getAll, collect, hasCollect, hasJoined, cancelCollect, getAllPhotos, getFans } from '../api/service';
+import { getUserInfo, notify } from "../api/user";
 import NewUploadModal from "../components/CommunityUploadModal.vue";
 import FollowButton from "./FollowButton.vue";
 import UploadModal from "./UploadModal.vue";
+import ServiceRegisterModal from "./ServiceRegisterModal.vue";
 
 export default {
   components: {
     UploadModal,
     FollowButton,
-    NewUploadModal
+    NewUploadModal,
+    ServiceRegisterModal
   },
   data() {
     return {
       currentUserEmail: '',
-      userAvatar: '', // Add userAvatar
-      userName: '', // Add userName
+      userAvatar: '',
+      userName: '',
       photographers: [],
       showUserDescription: '',
       userDescription: '',
       isJoined: false,
       isModalVisible: false,
+      isRegisterModalVisible: false,
       hoveredPhotographer: null,
-      tabs: ["全部摄影师", "热门摄影师"], // 按钮名称
-      activeTab: 0, // 当前选中的 tab 索引
+      tabs: ["全部摄影师", "热门摄影师"],
+      activeTab: 0,
     };
   },
   mounted() {
@@ -103,10 +106,10 @@ export default {
   },
   methods: {
     returnPrevious() {
-      this.$router.back()
+      this.$router.back();
     },
     selectTab(index) {
-      this.activeTab = index; // 切换选中的 tab
+      this.activeTab = index;
       if (index === 1) {
         this.photographers.sort((a, b) => b.fanCount - a.fanCount);
       } else if (index === 0) {
@@ -148,8 +151,8 @@ export default {
         if (userInfo.data.code === 1) {
           this.userDescription = userInfo.data.data[0].description;
           this.currentUserEmail = userInfo.data.data[0].email;
-          this.userAvatar = userInfo.data.data[0].headImg; // Set userAvatar
-          this.userName = userInfo.data.data[0].uname; // Set userName
+          this.userAvatar = userInfo.data.data[0].headImg;
+          this.userName = userInfo.data.data[0].uname;
         } else {
           console.error('Error fetching user description:', userInfo.data.msg);
         }
@@ -187,7 +190,7 @@ export default {
       try {
         const userInfo = await getUserInfo();
         if (!userInfo || !userInfo.data || userInfo.data.code !== 1) {
-          this.$notify({message: '未登录', type: 'error', offset: 100});
+          this.$notify({ message: '未登录', type: 'error', offset: 100 });
           setTimeout(() => this.$router.replace('/Login'), 1000);
           return;
         }
@@ -221,15 +224,14 @@ export default {
     async goToProfile() {
       try {
         const userInfo = await getUserInfo();
-        const curEmail= userInfo.data.data[0].email;
+        const curEmail = userInfo.data.data[0].email;
         for (const photographer of this.photographers) {
           if (curEmail === photographer.email) {
-            this.$router.push({name: 'PersonalInfo', params: {photographer}});
+            this.$router.push({ name: 'PersonalInfo', params: { photographer } });
             return;
           }
-
         }
-      }catch (error) {
+      } catch (error) {
         console.error('Error fetching user description:', error);
       }
     },
@@ -241,6 +243,15 @@ export default {
     },
     refresh() {
       this.fetchPhotographers();
+    },
+    openRegisterModal() {
+      this.isRegisterModalVisible = true;
+    },
+    closeRegisterModal() {
+      this.isRegisterModalVisible = false;
+      this.fetchPhotographers();
+      this.fetchUserDescription();
+      this.checkJoinStatus();
     }
   }
 };

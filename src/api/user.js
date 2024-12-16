@@ -77,6 +77,7 @@ export function notify(vm, message, type = 'success') {
   vm.$notify({
     message: message,
     type: type,
-    offset: 100
+    offset: 100,
+    customClass: 'custom-notification' // Add a custom class
   });
 }
