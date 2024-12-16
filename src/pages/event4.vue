@@ -6,7 +6,7 @@
         icon="el-icon-back"
         @click="toHome">
       </el-button>
-      <el-button @click="toExhibition1" type="primary" icon="el-icon-arrow-right">南京大学摄影展</el-button>
+      <el-button @click="toExhibition2" type="primary" icon="el-icon-arrow-right">最佳摄影师评选</el-button>
     </el-header>
 
     <!-- 通知 -->
@@ -202,9 +202,9 @@ export default {
     };
   },
   methods: {
-    toExhibition1() {
-      localStorage.setItem("now", 1);
-      this.$router.push('/Exhibition1');
+    toExhibition2() {
+      localStorage.setItem("now", 2);
+      this.$router.push('/Exhibition2');
     },
     toHome() {
       this.$router.push('/');

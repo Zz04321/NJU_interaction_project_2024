@@ -6,7 +6,7 @@
         icon="el-icon-back"
         @click="toHome">
       </el-button>
-      <el-button @click="toExhibition3" type="primary" icon="el-icon-arrow-right"> 2024最人气摄影师评选</el-button>
+      <el-button @click="toExhibition2" type="primary" icon="el-icon-arrow-right"> 发现中国之美</el-button>
     </el-header>
 
     <!-- 活动细则 -->
@@ -347,8 +347,8 @@ export default {
       });
   },
   methods: {
-    toExhibition3() {
-      this.$router.push("/Exhibition3");
+    toExhibition2() {
+      this.$router.push("/Exhibition2");
     },
     toHome() {
       this.$router.push("/");
@@ -381,6 +381,7 @@ export default {
           .then((res) => {
             this.hasJoined = true;
             this.$message.success("成功报名参选！");
+            this.$router.push("/Exhibition2");
           })
           .catch(() => {
             this.$message.error("报名失败，请稍后重试！");
