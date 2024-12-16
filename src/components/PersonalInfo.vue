@@ -144,6 +144,7 @@ export default {
     },
     showUploadModal() {
       this.isUploadModalVisible = true;
+      this.$router.push('/personal-info');
     },
     async handleUploadSuccess() {
       this.isUploadModalVisible = false;

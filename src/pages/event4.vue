@@ -2,7 +2,10 @@
   <body>
   <div class="container">
     <el-header class="header-buttons">
-      <el-button @click="toHome" type="primary" icon="el-icon-arrow-left">返回主页</el-button>
+      <el-button
+        icon="el-icon-back"
+        @click="toHome">
+      </el-button>
       <el-button @click="toExhibition1" type="primary" icon="el-icon-arrow-right">南京大学摄影展</el-button>
     </el-header>
 
