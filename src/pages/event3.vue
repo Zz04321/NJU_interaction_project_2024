@@ -2,7 +2,10 @@
   <body>
   <div class="container">
     <el-header class="header-buttons">
-      <el-button @click="toHome" type="primary" icon="el-icon-arrow-left">返回主页</el-button>
+      <el-button
+        icon="el-icon-back"
+        @click="toHome">
+      </el-button>
       <el-button @click="toExhibition3" type="primary" icon="el-icon-arrow-right"> 2024最人气摄影师评选</el-button>
     </el-header>
 
@@ -47,7 +50,7 @@
 
     <!-- 判断用户身份 -->
     <section v-if="isLoggedIn">
-      <div v-if="isPhotographer === 'PHOTOGRAPHER' && !hasJoined" class="section">
+      <div v-if="!hasJoined" class="section">
         <h2>报名参与评选</h2>
         <el-form ref="contact" :model="user" label-width="100px" class="form-container">
           <el-form-item label="联系方式">

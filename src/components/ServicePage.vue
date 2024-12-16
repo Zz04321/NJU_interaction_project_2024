@@ -103,7 +103,7 @@ export default {
   },
   methods: {
     returnPrevious() {
-      this.$router.back()
+      this.$router.push('/');
     },
     selectTab(index) {
       this.activeTab = index; // 切换选中的 tab

@@ -18,6 +18,7 @@ import ServiceRegister from "../components/ServiceRegister.vue";
 import PersonalInfo from "../components/PersonalInfo.vue";
 import newPersonInfo from "../components/newPersonInfo.vue";
 import FollowListModal from "../components/FollowListModal.vue";
+import HelpPage from "../components/HelpPage.vue";
 
 Vue.use(Router)
 
@@ -99,6 +100,10 @@ export default new Router({
     {
       path: '/ServicePage',
       component: ServicePage,
+    },
+    {
+      path: '/Help',
+      component: HelpPage,
     },
     {
 

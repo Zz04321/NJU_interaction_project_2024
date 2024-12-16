@@ -78,7 +78,7 @@ export default {
             localStorage.setItem("now", 4)
             this.$router.push('/Exhibition4')
             window.scrollTo(0,0);
-        }
+        },
     }
 }
 </script>
