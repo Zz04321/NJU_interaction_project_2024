@@ -16,6 +16,8 @@ import ServicePage from "../components/ServicePage.vue";
 import MyConcern from "../components/MyConcern.vue";
 import ServiceRegister from "../components/ServiceRegister.vue";
 import PersonalInfo from "../components/PersonalInfo.vue";
+import newPersonInfo from "../components/newPersonInfo.vue";
+import FollowListModal from "../components/FollowListModal.vue";
 
 Vue.use(Router)
 
@@ -103,6 +105,15 @@ export default new Router({
       path: '/personal-info',
       name: 'PersonalInfo',
       component: PersonalInfo,
+      props: true,
+      meta: {
+        needLogin: true
+      },
+    },
+    {
+      path: '/new-personal-info',
+      name: 'NewPersonalInfo',
+      component:newPersonInfo,
       props: true,
       meta: {
         needLogin: true

@@ -75,7 +75,7 @@ export default {
   props: {
     photographer: {
       type: Object,
-      required: false
+      required: true
     }
   },
   data() {
@@ -101,14 +101,6 @@ export default {
   async mounted() {
     console.log(this.photographer);
     try {
-      if(this.photographer){
-        const photographerData = JSON.stringify(this.photographer);
-        localStorage.setItem('photographer', photographerData);
-      }else{
-        const photographerData = localStorage.getItem('photographer');
-        this.photographer = JSON.parse(photographerData);
-        localStorage.removeItem('photographer');
-      }
       const userInfoResponse = await getUserInfo();
       this.currentUserEmail = userInfoResponse.data.data[0].email;
       this.isCurrentUser = this.currentUserEmail === this.photographer.email;

@@ -8,11 +8,11 @@
       <div class="content">
         <ul v-if="followList.length > 0" class="no-padding">
           <li v-for="(user, index) in followList" :key="index" class="follower-item no-padding">
-            <router-link :to="{ name: 'PersonalInfo', params: { user }}">
+            <router-link :to="{ name: 'NewPersonalInfo', params: { photographer:user }}">
               <img :src="user.headImg" alt="Avatar" class="avatar">
             </router-link>
             <div class="user-info">
-              <router-link :to="{ name: 'PersonalInfo', params: { user } }" @click.native="logPhotographer(user)">
+              <router-link :to="{ name: 'NewPersonalInfo', params: { photographer:user }}">
                 <span class="username">{{ user.uname }}</span>
               </router-link>
               <span class="fans-count">{{ user.fansCount }}粉丝</span>

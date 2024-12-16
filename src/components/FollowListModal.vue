@@ -8,11 +8,11 @@
       <div class="content">
         <ul v-if="followList.length > 0" class="no-padding">
           <li v-for="(user, index) in followList" :key="index" class="follower-item no-padding">
-            <router-link :to="{ name: 'PersonalInfo', params: { user }}">
+            <router-link :to="{ name: 'NewPersonalInfo', params: { photographer:user }}">
               <img :src="user.headImg" alt="Avatar" class="avatar">
             </router-link>
             <div class="user-info">
-              <router-link :to="{ name: 'PersonalInfo', params: { user } }" @click.native="logPhotographer(user)">
+              <router-link :to="{ name: 'NewPersonalInfo', params: { photographer:user }}">
                 <span class="username">{{ user.uname }}</span>
               </router-link>
               <span class="fans-count">{{ user.fansCount }}粉丝</span>
@@ -38,6 +38,7 @@
 import FollowButton from './FollowButton.vue';
 import { getAllCollects, getFans, collect, cancelCollect, hasCollect } from '../api/service';
 import { getUserInfo } from '../api/user';
+import router from "../router";
 
 export default {
   components: {
@@ -73,8 +74,10 @@ export default {
   },
   methods: {
     logPhotographer(user) {
-      console.log(user);
-      this.$router.push({ name: 'PersonalInfo', params: {user} });
+      console.log(this.$router);
+      this.$router.push({ name: 'PersonalInfo', params: { user } });
+      console.log(this.$router);
+      this.$emit('close');
     },
     async fetchCurrentUser() {
       try {
