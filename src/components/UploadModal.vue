@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import { uploadImage } from "../api/user";
+import {notify, uploadImage} from "../api/user";
 import { uploadPhoto } from "../api/photo";
 import ImageCard from "./ImageCard.vue";
 
@@ -133,7 +133,7 @@ export default {
           return uploadPhoto(imageUrl,this.description,this.theme,this.title);
         })
         .then(() => {
-          alert("Upload successful!");
+          notify(this, "上传成功!", "success");
           this.$emit("uploaded"); // 通知父组件刷新列表
         })
         .catch((error) => {

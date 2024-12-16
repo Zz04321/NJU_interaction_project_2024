@@ -205,8 +205,8 @@ export default {
   },
   methods: {
     toExhibition3() {
-      localStorage.setItem("now", 3);
-      this.$router.push('/Exhibition3');
+      localStorage.setItem("now", 2);
+      this.$router.push('/Exhibition2');
     },
     toHome() {
       this.$router.push('/');
