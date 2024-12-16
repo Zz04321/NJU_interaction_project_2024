@@ -138,8 +138,10 @@ export default {
     showUploadModal() {
       this.isUploadModalVisible = true;
     },
-    handleUploadSuccess() {
+    async handleUploadSuccess() {
       this.isUploadModalVisible = false;
+      const photosResponse = await getAllPhotos(this.photographer.email);
+      this.photos = photosResponse.data.data;
     },
     enlargeImage(photo) {
       this.selectedImage = photo;
