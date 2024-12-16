@@ -107,7 +107,6 @@ export default {
       }else{
         const photographerData = localStorage.getItem('photographer');
         this.photographer = JSON.parse(photographerData);
-        localStorage.removeItem('photographer');
       }
       const userInfoResponse = await getUserInfo();
       this.currentUserEmail = userInfoResponse.data.data[0].email;
