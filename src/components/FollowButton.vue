@@ -14,7 +14,7 @@
 <script>
 import {cancelCollect, collect} from "../api/service";
 import {notify} from "../api/user";
-
+import { MessageBox } from 'element-ui';
 export default {
   props: {
     isFollowed: {
@@ -62,8 +62,13 @@ export default {
       }
       console.log(this.isFollowed);
       if (this.isFollowed) {
-        const confirmed = confirm('确认取消关注?');
-        if (!confirmed) {
+        try {
+          await MessageBox.confirm('确认取消关注?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          });
+        } catch (error) {
           return;
         }
       }

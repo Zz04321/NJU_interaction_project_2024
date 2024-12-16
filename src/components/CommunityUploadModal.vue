@@ -31,6 +31,7 @@
 <script>
 import { uploadImage } from "../api/user";
 import { uploadPhoto } from "../api/photo";
+import { notify } from "../api/user";
 
 export default {
   props: {
@@ -66,12 +67,12 @@ export default {
           const imageUrl = response.data.data;
           await uploadPhoto(imageUrl);
         }
-        alert("上传成功！");
+        notify(this, "上传成功!");
         this.$emit("uploaded");
         this.$emit("close");
       } catch (error) {
         console.error("上传失败", error);
-        alert("上传失败，请重试。");
+        notify(this, "上传失败，请重试。");
       }
     },
     handleFileChange(event) {

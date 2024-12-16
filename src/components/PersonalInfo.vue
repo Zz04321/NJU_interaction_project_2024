@@ -15,18 +15,17 @@
           <p>{{ photographer.description }}</p>
         </div>
         <div class="followers-following">
-          <span>点赞数 {{ likes}}</span> <!-- Display the number of likes -->
+          <span>点赞数 {{ likes }}</span> <!-- Display the number of likes -->
           <span @click="showFanList">粉丝 {{ fans.length }}</span>
           <span @click="showFollowList">关注 {{ collects.length }}</span>
         </div>
         <div class="separator">作品</div>
-        <div class="photos">
-          <Waterfall>
-            <WaterfallItem v-for="(photo, index) in photos" :key="index" class="waterfall-item" :style="{ height: calculateHeight(index) + 'px', width: containerWidth + 'px' }">
-              <img :src="photo" class="photo" @load="updateAspectRatio(index, $event)" @click="enlargeImage(photo)">
-            </WaterfallItem>
-          </Waterfall>
-        </div>
+        <Waterfall class="waterfall-container">
+          <WaterfallItem v-for="(photo, index) in photos" :key="index" class="waterfall-item"
+                         :style="{ height: calculateHeight(index) + 'px', width: containerWidth + 'px' }">
+            <img :src="photo" class="photo" @load="updateAspectRatio(index, $event)" @click="enlargeImage(photo)">
+          </WaterfallItem>
+        </Waterfall>
       </div>
       <button v-if="isCurrentUser" class="upload-button" @click="showUploadModal">上传图片</button>
       <FollowButton
@@ -38,23 +37,25 @@
         class="fixed-follow-button"
       />
       <template>
-        <el-button class="like-button" :icon="isLiked ? 'el-icon-star-on' : 'el-icon-star-off'" @click="toggleLike" @mouseover="hoverLikeButton" @mouseleave="leaveLikeButton">
+        <el-button class="like-button" :icon="isLiked ? 'el-icon-star-on' : 'el-icon-star-off'" @click="toggleLike"
+                   @mouseover="hoverLikeButton" @mouseleave="leaveLikeButton">
           {{ isLiked ? (isHovered ? '取消点赞' : '已点赞') : '点赞' }}
         </el-button>
       </template>
     </div>
-    <CommunityUploadModal :isVisible="isUploadModalVisible" @close="isUploadModalVisible = false" @uploaded="handleUploadSuccess" />
-    <ImageModal :isVisible="isImageModalVisible" :imageSrc="selectedImage" @close="isImageModalVisible = false" />
-    <FollowListModal :isVisible="isFollowListVisible" :email="photographer.email" @close="isFollowListVisible = false" />
-    <FanListModal :isVisible="isFanListVisible" :email="photographer.email" @close="isFanListVisible = false" />
+    <CommunityUploadModal :isVisible="isUploadModalVisible" @close="isUploadModalVisible = false"
+                          @uploaded="handleUploadSuccess"/>
+    <ImageModal :isVisible="isImageModalVisible" :imageSrc="selectedImage" @close="isImageModalVisible = false"/>
+    <FollowListModal :isVisible="isFollowListVisible" :email="photographer.email" @close="isFollowListVisible = false"/>
+    <FanListModal :isVisible="isFanListVisible" :email="photographer.email" @close="isFanListVisible = false"/>
 
   </div>
 </template>
 
 <script>
-import { Waterfall, WaterfallItem } from "vue2-waterfall";
-import { getAllPhotos, getFans, getAllCollects, favour, getFavors, hasFavoured, cancelFavor } from "../api/service";
-import { getUserInfo } from "../api/user";
+import {Waterfall, WaterfallItem} from "vue2-waterfall";
+import {getAllPhotos, getFans, getAllCollects, favour, getFavors, hasFavoured, cancelFavor} from "../api/service";
+import {getUserInfo} from "../api/user";
 import CommunityUploadModal from "./CommunityUploadModal.vue";
 import ImageModal from "./ImageModal.vue";
 import FollowListModal from './FollowListModal.vue';
@@ -273,6 +274,7 @@ body {
 .followers-following span:hover {
   color: #333; /* Darker color on hover */
 }
+
 .info {
   margin-top: 40%; /* Adjust margin-top to ensure the info container floats above the representative work */
   width: 100vw;
@@ -292,8 +294,9 @@ body {
   height: 40%;
   object-fit: cover; /* Ensure the image covers the entire container */
 }
+
 .waterfall-item {
-  margin: 10px; /* Add margin to create space between images */
+  margin: 10px; /* Adjust margin to create space between images */
   transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effects */
 }
 
@@ -304,11 +307,12 @@ body {
 
 .photo {
   width: 100%;
-  max-height: 100vh; /* 确保图片不会超过视口高度 */
-  object-fit: contain; /* 确保图片在容器内完整显示 */
-  border-radius: 10px; /* 保持圆角 */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 保持阴影 */
+  max-height: 100vh; /* Ensure the image does not exceed the viewport height */
+  object-fit: contain; /* Ensure the image fits within the container */
+  border-radius: 10px; /* Keep rounded corners */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Keep shadow */
 }
+
 .separator {
   text-align: center;
   font-size: 24px; /* Reduced font size */
@@ -327,7 +331,11 @@ body {
   height: 1px;
   background-color: #ccc;
 }
-
+.waterfall-container {
+  display: flex;
+  justify-content: center;
+  padding: 0 20px; /* Adjust padding as needed */
+}
 .separator::before {
   left: 0;
 }
@@ -351,6 +359,7 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
   transition: background 0.3s ease, transform 0.3s ease; /* Smooth transition for background and transform */
 }
+
 .fixed-follow-button {
   position: absolute;
   top: 10px;
@@ -359,9 +368,12 @@ body {
   font-size: 16px; /* Increase font size */
   border-radius: 20px; /* Adjust border radius if needed */
 }
+
 .upload-button {
   background: linear-gradient(135deg, #4CAF50, #45a049); /* Green gradient background */
   right: 10px;
+  padding: 6px 20px; /* Adjust padding to make the button flatter */
+  height: 35px; /* Set a fixed height to make the button flatter */
 }
 
 .upload-button:hover {
@@ -400,4 +412,21 @@ body {
   transform: scale(1.05);
 }
 
+.fixed-follow-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 6px 20px; /* Adjust padding to make the button flatter */
+  height: 35px; /* Set a fixed height to make the button flatter */
+  font-size: 16px; /* Increase font size */
+  border-radius: 20px; /* Adjust border radius if needed */
+  border: 1px solid #2196F3;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.fixed-follow-button:hover {
+  border-color: #1976D2;
+  transform: scale(1.05);
+}
 </style>

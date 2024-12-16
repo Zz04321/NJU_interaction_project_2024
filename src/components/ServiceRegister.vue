@@ -3,11 +3,9 @@
   <div id="box" style="margin-top: 150px; position: relative;">
     <h1 style="color:black;">个人信息登记</h1>
     <div class="block1">
-      <img v-bind:src="user.photo" alt="">
-      <div class="file-input-wrapper">
-        <el-button class="fileInput">选择代表作</el-button>
-        <input @change="uploadImg" type="file" class="fileInput" style="opacity: 0;" ref="input">
-      </div>
+      <h2 class="upload-title">代表作</h2>
+      <img v-bind:src="user.photo" alt="" @click="triggerFileInput" title="点击图片上传代表作">
+      <input @change="uploadImg" type="file" class="fileInput" style="display: none;" ref="input">
     </div>
     <div class="block2">
       <ul style="list-style:none; margin-top: 20px;">
@@ -55,6 +53,9 @@ export default {
     }
   },
   methods: {
+    triggerFileInput() {
+      this.$refs.input.click();
+    },
     saveImg() {
       if (!this.pic) {
         notify(this, "请先选择图片再保存!", "warning");
@@ -133,28 +134,25 @@ export default {
 </script>
 
 <style scoped>
-.fileInput {
-  background-color: #bedcf6; /* 浅蓝色按钮 */
-  color: black;
+
+.button {
+  background-color: #4CAF50; /* 绿色按钮 */
+  color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 20px; /* 圆角按钮 */
   padding: 10px 20px;
   cursor: pointer;
-  transition: background-color 0.3s;
-  position: absolute;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
+  transition: background-color 0.3s, transform 0.3s;
 }
-.file-input-wrapper {
-  position: relative;
-  width: 100px;
-  height: 38px;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 30px;
+
+.button:hover {
+  background-color: #45a049; /* 悬停时变为深绿色 */
+  transform: scale(1.05); /* 悬停时放大 */
+}
+
+.submit-button-wrapper {
+  text-align: center;
+  margin-top: 20px;
 }
 .block2 ul li a {
   cursor: pointer;
@@ -185,7 +183,11 @@ body {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 
 }
-
+.upload-title {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+}
 .block1 {
   margin: 0;
   padding: 0;
@@ -209,9 +211,10 @@ body {
   display: block;
   width: 200px;
   height: 200px;
-  border-radius: 31%;
+  border-radius: 50%;
   background-color: white;
   border: 3px solid  #bedcf6; /* 增加淡蓝边框 */
+  cursor: pointer;
 }
 
 font {
