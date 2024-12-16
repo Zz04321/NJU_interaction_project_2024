@@ -84,6 +84,7 @@
 import { uploadImage } from "../api/user";
 import { uploadPhoto } from "../api/photo";
 import ImageCard from "./ImageCard.vue";
+import { notify} from "../api/user";
 
 export default {
   components: {ImageCard},
@@ -133,12 +134,14 @@ export default {
           return uploadPhoto(imageUrl,this.description,this.theme,this.title);
         })
         .then(() => {
-          alert("Upload successful!");
+          // alert("Upload successful!");
+          notify(this, "Upload successful!", "success");
           this.$emit("uploaded"); // 通知父组件刷新列表
         })
         .catch((error) => {
           console.error("Upload failed", error);
-          alert("Upload failed. Please try again.");
+          // alert("Upload failed. Please try again.");
+          notify(this, "Upload failed. Please try again.", "error");
         });
     },
     syncFile(file) {

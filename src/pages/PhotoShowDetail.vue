@@ -92,6 +92,7 @@ import ImageCard  from "../components/ImageCard.vue";
 import UploadModal from "../components/UploadModal.vue";
 import ImageDetailModal from "../components/ImageDetailModal.vue";
 import {fetchPhotos, uploadPhoto, fetchPhotosByEmail, fetchPhotosByTheme} from "../api/photo";
+import {notify} from "../api/user";
 
 
 export default {
