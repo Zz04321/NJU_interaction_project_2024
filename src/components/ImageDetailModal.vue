@@ -39,10 +39,10 @@
         </div>
       </div>
     </div>
-<!--    <div slot="footer" class="dialog-footer">-->
-<!--      <el-button @click="closeModal">关闭</el-button>-->
-<!--      <el-button @click="downloadImage">下载</el-button>-->
-<!--    </div>-->
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="closeModal">关闭</el-button>
+      <el-button @click="downloadImage">下载</el-button>
+    </div>
   </el-dialog>
 </template>
 
@@ -264,6 +264,9 @@ export default {
 }
 
 .dialog-footer .el-button {
+  margin-left: 15px;
+  margin-right: 15px;
+  display: flex;
   border: 2px solid #ddd;
   border-radius: 20px;
   color: #333;
@@ -275,6 +278,8 @@ export default {
   text-align: center;
   width: 60px;
   height: 20px;
+  align-items: center;
+  justify-content: center;
 }
 
 .dialog-footer .el-button:hover {
