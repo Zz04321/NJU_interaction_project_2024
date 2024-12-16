@@ -135,13 +135,13 @@ export default {
         })
         .then(() => {
           // alert("Upload successful!");
-          notify(this, "Upload successful!", "success");
+          notify(this, "上传成功", "success");
           this.$emit("uploaded"); // 通知父组件刷新列表
         })
         .catch((error) => {
           console.error("Upload failed", error);
           // alert("Upload failed. Please try again.");
-          notify(this, "Upload failed. Please try again.", "error");
+          notify(this, "上传失败", "error");
         });
     },
     syncFile(file) {
